@@ -1,4 +1,6 @@
-import { A, B } from "ts-toolbelt";
+import { A } from "ts-toolbelt";
+
+import { If } from "../utils";
 
 import { Never } from "./never";
 
@@ -8,9 +10,11 @@ export type Primitive<T extends null | boolean | number | string> =
   $Primitive<T>;
 
 // TOIMPROVE: We could check that T extends either null, boolean, number or string with DoesExtend<T, PRIMITIVE_TYPE> extends true ? continue : Never
-export type $Primitive<T> = A.Equals<T, never> extends B.True
-  ? Never
-  : { type: PrimitiveTypeId; value: T };
+export type $Primitive<T> = If<
+  A.Equals<T, never>,
+  Never,
+  { type: PrimitiveTypeId; value: T }
+>;
 
 export type PrimitiveType = {
   type: PrimitiveTypeId;

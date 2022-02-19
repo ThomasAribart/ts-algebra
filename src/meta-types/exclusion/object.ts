@@ -1,6 +1,6 @@
-import { A, B, U } from "ts-toolbelt";
+import { A, U } from "ts-toolbelt";
 
-import { And, Or, Not, DoesExtend, IsObject } from "../../utils";
+import { And, Or, Not, DoesExtend, IsObject, If } from "../../utils";
 
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
@@ -91,11 +91,11 @@ type ExcludeObjectValues<A extends ObjectType, B extends ObjectType> = {
 
 // UTILS
 
-type GetUnionLength<U> = A.Equals<U, never> extends B.True
-  ? "none"
-  : A.Equals<U.Pop<U>, never> extends B.True
-  ? "onlyOne"
-  : "moreThanTwo";
+type GetUnionLength<U> = If<
+  A.Equals<U, never>,
+  "none",
+  If<A.Equals<U.Pop<U>, never>, "onlyOne", "moreThanTwo">
+>;
 
 type IsPossibleIn<O extends ObjectType, K extends string> = Or<
   DoesExtend<K, keyof ObjectValues<O>>,

@@ -1,4 +1,6 @@
-import { A, B, U } from "ts-toolbelt";
+import { A, U } from "ts-toolbelt";
+
+import { If } from "../../utils";
 
 import { Type } from "..";
 import { $Union, UnionType, UnionValues } from "../union";
@@ -14,12 +16,11 @@ type RecurseOnUnionValues<V extends Type, B> = V extends infer T
   ? _$Exclude<T, B>
   : never;
 
-export type ExcludeUnion<A, B extends UnionType> = A.Equals<
-  UnionValues<B>,
-  never
-> extends B.True
-  ? A
-  : ExcludeUnionValue<A, U.Last<UnionValues<B>>, B>;
+export type ExcludeUnion<A, B extends UnionType> = If<
+  A.Equals<UnionValues<B>, never>,
+  A,
+  ExcludeUnionValue<A, U.Last<UnionValues<B>>, B>
+>;
 
 type ExcludeUnionValue<A, V, B extends UnionType> = $Intersect<
   _$Exclude<A, V>,

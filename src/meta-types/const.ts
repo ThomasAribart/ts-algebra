@@ -1,12 +1,16 @@
-import { A, B } from "ts-toolbelt";
+import { A } from "ts-toolbelt";
+
+import { If } from "../utils";
 
 import { Never } from "./never";
 
 export type ConstTypeId = "const";
 
-export type Const<V extends any> = A.Equals<V, never> extends B.True
-  ? Never
-  : { type: ConstTypeId; value: V };
+export type Const<V extends any> = If<
+  A.Equals<V, never>,
+  Never,
+  { type: ConstTypeId; value: V }
+>;
 
 export type ConstType = {
   type: ConstTypeId;

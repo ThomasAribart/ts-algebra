@@ -1,6 +1,6 @@
-import { A, B, L } from "ts-toolbelt";
+import { A, L } from "ts-toolbelt";
 
-import { And, DoesExtend, Not } from "../../utils";
+import { And, DoesExtend, Not, If } from "../../utils";
 
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
@@ -133,14 +133,11 @@ type CrossTupleValues<
 
 // UTILS
 
-type GetTupleLength<T extends any[], R extends any[] = L.Tail<T>> = A.Equals<
-  T,
-  []
-> extends B.True
-  ? "none"
-  : A.Equals<R, []> extends B.True
-  ? "onlyOne"
-  : "moreThanTwo";
+type GetTupleLength<T extends any[], R extends any[] = L.Tail<T>> = If<
+  A.Equals<T, []>,
+  "none",
+  If<A.Equals<R, []>, "onlyOne", "moreThanTwo">
+>;
 
 // SIZE CHECK
 

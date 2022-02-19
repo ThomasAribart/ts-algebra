@@ -1,12 +1,16 @@
-import { A, B } from "ts-toolbelt";
+import { A } from "ts-toolbelt";
+
+import { If } from "../utils";
 
 import { Never } from "./never";
 
 export type EnumTypeId = "enum";
 
-export type Enum<V extends any> = A.Equals<V, never> extends B.True
-  ? Never
-  : { type: EnumTypeId; values: V };
+export type Enum<V extends any> = If<
+  A.Equals<V, never>,
+  Never,
+  { type: EnumTypeId; values: V }
+>;
 
 export type EnumType = {
   type: EnumTypeId;

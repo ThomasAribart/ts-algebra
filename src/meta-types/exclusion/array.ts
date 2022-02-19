@@ -1,4 +1,4 @@
-import { A, B } from "ts-toolbelt";
+import { A } from "ts-toolbelt";
 
 import { And, DoesExtend } from "../../utils";
 
@@ -32,7 +32,7 @@ export type ExcludeFromArray<A extends ArrayType, B> = B extends Type
     ? ExcludeArrays<A, B>
     : B extends TupleType
     ? And<
-        DoesExtend<A.Equals<TupleValues<B>, []>, B.True>,
+        DoesExtend<A.Equals<TupleValues<B>, []>, 1>,
         IsTupleOpen<B>
       > extends true
       ? ExcludeArrays<A, _Array<TupleOpenProps<B>>>

@@ -1,4 +1,6 @@
-import { A, B } from "ts-toolbelt";
+import { A } from "ts-toolbelt";
+
+import { If } from "../../utils";
 
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
@@ -26,9 +28,7 @@ export type IntersectPrimitive<A extends PrimitiveType, B> = B extends Type
     : B extends EnumType
     ? IntersectEnumToPrimitive<B, A>
     : B extends PrimitiveType
-    ? A.Equals<PrimitiveValue<A>, PrimitiveValue<B>> extends B.True
-      ? A
-      : Never
+    ? If<A.Equals<PrimitiveValue<A>, PrimitiveValue<B>>, A, Never>
     : B extends ArrayType
     ? Never
     : B extends TupleType
