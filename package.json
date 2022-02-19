@@ -1,0 +1,34 @@
+{
+  "name": "ts-algebra",
+  "version": "1.0.0-alpha.1",
+  "description": "Empower your types with new operations!",
+  "main": "lib/index.d.ts",
+  "scripts": {
+    "release": "bash scripts/release.bash",
+    "test": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ts-toolbelt": "^6.15.5"
+  },
+  "devDependencies": {
+    "rollup": "^2.45.2",
+    "rollup-plugin-dts": "1.4.10",
+    "rollup-plugin-import-map": "^2.2.2",
+    "typescript": "^4.3.5"
+  },
+  "author": "Thomas Aribart",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThomasAribart/ts-algebra.git"
+  },
+  "keywords": [
+    "typescript",
+    "type",
+    "ts"
+  ],
+  "bugs": {
+    "url": "https://github.com/ThomasAribart/ts-algebra/issues"
+  },
+  "homepage": "https://github.com/ThomasAribart/ts-algebra#readme"
+}
