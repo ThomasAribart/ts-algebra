@@ -1,6 +1,6 @@
 {
   "name": "ts-algebra",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-beta.0",
   "description": "Empower your types with new operations!",
   "main": "lib/index.d.ts",
   "scripts": {
