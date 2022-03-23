@@ -4,9 +4,9 @@
   <i>If you use this repo, star it ✨</i>
 </p>
 
-# Your types on steroids 💊
+# Types on steroids 💊
 
-`ts-algebra` exposes a subset of TS types called **meta-types**. Meta-types are types that encapsulate other types.
+`ts-algebra` exposes a subset of TS types called **Meta-types**: Meta-types are types that encapsulate other types.
 
 ```typescript
 import { Meta } from "ts-algebra";
@@ -21,68 +21,44 @@ type Resolved = Meta.Resolve<MetaString>;
 // => string 🙌
 ```
 
-As inspired by [ts-toolbelt](https://github.com/millsp/ts-toolbelt), you can also use the more compact `M` notation:
+You can also use the more compact `M` notation:
 
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type Resolved = M.Resolve<M.Primitive<string>>;
-// => string 🙌
+type Resolved = M.Resolve<
+  M.Primitive<string>
+>;
 ```
 
 ## Okay, but... why ? 🤔
 
-Any type can be represented through Meta-Types. However, Meta-Types allow operations **that would not otherwise be possible with regular types**.
+Meta-types allow operations that **are not possible with conventional types**.
 
-For instance, handling object additional properties is not possible in "classic" typescript:
+For instance, they allow new ["intersect"](#intersect) and ["exclude"](#exclude) operations, and handling objects additional properties:
 
 ```typescript
 type MyObject = {
-  str: string; // <= ❌ Will error because "str" is assignable to string
+  str: string; // <= ❌ "str" is assignable to string
   [key: string]: number;
 };
 
 type MyObjectKeys = keyof MyObject;
-// => string <= ❌ Impossible to isolate "str" property key
+// => string <= ❌ Unable to isolate "str"
 ```
 
-`ts-algebra` allows easy definition and manipulation of such objects (see the [`Object` Meta-Type section](#object)).
+Think of meta-types as a parallel universe where all kinds of magic can happen 🌈 Once your computations are over, you can retrieve the results by resolving them.
 
-```typescript
-type MyObject = M.Object<
-  { str: M.Primitive<string> }, // <= Named properties
-  "str", // <= Required properties keys
-  true, // <= Allows for additional properties (false by default)
-  M.Primitive<number> // <= Additional properties type
->;
+<img src="assets/schema.png" width="100%" align="center" />
 
-type Resolved = M.Resolve<MyObject>;
-// => { str: string, [key: string]: unknown } 🙌
-```
-
-In presence of named properties, additional properties will be resolved as unknown to avoid conflicts. However, they are kept during any manipulation done
-
-Speaking of manipulations: Meta-types also allow for **richer operations**: allowing for intersections and exclusions. Set theory.
-
-```typescript
-type NaiveIntersection = { str: string } & { num: number };
-// => { str: string, num: number }
-
-type TrueIntersection = M.Resolve<
-  M.Intersect<
-    M.Object<{ str: M.Primitive<string> }, "str">,
-    M.Object<{ num: M.Primitive<number> }, "num">
-  >
->;
-// => never 🙌
-```
-
-> The need for meta-types appeared while I was working on [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts).
+> Meta-types were originally part of [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts). Check it to see a real-life usage.
 
 ## Table of content
 
-- [Installation](#installation)
-- [Meta-types](#meta-types)
+- [Installation](#%EF%B8%8F-installation)
+- [Cardinality](#-cardinality)
+- [Meta-types](#-meta-types)
   - [Any](#any)
   - [Never](#never)
   - [Const](#const)
@@ -92,12 +68,14 @@ type TrueIntersection = M.Resolve<
   - [Tuple](#tuple)
   - [Object](#object)
   - [Union](#union)
-- [Methods](#methods)
+- [Methods](#-methods)
   - [Resolve](#resolve)
   - [Intersect](#intersect)
   - [Exclude](#exclude)
+- [Type constraints](#-type-constraints)
+- [Unsafe types](#%EF%B8%8F-unsafe-types-and-methods)
 
-## Installation
+## ☁️ Installation
 
 ```bash
 # npm
@@ -107,123 +85,584 @@ npm install --save-dev ts-algebra
 yarn add --dev ts-algebra
 ```
 
-## Meta-Types
+## 🧮 Cardinality
+
+A bit of theory first:
+
+- The [**cardinality**](https://en.wikipedia.org/wiki/Cardinality) of a type is the number of distinct values (potentially infinite) that can be assigned to it
+- A meta-type is said **representable** if at least one value can be assigned to its resolved type (cardinality ≥ 1)
+
+An important notion to keep in mind using `ts-algebra`:
+
+---
+
+<p align="center">
+  <a href="#never"><code>M.Never</code></a> is the only Meta-Type that is non-representable
+  <br>
+  <i>(i.e. that resolves to <code>never</code>)</i>
+</p>
+
+---
+
+Any other non-representable meta-type (e.g. an object with a non-representable but required property) will be instanciated as `M.Never`.
+
+There are drawbacks to this choice (the said property is hard to find and debug) but stronger benefits: This drastically reduces type computations, in particular in [intersections](#intersect) and [exclusions](#exclude). This is crucial for performances and stability.
+
+## ✨ Meta-types
 
 ### Any
 
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type Any = M.Any;
-
-type Resolved = M.Resolve<Any>;
+type Resolved = M.Resolve<
+  M.Any
+>;
 // => unknown
 ```
 
 ### Never
 
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type Never = M.Never;
-
-type Resolved = M.Resolve<Never>;
+type Resolved = M.Resolve<
+  M.Never
+>;
 // => never
 ```
 
-Note that, to keep the amount of type computations to a minimum, **`M.Never` is the only Meta-Type that is non-representable** (i.e. that resolves to `never`). Any other non-representable Meta-Type (for instance, a meta-object containing a `M.Never` required property) will be instanciated as `M.Never`.
-
 ### Const
 
+Used for types with [cardinalities](#meta-types) of 1.
+
+**Arguments:**
+
+- <code>Value <i>(type)</i></code>
+
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type Foo = M.Const<"foo">;
-
-type Resolved = M.Resolve<Foo>;
-// => "foo"
+type Resolved = M.Resolve<
+  M.Const<"I love pizza">
+>;
+// => "I love pizza"
 ```
 
 ### Enum
 
+Used for types with finite [cardinalities](#meta-types).
+
+**Arguments:**
+
+- <code>Values <i>(type union)</i></code>
+
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type MetaFood = M.Enum<"pizza" | "taco" | "fries">;
-
-type Food = M.Resolve<MetaFood>;
-// => "pizza" | "taco" | "fries"
+type Food = M.Resolve<
+  M.Enum<"pizza" | "tacos" | "fries">
+>;
+// => "pizza" | "tacos" | "fries"
 ```
 
-Representability: Providing no value to `M.Enum` will instanciate it as `M.Never`
-
-```typescript
-type EmptyEnum = M.Enum<never>;
-// => M.Never
-```
+> ☝️ `M.Enum<never>` is [non-representable](#✨-meta-types)
 
 ### Primitive
 
-`M.Primitive` can be used to represent either `string`, `number`, `boolean` or `null`.
+Used for either `string`, `number`, `boolean` or `null`.
 
+**Arguments:**
+
+- <code>Value <i>(string | number | boolean | null)</i></code>
+
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type MetaString = M.Primitive<string>;
-type Resolved = M.Resolve<MetaString>;
+type Resolved = M.Resolve<
+  M.Primitive<string>
+>;
 // => string
-
-type MetaNumber = M.Primitive<number>;
-type Resolved = M.Resolve<MetaNumber>;
-// => number
-
-type MetaBoolean = M.Primitive<boolean>;
-type Resolved = M.Resolve<MetaBoolean>;
-// => boolean
-
-type MetaNull = M.Primitive<null>;
-type Resolved = M.Resolve<MetaNull>;
-// => null
 ```
-
-Representability: Primitives are always representable
 
 ### Array
 
+Used for lists of items of the same type.
+
+**Arguments:**
+
+- <code>Items <i>(?meta-type = M.Any)</i></code>
+
+<!-- prettier-ignore -->
 ```typescript
 import { M } from "ts-algebra";
 
-type MetaStringArray = M.Array<M.Primitive<string>>;
-type Resolved = M.Resolve<MetaStringArray>;
+type Resolved = M.Resolve<
+  M.Array
+>;
+// => unknown[]
+
+type Resolved = M.Resolve<
+  M.Array<M.Primitive<string>>
+>;
 // => string[]
 ```
 
-Representability: Arrays are always representable by an empty array.
+> ☝️ Any meta-array is representable by `[]`
 
 ### Tuple
 
-Syntax: TODO
+Used for finite, ordered lists of items of different types.
+
+Meta-tuples can have **additional items** (typed as [`M.Any`](#any) by default).
+
+**Arguments:**
+
+- <code>RequiredItems <i>(meta-type[])</i>:</code>
+- <code>IsOpen <i>(?boolean = false)</i>:</code> Wether the tuple allows
+  additional items
+- <code>AdditionalItems <i>(?meta-type = M.Any)</i>:</code> Type of
+  additional items
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Resolved = M.Resolve<
+  M.Tuple<[M.Primitive<string>]>
+>;
+// => [string]
+
+type Resolved = M.Resolve<
+  M.Tuple<
+    [M.Primitive<string>],
+    true
+  >
+>;
+// => [string, ...unknown[]]
+
+type Resolved = M.Resolve<
+  M.Tuple<
+    [M.Primitive<string>],
+    true,
+    M.Primitive<string>
+  >
+>;
+// => [string, ...string[]]
+```
+
+> ☝️ A meta-tuple is [non-representable](#✨-meta-types) if one of its required items is non-representable
+
+### Object
+
+Used for sets of key-value pairs (properties) which can be required or not.
+
+Meta-objects can have **additional properties** (typed as [`M.Any`](#any) by default).
+
+In presence of named properties, additional properties are resolved as `unknown` to avoid conflicts. However, they are used as long as the meta-type is not resolved (especially in [intersections](#intersect) and [exclusions](#exclude)).
+
+**Arguments:**
+
+- <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
+- <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
+- <code>IsOpen <i>(?boolean = false)</i>:</code> Wether the object allows
+  additional properties
+- <code>AdditionalProperties <i>(?meta-type = M.Any)</i>:</code> The type of
+  additional properties
 
 ```typescript
 import { M } from "ts-algebra";
 
-type StringTuple = M.Tuple<[M.Primitive<string>]>;
-type Resolved = M.Resolve<StringTuple>;
-// => [string]
-```
-
-Tuples can have **additional items**. By default, those are typed as `M.Any`, but can be typed as well.
-
-```typescript
-type OpenStringTuple = M.Tuple<[M.Primitive<string>], true>;
-type Resolved = M.Resolve<OpenStringTuple>;
-// [string, ...unknown[]]
-
-type OpenStringTuple = M.Tuple<
-  [M.Primitive<string>], // <= M.Type[] tuple (finite)
-  true, // <= Allows additional items (default: false)
-  M.Primitive<number> // <= Additional items type (default: M.Any)
+type Resolved = M.Resolve<
+  M.Object<
+    {
+      required: M.Primitive<string>;
+      notRequired: M.Primitive<null>;
+    },
+    "required",
+    true,
+    M.Primitive<number>
+  >
 >;
-type Resolved = M.Resolve<OpenAllStringTuple>;
-// => [string, ...number[]]
+// => {
+//  req: string,
+//  notRequired?: null,
+//  [key: string]: unknown
+// }
 ```
+
+> ☝️ A meta-object is [non-representable](#✨-meta-types) if one of its required properties value is non-representable:
+>
+> - If it is a non-representable named property
+> - If it is an additional property, and the object doesn't allow it
+> - If it is an additional property, and additional properties are non-representable
+
+### Union
+
+Used to combine meta-types in a union of meta-types.
+
+**Arguments:**
+
+- <code>Values <i>(meta-type union)</i></code>
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Food = M.Resolve<
+  M.Union<
+    | M.Primitive<number>
+    | M.Enum<"pizza" | "tacos" | "fries">
+    | M.Const<true>
+  >
+>;
+// => number
+// | "pizza" | "tacos" | "fries"
+// | true
+```
+
+> ☝️ A meta-union is [non-representable](#✨-meta-types) if it is empty, or if none of its elements is representable
+
+## 🔧 Methods
+
+### Resolve
+
+Resolves the meta-type to its encapsulated type.
+
+**Arguments:**
+
+- <code>MetaType <i>(meta-type)</i></code>
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Resolved = M.Resolve<
+  M.Primitive<string>
+>;
+// => string
+```
+
+### Intersect
+
+Takes two meta-types as arguments, and returns their intersection as a meta-type.
+
+**Arguments:**
+
+- <code>LeftMetaType <i>(meta-type)</i></code>
+- <code>RightMetaType <i>(meta-type)</i></code>
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Intersected = M.Intersect<
+  M.Primitive<string>,
+  M.Enum<"I love pizza"
+    | ["tacos"]
+    | { and: "fries" }
+  >
+>
+// => M.Enum<"I love pizza">
+```
+
+Meta-type intersections differ from conventional intersections:
+
+<!-- prettier-ignore -->
+```typescript
+type ConventionalIntersection =
+  { str: string } & { num: number };
+// => { str: string, num: number }
+
+type MetaIntersection = M.Intersect<
+  M.Object<
+    { str: M.Primitive<string> },
+    "str"
+  >,
+  M.Object<
+    { num: M.Primitive<number> },
+    "num"
+  >
+>;
+// => M.Never: "num" is required in B
+// ...but denied in A
+```
+
+Intersections are recursively propagated among tuple items and object properties, and take into account additional items and properties:
+
+<!-- prettier-ignore -->
+```typescript
+type Intersected = M.Intersect<
+  M.Tuple<
+    [M.Primitive<number>],
+    true,
+    M.Primitive<string>
+  >,
+  M.Tuple<
+    [M.Enum<"pizza" | 42>],
+    true,
+    M.Enum<"fries" | true>
+  >
+>;
+// => M.Tuple<
+//  [M.Enum<42>],
+//  true,
+//  M.Enum<"fries">
+// >
+
+type Intersected = M.Intersect<
+  M.Object<
+    { food: M.Primitive<string> },
+    "food",
+    true
+  >,
+  M.Object<
+    { age: M.Primitive<number> },
+    "age",
+    true,
+    M.Enum<"pizza" | "fries" | 42>
+  >
+>;
+// => M.Object<
+//  {
+//    food: M.Enum<"pizza" | "fries">,
+//    age: M.Primitive<number>
+//  },
+//  "food" | "age",
+//  true,
+//  M.Enum<"pizza" | "fries" | 42>
+// >
+```
+
+Intersections are distributed among unions:
+
+<!-- prettier-ignore -->
+```typescript
+type Intersected = M.Intersect<
+  M.Primitive<string>,
+  M.Union<
+    | M.Const<"pizza">
+    | M.Const<42>
+  >
+>;
+// => M.Union<
+//  | M.Const<"pizza">
+//  | M.Never
+// >
+```
+
+### Exclude
+
+Takes two meta-types as arguments, and returns their exclusion as a meta-type.
+
+**Arguments:**
+
+- <code>SourceMetaType <i>(meta-type)</i></code>
+- <code>ExcludedMetaType <i>(meta-type)</i></code>
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Excluded = M.Exclude<
+  M.Enum<"I love pizza"
+    | ["tacos"]
+    | { and: "fries" }
+  >,
+  M.Primitive<string>,
+>
+// => M.Enum<
+//  | ["tacos"]
+//  | { and: "fries" }
+// >
+```
+
+Meta-type exclusions differ from conventional exclusions:
+
+<!-- prettier-ignore -->
+```typescript
+type ConventionalExclusion = Exclude<
+  { req: string; notReq?: string },
+  { req: string }
+>;
+// => never
+// ObjectA is assignable to ObjectB
+
+type MetaExclusion = M.Exclude<
+  M.Object<
+    {
+      req: M.Primitive<string>;
+      notReq: M.Primitive<string>;
+    },
+    "req"
+  >,
+  M.Object<
+    { req: M.Primitive<string> },
+    "req"
+  >
+>;
+// => ObjectA
+// Exclusion is still representable
+```
+
+<!-- prettier-ignore -->
+```typescript
+type ConventionalExclusion = Exclude<
+  { food: "pizza" | 42 },
+  { [k: string]: number }
+>;
+// => { food: "pizza" | 42 }
+
+type MetaExclusion = M.Exclude<
+  M.Object<
+    { food: M.Enum<"pizza" | 42> },
+    "food"
+  >,
+  M.Object<
+    {},
+    never,
+    true,
+    M.Primitive<number>
+  >
+>;
+// => M.Object<
+//  { food: M.Enum<"pizza"> },
+//  "food"
+// >
+```
+
+When exclusions can be collapsed on a single item or property, they are recursively propagated among tuple items and object properties, taking into account additional items and properties:
+
+<!-- prettier-ignore -->
+```typescript
+type Excluded = M.Exclude<
+  M.Tuple<[M.Enum<"pizza" | 42>]>,
+  M.Tuple<[M.Primitive<number>]>
+>;
+// => M.Tuple<[M.Enum<"pizza">]>
+
+type Excluded = M.Exclude<
+  M.Tuple<
+    [M.Enum<"pizza" | 42>],
+    true,
+    M.Enum<"fries" | true>
+  >,
+  M.Tuple<
+    [M.Primitive<number>],
+    true,
+    M.Primitive<string>
+  >
+>;
+// => TupleA
+// Exclusion is not collapsable on a single item
+
+type Excluded = M.Exclude<
+  M.Object<
+    {
+      reqA: M.Enum<"pizza" | 42>;
+      reqB: M.Enum<"pizza" | 42>;
+    },
+    "reqA" | "reqB"
+  >,
+  M.Object<
+    {},
+    never,
+    true,
+    M.Primitive<number>
+  >
+>;
+// => ObjectA
+// Exclusion is not collapsable on a single property
+```
+
+Exclusions are distributed among unions:
+
+<!-- prettier-ignore -->
+```typescript
+type Excluded = M.Exclude<
+  M.Union<
+    | M.Const<"pizza">
+    | M.Const<42>
+  >,
+  M.Primitive<number>
+>;
+// => M.Union<
+//  | M.Const<"pizza">
+//  | M.Never
+// >
+```
+
+Exluding a union returns the intersection of the exclusions of all elements, applied separately:
+
+<!-- prettier-ignore -->
+```typescript
+type Excluded = M.Exclude<
+  M.Enum<42 | "pizza" | true>,
+  M.Union<
+    | M.Primitive<number>
+    | M.Primitive<boolean>
+  >
+>;
+// => M.Enum<"pizza">
+```
+
+## 🚧 Type constraints
+
+To prevent errors, meta-types inputs are validated against type constraints:
+
+<!-- prettier-ignore -->
+```typescript
+type Invalid = M.Array<
+  string // <= ❌ Meta-type expected
+>;
+```
+
+If you need to use them, all type constraints are also exported:
+
+| Meta-type     | Type constraint                                                              |
+| ------------- | :--------------------------------------------------------------------------- |
+| `M.Any`       | `M.AnyType` = `M.Any`                                                        |
+| `M.Never`     | `M.NeverType` = `M.Never`                                                    |
+| `M.Const`     | `M.ConstType` = `M.Const<any>`                                               |
+| `M.Enum`      | `M.EnumType` = `M.Enum<any>`                                                 |
+| `M.Primitive` | `M.PrimitiveType` = `M.Primitive<null \| boolean \| number \| string>`       |
+| `M.Array`     | `M.ArrayType` = `M.Array<M.Type>`                                            |
+| `M.Tuple`     | `M.TupleType` = `M.Tuple<M.Type[], boolean, M.Type>`                         |
+| `M.Object`    | `M.ObjectType` = `M.Object<Record<string, M.Type>, string, boolean, M.Type>` |
+| `M.Union`     | `M.UnionType` = `M.Union<M.Type>`                                            |
+| -             | `M.Type` = Union of the above                                                |
+
+## ✂️ Unsafe types and methods
+
+In deep and self-referencing computations like in [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts), type constraints can become an issue, as the compiler may not be able to confirm the input type validity ahead of usage.
+
+<!-- prettier-ignore -->
+```typescript
+type MyArray = M.Array<
+  VeryDeepTypeComputation<
+    ...
+  > // <= 💥 Type constraint can break
+>
+```
+
+For such cases, `ts-algebra` exposes **"unsafe"** types and methods, that behave the same as "safe" ones but removing any type constraints. If you use them, beware: The integrity of the compiling is up to you 😉
+
+| Safe          | Unsafe         |
+| ------------- | -------------- |
+| `M.Any`       | -              |
+| `M.Never`     | -              |
+| `M.Const`     | -              |
+| `M.Enum`      | -              |
+| `M.Primitive` | `M.$Primitive` |
+| `M.Array`     | `M.$Array`     |
+| `M.Tuple`     | `M.$Tuple`     |
+| `M.Object`    | `M.$Object`    |
+| `M.Union`     | `M.$Union`     |
+| `M.Resolve`   | `M.$Resolve`   |
+| `M.Intersect` | `M.$Intersect` |
+| `M.Exclude`   | `M.$Exclude`   |
