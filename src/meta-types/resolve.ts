@@ -7,7 +7,6 @@ import { ArrayType, ResolveArray } from "./array";
 import { TupleType, ResolveTuple } from "./tuple";
 import { ObjectType, ResolveObject } from "./object";
 import { UnionType, ResolveUnion } from "./union";
-import { ErrorType } from "./error";
 import { Type } from "./type";
 
 export type Resolve<T extends Type> = $Resolve<T>;
@@ -30,6 +29,4 @@ export type $Resolve<T> = T extends AnyType
   ? ResolveObject<T>
   : T extends UnionType
   ? ResolveUnion<T>
-  : T extends ErrorType
-  ? never
   : never;

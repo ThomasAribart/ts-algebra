@@ -11,7 +11,6 @@ import { _Array, ArrayType, ArrayValues } from "../array";
 import { TupleValues, TupleType, IsTupleOpen, TupleOpenProps } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { _Exclude } from "./index";
@@ -41,10 +40,8 @@ export type ExcludeFromArray<A extends ArrayType, B> = B extends Type
     ? A
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type ExcludeArrays<A extends ArrayType, B extends ArrayType> = _Exclude<
   ArrayValues<A>,

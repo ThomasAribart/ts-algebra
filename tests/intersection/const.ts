@@ -177,11 +177,3 @@ const intersectingExclusion: A.Equals<
   M.Const<"foo">
 > = 1;
 intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Const<"foo">, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

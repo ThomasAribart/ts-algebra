@@ -7,7 +7,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { ExcludeUnion } from "./union";
@@ -31,7 +30,5 @@ export type ExcludeFromAny<A extends AnyType, B> = B extends Type
     ? A
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;

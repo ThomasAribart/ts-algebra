@@ -77,8 +77,3 @@ const neverToExclusion: A.Equals<
   M.Never
 > = 1;
 neverToExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<M.Intersect<M.Never, M.Error<"Any">>, M.Error<"Any">> = 1;
-error;

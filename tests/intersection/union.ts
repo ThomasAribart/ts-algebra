@@ -179,11 +179,3 @@ const intersectingExclusion: A.Equals<
   M.Union<M.Const<"foo"> | M.Enum<true>>
 > = 1;
 intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Union<M.Const<"foo"> | M.Primitive<number>>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

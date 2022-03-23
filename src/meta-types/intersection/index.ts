@@ -1,5 +1,5 @@
 import { AnyType } from "../any";
-import { NeverType } from "../never";
+import { Never, NeverType } from "../never";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -7,7 +7,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { IntersectConst } from "./const";
@@ -23,9 +22,7 @@ export type Intersect<A extends Type, B extends Type> = $Intersect<A, B>;
 export type $Intersect<A, B> = A extends AnyType
   ? B
   : A extends NeverType
-  ? B extends ErrorType
-    ? B
-    : A
+  ? A
   : A extends ConstType
   ? IntersectConst<A, B>
   : A extends EnumType
@@ -40,6 +37,4 @@ export type $Intersect<A, B> = A extends AnyType
   ? IntersectObject<A, B>
   : A extends UnionType
   ? IntersectUnion<A, B>
-  : A extends ErrorType
-  ? A
-  : Error<"TODO">;
+  : Never;

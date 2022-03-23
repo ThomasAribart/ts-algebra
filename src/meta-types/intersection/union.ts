@@ -7,7 +7,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { $Union, UnionType, UnionValues } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { $Intersect } from "./index";
@@ -31,10 +30,8 @@ export type IntersectUnion<A extends UnionType, B> = B extends Type
     ? DistributeIntersection<A, B>
     : B extends UnionType
     ? DistributeIntersection<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 export type DistributeIntersection<A extends UnionType, B> = $Union<
   RecurseOnUnionValues<UnionValues<A>, B>

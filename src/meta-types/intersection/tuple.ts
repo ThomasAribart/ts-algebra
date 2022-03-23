@@ -17,7 +17,6 @@ import {
 } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { Intersect, $Intersect } from "./index";
@@ -43,9 +42,7 @@ export type IntersectTuple<A extends TupleType, B> = B extends AnyType
   ? Never
   : B extends UnionType
   ? DistributeIntersection<B, A>
-  : B extends ErrorType
-  ? B
-  : Error<"TODO">;
+  : Never;
 
 export type IntersectTupleToArray<
   T extends TupleType,

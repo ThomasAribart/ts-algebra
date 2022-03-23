@@ -11,7 +11,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { IntersectConstToPrimitive } from "./const";
@@ -37,7 +36,5 @@ export type IntersectPrimitive<A extends PrimitiveType, B> = B extends Type
     ? Never
     : B extends UnionType
     ? DistributeIntersection<B, A>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;

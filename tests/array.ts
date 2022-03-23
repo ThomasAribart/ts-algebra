@@ -78,8 +78,3 @@ const test10: A.Equals<
   "foo"[]
 > = 1;
 test10;
-
-// --- ERROR ---
-
-const test11: A.Equals<M.Resolve<M.Array<M.Error<"Any">>>, never[]> = 1;
-test11;

@@ -294,11 +294,3 @@ const nonExcludingExclusion: A.Equals<
   M.Union<M.Const<"A"> | M.Const<"B"> | M.Const<"C"> | M.Const<"D"> | M.Never>
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Exclude<M.Intersect<M.Enum<"A" | "B">, M.Const<"A">>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

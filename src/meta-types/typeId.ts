@@ -7,7 +7,6 @@ import { ArrayTypeId } from "./array";
 import { TupleTypeId } from "./tuple";
 import { ObjectTypeId } from "./object";
 import { UnionTypeId } from "./union";
-import { ErrorTypeId } from "./error";
 
 export type TypeId =
   | AnyTypeId
@@ -18,5 +17,4 @@ export type TypeId =
   | ArrayTypeId
   | TupleTypeId
   | ObjectTypeId
-  | UnionTypeId
-  | ErrorTypeId;
+  | UnionTypeId;

@@ -10,7 +10,6 @@ import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
 import { $Intersect } from "../intersection";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { _Exclude } from "./index";
@@ -35,10 +34,8 @@ export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
     ? FilterExcluded<A, B>
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type FilterExcluded<A extends EnumType, B extends Type> = Enum<
   RecurseOnEnumValues<EnumValues<A>, B>

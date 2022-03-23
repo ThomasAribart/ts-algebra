@@ -178,19 +178,11 @@ tupleIsKept;
 
 // --- EXCLUSION ---
 
-// const intersectingExclusion: A.Equals<
-//   M.Intersect<
-//     M.Array<M.Const<"foo">>,
-//     M.Exclusion<M.Array<M.Primitive<string>>, M.Const<[]>>
-//   >,
-//   M.Exclusion<M.Array<M.Const<"foo">>, M.Const<[]>>
-// > = 1;
-// intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Array<M.Primitive<string>>, M.Error<"Any">>,
-  M.Error<"Any">
+const intersectingExclusion: A.Equals<
+  M.Intersect<
+    M.Array<M.Const<"foo">>,
+    M.Exclude<M.Array<M.Primitive<string>>, M.Const<[]>>
+  >,
+  M.Exclude<M.Array<M.Const<"foo">>, M.Const<[]>>
 > = 1;
-error;
+intersectingExclusion;

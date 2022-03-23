@@ -114,11 +114,3 @@ const testIntersections: A.Equals<
   "foo" | 42
 > = 1;
 testIntersections;
-
-// --- ERROR ---
-
-const testError: A.Equals<
-  M.Resolve<M.Union<M.Const<"foo"> | M.Error<"Other value">>>,
-  "foo"
-> = 1;
-testError;

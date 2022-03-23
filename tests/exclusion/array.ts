@@ -164,11 +164,3 @@ const nonExcludingExclusion: A.Equals<
   M.Array<M.Primitive<string>>
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Exclude<M.Array<M.Primitive<string>>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

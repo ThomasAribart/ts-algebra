@@ -80,8 +80,3 @@ const exclusionsNeverExclude: A.Equals<
   M.Never
 > = 1;
 exclusionsNeverExclude;
-
-// --- ERROR ---
-
-const error: A.Equals<M.Exclude<M.Any, M.Error<"Any">>, M.Error<"Any">> = 1;
-error;

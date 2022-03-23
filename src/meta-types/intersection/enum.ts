@@ -7,7 +7,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { $Intersect } from "./index";
@@ -33,10 +32,8 @@ export type IntersectEnum<A extends EnumType, B> = B extends Type
     ? FilterUnintersecting<A, B>
     : B extends UnionType
     ? DistributeIntersection<B, A>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type FilterUnintersecting<A extends EnumType, B> = Enum<
   RecurseOnEnumValues<EnumValues<A>, B>

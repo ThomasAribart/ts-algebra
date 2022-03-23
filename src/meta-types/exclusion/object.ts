@@ -19,7 +19,6 @@ import {
   ObjectOpenProps,
 } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { _Exclude, _$Exclude } from "./index";
@@ -51,10 +50,8 @@ export type ExcludeFromObject<A extends ObjectType, B> = B extends Type
     ? ExcludeObjects<A, B>
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type ExcludeObjects<
   A extends ObjectType,

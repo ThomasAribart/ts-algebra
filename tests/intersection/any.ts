@@ -80,8 +80,3 @@ const anyToExclusion: A.Equals<
   M.Enum<"B">
 > = 1;
 anyToExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<M.Intersect<M.Any, M.Error<"Any">>, M.Error<"Any">> = 1;
-error;

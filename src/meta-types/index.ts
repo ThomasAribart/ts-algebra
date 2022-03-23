@@ -14,7 +14,6 @@ import { _Object, _$Object, ObjectType, ObjectTypeId } from "./object";
 import { Union, $Union, UnionType, UnionTypeId } from "./union";
 import { Intersect, $Intersect } from "./intersection";
 import { _Exclude, _$Exclude } from "./exclusion";
-import { $Error, Error, ErrorType, ErrorTypeId } from "./error";
 
 import { Type } from "./type";
 import { TypeId } from "./typeId";
@@ -37,8 +36,6 @@ export {
   _$Object as $Object,
   Union,
   $Union,
-  Error,
-  $Error,
   // --- DEFINITIONS ---
   AnyType,
   NeverType,
@@ -49,7 +46,6 @@ export {
   TupleType,
   ObjectType,
   UnionType,
-  ErrorType,
   Type,
   // --- IDS ---
   AnyTypeId,
@@ -61,7 +57,6 @@ export {
   TupleTypeId,
   ObjectTypeId,
   UnionTypeId,
-  ErrorTypeId,
   TypeId,
   // --- METHODS ---
   $Resolve,

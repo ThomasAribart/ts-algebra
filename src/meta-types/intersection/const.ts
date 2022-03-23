@@ -9,7 +9,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType, ObjectRequiredKeys, ObjectValue } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 import { Resolve } from "../resolve";
 
@@ -35,10 +34,8 @@ export type IntersectConst<A extends ConstType, B> = B extends Type
     ? IntersectConstToObject<A, B>
     : B extends UnionType
     ? DistributeIntersection<B, A>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type CheckExtendsResolved<
   A extends ConstType,

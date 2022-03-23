@@ -17,7 +17,6 @@ import {
   ObjectOpenProps,
 } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { Intersect, $Intersect } from "./index";
@@ -44,10 +43,8 @@ export type IntersectObject<A extends ObjectType, B> = B extends Type
     ? IntersectObjects<A, B>
     : B extends UnionType
     ? DistributeIntersection<B, A>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type IntersectObjects<
   A extends ObjectType,

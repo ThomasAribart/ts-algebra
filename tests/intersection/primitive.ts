@@ -152,11 +152,3 @@ const intersectingExclusion2: A.Equals<
   M.Primitive<number>
 > = 1;
 intersectingExclusion2;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Primitive<string>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

@@ -221,11 +221,3 @@ const nonExcludingExclusion: A.Equals<
   M.Const<"A">
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Exclude<M.Const<"A">, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

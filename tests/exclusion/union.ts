@@ -200,11 +200,3 @@ const nonExcludingExclusion: A.Equals<
   M.Union<M.Const<"A"> | M.Const<"B"> | M.Const<"C"> | M.Const<"D">>
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Exclude<M.Union<M.Const<"B"> | M.Const<"A">>, M.Error<"Any">>,
-  M.Union<M.Error<"Any">>
-> = 1;
-error;

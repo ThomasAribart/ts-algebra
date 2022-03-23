@@ -132,11 +132,3 @@ const intersectingExclusion: A.Equals<
   M.Union<M.Never | M.Const<"C">>
 > = 1;
 intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Exclude<M.Primitive<string>, M.Const<"foo">>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

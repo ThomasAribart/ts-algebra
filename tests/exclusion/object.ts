@@ -384,8 +384,3 @@ const nonExcludingExclusion: A.Equals<
   M.Object<{ a: M.Enum<"A" | "B" | "C"> }, "a">
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<M.Exclude<M.Object, M.Error<"Any">>, M.Error<"Any">> = 1;
-error;

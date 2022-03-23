@@ -7,7 +7,6 @@ import { ArrayType } from "./array";
 import { TupleType } from "./tuple";
 import { ObjectType } from "./object";
 import { UnionType } from "./union";
-import { ErrorType } from "./error";
 
 export type Type =
   | AnyType
@@ -18,5 +17,4 @@ export type Type =
   | ArrayType
   | TupleType
   | ObjectType
-  | UnionType
-  | ErrorType;
+  | UnionType;

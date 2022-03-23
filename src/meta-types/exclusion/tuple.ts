@@ -18,7 +18,6 @@ import {
 } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { _Exclude } from "./index";
@@ -54,10 +53,8 @@ export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
     ? A
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<
   A,

@@ -332,11 +332,3 @@ const nonExcludingExclusion: A.Equals<
   M.Tuple<[M.Enum<"A" | "B" | "C">]>
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Exclude<M.Tuple<[M.Const<"A">, M.Const<"B">]>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

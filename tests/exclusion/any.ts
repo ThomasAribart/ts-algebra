@@ -101,8 +101,3 @@ const nonExcludingExclusion: A.Equals<
   M.Any
 > = 1;
 nonExcludingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<M.Exclude<M.Any, M.Error<"Any">>, M.Error<"Any">> = 1;
-error;

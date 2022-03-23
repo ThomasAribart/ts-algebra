@@ -248,14 +248,3 @@ const intersectingExclusion: A.Equals<
   >
 > = 1;
 intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<
-    M.Object<{ str: M.Primitive<string> }, "str", true>,
-    M.Error<"Any">
-  >,
-  M.Error<"Any">
-> = 1;
-error;

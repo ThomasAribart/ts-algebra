@@ -7,7 +7,6 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { ExcludeFromAny } from "./any";
@@ -40,6 +39,4 @@ export type _$Exclude<A, B> = A extends AnyType
   ? ExcludeFromObject<A, B>
   : A extends UnionType
   ? DistributeUnion<A, B>
-  : A extends ErrorType
-  ? A
-  : Error<"TODO">;
+  : Never;

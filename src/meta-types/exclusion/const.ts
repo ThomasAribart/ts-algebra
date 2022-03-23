@@ -15,7 +15,6 @@ import {
   ObjectOpenProps,
 } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 import { Resolve } from "../resolve";
 
@@ -41,10 +40,8 @@ export type ExcludeFromConst<A extends ConstType, B> = B extends Type
     ? ExcludeObject<A, B>
     : B extends UnionType
     ? ExcludeUnion<A, B>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type CheckNotExtendsResolved<
   A extends ConstType,

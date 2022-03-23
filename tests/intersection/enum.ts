@@ -174,11 +174,3 @@ const intersectingExclusion: A.Equals<
   M.Enum<"foo" | "bar" | "baz">
 > = 1;
 intersectingExclusion;
-
-// --- ERROR ---
-
-const error: A.Equals<
-  M.Intersect<M.Enum<"foo" | "bar" | 42>, M.Error<"Any">>,
-  M.Error<"Any">
-> = 1;
-error;

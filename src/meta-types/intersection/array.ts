@@ -7,7 +7,6 @@ import { _$Array, ArrayType, ArrayValues } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Error, ErrorType } from "../error";
 import { Type } from "../type";
 
 import { Intersect } from "./index";
@@ -35,10 +34,8 @@ export type IntersectArray<A extends ArrayType, B> = B extends Type
     ? Never
     : B extends UnionType
     ? DistributeIntersection<B, A>
-    : B extends ErrorType
-    ? B
-    : Error<"TODO">
-  : Error<"TODO">;
+    : Never
+  : Never;
 
 type IntersectArrays<A extends ArrayType, B extends ArrayType> = _$Array<
   Intersect<ArrayValues<A>, ArrayValues<B>>
