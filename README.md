@@ -250,7 +250,7 @@ type Resolved = M.Resolve<
 
 Used for sets of key-value pairs (properties) which can be required or not.
 
-Meta-objects can have **additional properties**, typed as [`M.Never`](#never) by default. Thus, any meta-object is considered **closed** (additional properties not allowed), unless a representable additional property meta-type is specified, in which case it becomes **open**.
+Meta-objects can have **additional properties**, typed as [`M.Never`](#never) by default. Thus, any meta-object is considered **closed** (additional properties not allowed), unless a representable additional properties meta-type is specified, in which case it becomes **open**.
 
 In presence of named properties, open meta-objects additional properties are resolved as `unknown` to avoid conflicts. However, they are used as long as the meta-type is not resolved (especially in [intersections](#intersect) and [exclusions](#exclude)).
 
