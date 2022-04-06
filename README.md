@@ -262,18 +262,15 @@ type Resolved = M.Resolve<
 
 Used for sets of key-value pairs (properties) which can be required or not.
 
-Meta-objects can have **additional properties** (typed as [`M.Any`](#any) by default).
+Meta-objects can have **additional properties**, typed as [`M.Never`](#never) by default. Thus, a meta-object is considered **closed** (additional properties not allowed), unless a representable additional property meta-type is specified, in which case it becomes **open**.
 
-In presence of named properties, additional properties are resolved as `unknown` to avoid conflicts. However, they are used as long as the meta-type is not resolved (especially in [intersections](#intersect) and [exclusions](#exclude)).
+In presence of named properties, open meta-objects additional properties are resolved as `unknown` to avoid conflicts. However, they are used as long as the meta-type is not resolved (especially in [intersections](#intersect) and [exclusions](#exclude)).
 
 **Arguments:**
 
 - <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
 - <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
-- <code>IsOpen <i>(?boolean = false)</i>:</code> Wether the object allows
-  additional properties
-- <code>AdditionalProperties <i>(?meta-type = M.Any)</i>:</code> The type of
-  additional properties
+- <code>AdditionalProperties <i>(?meta-type = M.Never)</i>:</code> The type of additional properties
 
 ```typescript
 import { M } from "ts-algebra";
@@ -285,7 +282,6 @@ type Resolved = M.Resolve<
       notRequired: M.Primitive<null>;
     },
     "required",
-    true,
     M.Primitive<number>
   >
 >;
@@ -299,8 +295,7 @@ type Resolved = M.Resolve<
 > ☝️ A meta-object is [non-representable](#✨-meta-types) if one of its required properties value is non-representable:
 >
 > - If it is a non-representable named property
-> - If it is an additional property, and the object doesn't allow it
-> - If it is an additional property, and additional properties are non-representable
+> - If it is an additional property, and the object is closed
 
 ### Union
 
@@ -419,12 +414,11 @@ type Intersected = M.Intersect<
   M.Object<
     { food: M.Primitive<string> },
     "food",
-    true
+    M.Any
   >,
   M.Object<
     { age: M.Primitive<number> },
     "age",
-    true,
     M.Enum<"pizza" | "fries" | 42>
   >
 >;
@@ -434,7 +428,6 @@ type Intersected = M.Intersect<
 //    age: M.Primitive<number>
 //  },
 //  "food" | "age",
-//  true,
 //  M.Enum<"pizza" | "fries" | 42>
 // >
 ```
@@ -526,7 +519,6 @@ type MetaExclusion = M.Exclude<
   M.Object<
     {},
     never,
-    true,
     M.Primitive<number>
   >
 >;
@@ -572,7 +564,6 @@ type Excluded = M.Exclude<
   M.Object<
     {},
     never,
-    true,
     M.Primitive<number>
   >
 >;
@@ -624,18 +615,18 @@ type Invalid = M.Array<
 
 If you need to use them, all type constraints are also exported:
 
-| Meta-type     | Type constraint                                                              |
-| ------------- | :--------------------------------------------------------------------------- |
-| `M.Any`       | `M.AnyType` = `M.Any`                                                        |
-| `M.Never`     | `M.NeverType` = `M.Never`                                                    |
-| `M.Const`     | `M.ConstType` = `M.Const<any>`                                               |
-| `M.Enum`      | `M.EnumType` = `M.Enum<any>`                                                 |
-| `M.Primitive` | `M.PrimitiveType` = `M.Primitive<null \| boolean \| number \| string>`       |
-| `M.Array`     | `M.ArrayType` = `M.Array<M.Type>`                                            |
-| `M.Tuple`     | `M.TupleType` = `M.Tuple<M.Type[], boolean, M.Type>`                         |
-| `M.Object`    | `M.ObjectType` = `M.Object<Record<string, M.Type>, string, boolean, M.Type>` |
-| `M.Union`     | `M.UnionType` = `M.Union<M.Type>`                                            |
-| -             | `M.Type` = Union of the above                                                |
+| Meta-type     | Type constraint                                                        |
+| ------------- | :--------------------------------------------------------------------- |
+| `M.Any`       | `M.AnyType` = `M.Any`                                                  |
+| `M.Never`     | `M.NeverType` = `M.Never`                                              |
+| `M.Const`     | `M.ConstType` = `M.Const<any>`                                         |
+| `M.Enum`      | `M.EnumType` = `M.Enum<any>`                                           |
+| `M.Primitive` | `M.PrimitiveType` = `M.Primitive<null \| boolean \| number \| string>` |
+| `M.Array`     | `M.ArrayType` = `M.Array<M.Type>`                                      |
+| `M.Tuple`     | `M.TupleType` = `M.Tuple<M.Type[], boolean, M.Type>`                   |
+| `M.Object`    | `M.ObjectType` = `M.Object<Record<string, M.Type>, string, M.Type>`    |
+| `M.Union`     | `M.UnionType` = `M.Union<M.Type>`                                      |
+| -             | `M.Type` = Union of the above                                          |
 
 ## ✂️ Unsafe types and methods
 

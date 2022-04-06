@@ -81,7 +81,7 @@ testTuple;
 const testObjects: A.Equals<
   M.Resolve<
     M.Union<
-      | M.Object<{ bar: M.Primitive<number> }, "bar", true>
+      | M.Object<{ bar: M.Primitive<number> }, "bar", M.Any>
       | M.Object<{ foo: M.Primitive<string> }, "foo">
     >
   >,

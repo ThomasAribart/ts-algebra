@@ -100,10 +100,7 @@ nonExcludingTuple;
 // --- OBJECT ---
 
 const nonObjectConst: A.Equals<
-  M.Exclude<
-    M.Const<["A", "B"]>,
-    M.Object<{}, never, true, M.Primitive<string>>
-  >,
+  M.Exclude<M.Const<["A", "B"]>, M.Object<{}, never, M.Primitive<string>>>,
   M.Const<["A", "B"]>
 > = 1;
 nonObjectConst;
@@ -147,7 +144,7 @@ closedObjectSizesDontMatch2;
 const excludingOpenObject1: A.Equals<
   M.Exclude<
     M.Const<{ a: "A"; b: "B" }>,
-    M.Object<{ a: M.Const<"A"> }, never, true, M.Const<"B">>
+    M.Object<{ a: M.Const<"A"> }, never, M.Const<"B">>
   >,
   M.Never
 > = 1;
@@ -156,14 +153,14 @@ excludingOpenObject1;
 const excludingOpenObject2: A.Equals<
   M.Exclude<
     M.Const<{ a: "A"; b: "B" }>,
-    M.Object<{}, never, true, M.Union<M.Const<"A"> | M.Const<"B">>>
+    M.Object<{}, never, M.Union<M.Const<"A"> | M.Const<"B">>>
   >,
   M.Never
 > = 1;
 excludingOpenObject2;
 
 const nonExcludingOpenObject: A.Equals<
-  M.Exclude<M.Const<{ a: "A" }>, M.Object<{}, never, true, M.Const<"C">>>,
+  M.Exclude<M.Const<{ a: "A" }>, M.Object<{}, never, M.Const<"C">>>,
   M.Const<{ a: "A" }>
 > = 1;
 nonExcludingOpenObject;

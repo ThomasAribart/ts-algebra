@@ -121,7 +121,7 @@ nonIntersectingTuple2;
 const intersectingObject: A.Equals<
   M.Intersect<
     M.Const<{ foo: "bar" }>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Const<{ foo: "bar" }>
 > = 1;
@@ -130,7 +130,7 @@ intersectingObject;
 const nonIntersectingObject: A.Equals<
   M.Intersect<
     M.Const<"foo">,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Never
 > = 1;

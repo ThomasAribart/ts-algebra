@@ -18,7 +18,7 @@ const test3: A.Equals<
   M.Resolve<
     M.Exclude<
       M.Union<
-        | M.Object<{}, never, true>
+        | M.Object<{}, never, M.Any>
         | M.Tuple<[M.Primitive<string>], true>
         | M.Primitive<string>
       >,

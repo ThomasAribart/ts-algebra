@@ -96,7 +96,7 @@ nonExcludingTuple2;
 const objectsNeverExclude: A.Equals<
   M.Exclude<
     M.Array<M.Primitive<string>>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Array<M.Primitive<string>>
 > = 1;

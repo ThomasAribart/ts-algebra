@@ -114,7 +114,7 @@ nonIntersectingTuple;
 const nonIntersectingObject: A.Equals<
   M.Intersect<
     M.Union<M.Const<"foo"> | M.Primitive<number>>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Union<M.Never>
 > = 1;

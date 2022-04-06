@@ -97,10 +97,7 @@ nonExcludingTuple;
 // --- OBJECT ---
 
 const nonObjectEnum: A.Equals<
-  M.Exclude<
-    M.Enum<["A", "B"] | 42>,
-    M.Object<{}, never, true, M.Primitive<string>>
-  >,
+  M.Exclude<M.Enum<["A", "B"] | 42>, M.Object<{}, never, M.Primitive<string>>>,
   M.Enum<["A", "B"] | 42>
 > = 1;
 nonObjectEnum;
@@ -153,7 +150,7 @@ closedObjectSizesDontMatch2;
 const excludingOpenObject1: A.Equals<
   M.Exclude<
     M.Enum<{ a: "A"; b: "B" } | { a: "A"; b: "C" }>,
-    M.Object<{ a: M.Const<"A"> }, never, true, M.Const<"B">>
+    M.Object<{ a: M.Const<"A"> }, never, M.Const<"B">>
   >,
   M.Enum<{ a: "A"; b: "C" }>
 > = 1;
@@ -162,17 +159,14 @@ excludingOpenObject1;
 const excludingOpenObject2: A.Equals<
   M.Exclude<
     M.Enum<{ a: "A"; b: "B" } | { a: "A"; b: "C" }>,
-    M.Object<{}, never, true, M.Union<M.Const<"A"> | M.Const<"B">>>
+    M.Object<{}, never, M.Union<M.Const<"A"> | M.Const<"B">>>
   >,
   M.Enum<{ a: "A"; b: "C" }>
 > = 1;
 excludingOpenObject2;
 
 const nonExcludingOpenObject: A.Equals<
-  M.Exclude<
-    M.Enum<{ a: "A" } | { a: "B" }>,
-    M.Object<{}, never, true, M.Const<"C">>
-  >,
+  M.Exclude<M.Enum<{ a: "A" } | { a: "B" }>, M.Object<{}, never, M.Const<"C">>>,
   M.Enum<{ a: "A" } | { a: "B" }>
 > = 1;
 nonExcludingOpenObject;

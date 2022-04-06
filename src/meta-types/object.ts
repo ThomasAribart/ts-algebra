@@ -1,4 +1,4 @@
-import { DoesExtend, DeepMergeUnsafe } from "../utils";
+import { DoesExtend, DeepMergeUnsafe, Not } from "../utils";
 
 import { Any } from "./any";
 import { Never, NeverType } from "./never";
@@ -11,18 +11,15 @@ export type ObjectTypeId = "object";
 export type _Object<
   V extends Record<string, Type> = {},
   R extends string = never,
-  O extends boolean = false,
-  P extends Type = Any
-> = _$Object<V, R, O, P>;
+  P extends Type = Never
+> = _$Object<V, R, P>;
 
-export type _$Object<V = {}, R = never, O = false, P = Any> = DoesExtend<
+export type _$Object<V = {}, R = never, P = Never> = DoesExtend<
   true,
   {
     [key in Extract<R, string>]: key extends keyof V
       ? DoesExtend<V[key], NeverType>
-      : O extends true
-      ? DoesExtend<P, NeverType>
-      : true;
+      : DoesExtend<P, NeverType>;
   }[Extract<R, string>]
 > extends true
   ? Never
@@ -30,7 +27,7 @@ export type _$Object<V = {}, R = never, O = false, P = Any> = DoesExtend<
       type: ObjectTypeId;
       values: V;
       required: R;
-      isOpen: O;
+      isOpen: Not<DoesExtend<P, NeverType>>;
       openProps: P;
     };
 

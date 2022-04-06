@@ -139,7 +139,7 @@ nonIntersectingTuple;
 const objectsNeverIntersect: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Never
 > = 1;
