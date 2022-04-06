@@ -68,16 +68,16 @@ nonExcludingArray2;
 // --- TUPLE ---
 
 const excludingTuple: A.Equals<
-  M.Exclude<
-    M.Array<M.Primitive<string>>,
-    M.Tuple<[], true, M.Primitive<string>>
-  >,
+  M.Exclude<M.Array<M.Primitive<string>>, M.Tuple<[], M.Primitive<string>>>,
   M.Const<[]>
 > = 1;
 excludingTuple;
 
 const nonExcludingTuple1: A.Equals<
-  M.Exclude<M.Array<M.Primitive<string>>, M.Tuple<[M.Primitive<string>], true>>,
+  M.Exclude<
+    M.Array<M.Primitive<string>>,
+    M.Tuple<[M.Primitive<string>], M.Any>
+  >,
   M.Array<M.Primitive<string>>
 > = 1;
 nonExcludingTuple1;
@@ -85,7 +85,7 @@ nonExcludingTuple1;
 const nonExcludingTuple2: A.Equals<
   M.Exclude<
     M.Array<M.Union<M.Primitive<string> | M.Primitive<number>>>,
-    M.Tuple<[], true, M.Primitive<number>>
+    M.Tuple<[], M.Primitive<number>>
   >,
   M.Array<M.Union<M.Primitive<string> | M.Primitive<number>>>
 > = 1;
@@ -96,7 +96,7 @@ nonExcludingTuple2;
 const objectsNeverExclude: A.Equals<
   M.Exclude<
     M.Array<M.Primitive<string>>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Array<M.Primitive<string>>
 > = 1;

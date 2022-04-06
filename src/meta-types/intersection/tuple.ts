@@ -1,7 +1,5 @@
 import { L } from "ts-toolbelt";
 
-import { And, Not, DoesExtend } from "../../utils";
-
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
 import { ConstType } from "../const";
@@ -49,7 +47,7 @@ export type IntersectTupleToArray<
   A extends ArrayType,
   V extends any[] = IntersectTupleToArrayValues<TupleValues<T>, ArrayValues<A>>,
   O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>
-> = $Tuple<V, And<IsTupleOpen<T>, Not<DoesExtend<O, Never>>>, O>;
+> = $Tuple<V, O>;
 
 type IntersectTupleToArrayValues<
   V extends Type[],
@@ -76,11 +74,7 @@ type IntersectTuples<
     TupleOpenProps<B>
   >,
   O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>
-> = $Tuple<
-  V,
-  And<And<IsTupleOpen<A>, IsTupleOpen<B>>, Not<DoesExtend<O, Never>>>,
-  O
->;
+> = $Tuple<V, O>;
 
 type IntersectTupleValues<
   V1 extends Type[],

@@ -91,7 +91,7 @@ nonIntersectingArray;
 const intersectingTuple: A.Equals<
   M.Intersect<
     M.Enum<["foo", "bar"] | ["foo", 42]>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Enum<["foo", "bar"]>
 > = 1;
@@ -100,7 +100,7 @@ intersectingTuple;
 const nonIntersectingTuple: A.Equals<
   M.Intersect<
     M.Enum<"foo" | "bar" | 42>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Enum<never>
 > = 1;
@@ -111,7 +111,7 @@ nonIntersectingTuple;
 const intersectingObject: A.Equals<
   M.Intersect<
     M.Enum<{ foo: "str"; bar: "str" } | { foo: "str"; bar: 42 }>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Enum<{ foo: "str"; bar: "str" }>
 > = 1;
@@ -120,7 +120,7 @@ intersectingObject;
 const nonIntersectingObject: A.Equals<
   M.Intersect<
     M.Enum<"foo" | "bar" | 42>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Enum<never>
 > = 1;

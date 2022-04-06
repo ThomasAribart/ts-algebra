@@ -18,11 +18,11 @@ const test3: A.Equals<
   M.Resolve<
     M.Exclude<
       M.Union<
-        | M.Object<{}, never, true>
-        | M.Tuple<[M.Primitive<string>], true>
+        | M.Object<{}, never, M.Any>
+        | M.Tuple<[M.Primitive<string>], M.Any>
         | M.Primitive<string>
       >,
-      M.Union<M.Primitive<string> | M.Tuple<[M.Any], true>>
+      M.Union<M.Primitive<string> | M.Tuple<[M.Any], M.Any>>
     >
   >,
   { [k: string]: unknown }

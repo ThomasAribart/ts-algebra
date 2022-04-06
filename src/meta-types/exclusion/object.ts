@@ -148,7 +148,6 @@ type PropagateExclusion<
     [key in keyof C]: Propagate<C[key]>;
   },
   ObjectRequiredKeys<A>,
-  IsObjectOpen<A>,
   ObjectOpenProps<A>
 >;
 
@@ -165,7 +164,6 @@ type OmitOmittableKeys<
       [key in keyof C]: key extends K ? Never : SourceValue<C[key]>;
     },
     ObjectRequiredKeys<A>,
-    IsObjectOpen<A>,
     ObjectOpenProps<A>
   >;
   none: Never;
@@ -189,7 +187,6 @@ type ExcludeConstFromObject<
       _Object<
         { [key in Extract<keyof V, string>]: Const<V[key]> },
         Extract<keyof V, string>,
-        false,
         Never
       >
     >

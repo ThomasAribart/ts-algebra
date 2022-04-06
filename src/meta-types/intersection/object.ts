@@ -1,5 +1,3 @@
-import { And, Not, DoesExtend } from "../../utils";
-
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
 import { ConstType } from "../const";
@@ -13,7 +11,6 @@ import {
   ObjectValue,
   ObjectValues,
   ObjectRequiredKeys,
-  IsObjectOpen,
   ObjectOpenProps,
 } from "../object";
 import { UnionType } from "../union";
@@ -56,7 +53,6 @@ type IntersectObjects<
     [key in keyof V]: V[key];
   },
   ObjectRequiredKeys<A> | ObjectRequiredKeys<B>,
-  And<And<IsObjectOpen<A>, IsObjectOpen<B>>, Not<DoesExtend<O, Never>>>,
   O
 >;
 

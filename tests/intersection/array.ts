@@ -79,56 +79,52 @@ nonIntersectingArray;
 const intersectingTuple1: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
-  M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+  M.Tuple<[M.Primitive<string>], M.Primitive<string>>
 > = 1;
 intersectingTuple1;
 
 const intersectingTuple2: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<[M.Primitive<string>], true, M.Const<"foo">>
+    M.Tuple<[M.Primitive<string>], M.Const<"foo">>
   >,
-  M.Tuple<[M.Primitive<string>], true, M.Const<"foo">>
+  M.Tuple<[M.Primitive<string>], M.Const<"foo">>
 > = 1;
 intersectingTuple2;
 
 const tupleOpenPropsBecomeString: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<[M.Primitive<string>], true>
+    M.Tuple<[M.Primitive<string>], M.Any>
   >,
-  M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+  M.Tuple<[M.Primitive<string>], M.Primitive<string>>
 > = 1;
 tupleOpenPropsBecomeString;
 
 const tupleOpenPropsBecomeFoo: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<[M.Primitive<string>], true, M.Enum<"foo" | 42>>
+    M.Tuple<[M.Primitive<string>], M.Enum<"foo" | 42>>
   >,
-  M.Tuple<[M.Primitive<string>], true, M.Enum<"foo">>
+  M.Tuple<[M.Primitive<string>], M.Enum<"foo">>
 > = 1;
 tupleOpenPropsBecomeFoo;
 
 const tupleBecomeClose: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<number>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<number>>
   >,
-  M.Tuple<[M.Primitive<string>], false, M.Never>
+  M.Tuple<[M.Primitive<string>], M.Never>
 > = 1;
 tupleBecomeClose;
 
 const nonIntersectingTuple: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Tuple<
-      [M.Primitive<string>, M.Primitive<boolean>],
-      true,
-      M.Primitive<string>
-    >
+    M.Tuple<[M.Primitive<string>, M.Primitive<boolean>], M.Primitive<string>>
   >,
   M.Never
 > = 1;
@@ -139,7 +135,7 @@ nonIntersectingTuple;
 const objectsNeverIntersect: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>
   >,
   M.Never
 > = 1;
@@ -168,10 +164,12 @@ numberIsExcluded2;
 const tupleIsKept: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
-    M.Union<M.Array<M.Primitive<number>> | M.Tuple<[M.Primitive<string>], true>>
+    M.Union<
+      M.Array<M.Primitive<number>> | M.Tuple<[M.Primitive<string>], M.Any>
+    >
   >,
   M.Union<
-    M.Array<M.Never> | M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Array<M.Never> | M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >
 > = 1;
 tupleIsKept;

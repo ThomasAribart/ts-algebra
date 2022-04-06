@@ -13,10 +13,7 @@ requiredNeverKey;
 const requiredMissingKeyClosed: A.Equals<M.Object<{}, "b">, M.Never> = 1;
 requiredMissingKeyClosed;
 
-const requiredNeverKeyOpen: A.Equals<
-  M.Object<{}, "b", true, M.Never>,
-  M.Never
-> = 1;
+const requiredNeverKeyOpen: A.Equals<M.Object<{}, "b", M.Never>, M.Never> = 1;
 requiredNeverKeyOpen;
 
 // --- OPEN ---
@@ -26,7 +23,6 @@ const test1: A.Equals<
     M.Object<
       { str: M.Primitive<string>; num: M.Primitive<number> },
       "str",
-      true,
       M.Primitive<string>
     >
   >,
@@ -35,7 +31,7 @@ const test1: A.Equals<
 test1;
 
 const test2: A.Equals<
-  M.Resolve<M.Object<{}, never, true, M.Primitive<string>>>,
+  M.Resolve<M.Object<{}, never, M.Primitive<string>>>,
   { [k: string]: string }
 > = 1;
 test2;

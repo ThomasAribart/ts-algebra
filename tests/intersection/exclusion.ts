@@ -70,10 +70,10 @@ intersectingArray;
 
 const intersectingTuple: A.Equals<
   M.Intersect<
-    M.Exclude<M.Tuple<[M.Primitive<string>], true>, M.Const<[]>>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Exclude<M.Tuple<[M.Primitive<string>], M.Any>, M.Const<[]>>,
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
-  M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+  M.Tuple<[M.Primitive<string>], M.Primitive<string>>
 > = 1;
 intersectingTuple;
 
@@ -82,15 +82,14 @@ intersectingTuple;
 const intersectingObject: A.Equals<
   M.Intersect<
     M.Exclude<
-      M.Object<{ foo: M.Primitive<string> }, "foo", true, M.Primitive<string>>,
+      M.Object<{ foo: M.Primitive<string> }, "foo", M.Primitive<string>>,
       M.Const<{ foo: "bar" }>
     >,
-    M.Object<{ baz: M.Primitive<string> }, "baz", true>
+    M.Object<{ baz: M.Primitive<string> }, "baz", M.Any>
   >,
   M.Object<
     { foo: M.Primitive<string>; baz: M.Primitive<string> },
     "foo" | "baz",
-    true,
     M.Primitive<string>
   >
 > = 1;

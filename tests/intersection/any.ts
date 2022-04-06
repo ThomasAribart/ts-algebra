@@ -47,8 +47,8 @@ anyToArray;
 // --- TUPLE ---
 
 const anyToTuple: A.Equals<
-  M.Intersect<M.Any, M.Tuple<[M.Primitive<string>], true>>,
-  M.Tuple<[M.Primitive<string>], true>
+  M.Intersect<M.Any, M.Tuple<[M.Primitive<string>], M.Any>>,
+  M.Tuple<[M.Primitive<string>], M.Any>
 > = 1;
 anyToTuple;
 

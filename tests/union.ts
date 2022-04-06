@@ -68,7 +68,7 @@ testArray;
 const testTuple: A.Equals<
   M.Resolve<
     M.Union<
-      | M.Tuple<[M.Primitive<string>, M.Primitive<number>], true>
+      | M.Tuple<[M.Primitive<string>, M.Primitive<number>], M.Any>
       | M.Tuple<[M.Primitive<string>, M.Primitive<boolean>]>
     >
   >,
@@ -81,7 +81,7 @@ testTuple;
 const testObjects: A.Equals<
   M.Resolve<
     M.Union<
-      | M.Object<{ bar: M.Primitive<number> }, "bar", true>
+      | M.Object<{ bar: M.Primitive<number> }, "bar", M.Any>
       | M.Object<{ foo: M.Primitive<string> }, "foo">
     >
   >,

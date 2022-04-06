@@ -21,8 +21,8 @@ neversNeverExclude;
 // --- CONSTS ---
 
 const constTooSmall: A.Equals<
-  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a", true>, M.Const<{ a: "A" }>>,
-  M.Object<{ a: M.Const<"A"> }, "a", true>
+  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a", M.Any>, M.Const<{ a: "A" }>>,
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 constTooSmall;
 
@@ -48,10 +48,10 @@ constSizeMatches2;
 
 const enumTooSmall: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Const<"A"> }, "a", true>,
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
     M.Enum<{ a: "A" } | { b: "B" }>
   >,
-  M.Object<{ a: M.Const<"A"> }, "a", true>
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 enumTooSmall;
 
@@ -76,8 +76,8 @@ enumSizesMatch;
 // --- PRIMITIVES ---
 
 const primitivesNeverExclude: A.Equals<
-  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a", true>, M.Primitive<string>>,
-  M.Object<{ a: M.Const<"A"> }, "a", true>
+  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a", M.Any>, M.Primitive<string>>,
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 primitivesNeverExclude;
 
@@ -224,7 +224,7 @@ bothClosedTooManyOmittableKeys;
 const closedValueOpenExcluded1: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a">,
-    M.Object<{}, never, true, M.Const<"B">>
+    M.Object<{}, never, M.Const<"B">>
   >,
   M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a">
 > = 1;
@@ -233,7 +233,7 @@ closedValueOpenExcluded1;
 const closedValueOpenExcluded2: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a">,
-    M.Object<{}, never, true, M.Const<"C">>
+    M.Object<{}, never, M.Const<"C">>
   >,
   M.Object<{ a: M.Const<"A"> }, "a">
 > = 1;
@@ -242,18 +242,18 @@ closedValueOpenExcluded2;
 // Open value closed excluded
 const openValueClosedExcluded: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Const<"A"> }, "a", true>,
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
     M.Object<{ a: M.Const<"A"> }, "a">
   >,
-  M.Object<{ a: M.Const<"A"> }, "a", true>
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 openValueClosedExcluded;
 
 // Both open
 const bothOpenMatch1: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Const<"A"> }, "a", true>,
-    M.Object<{ a: M.Const<"A"> }, "a", true>
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any>
   >,
   M.Never
 > = 1;
@@ -261,8 +261,8 @@ bothOpenMatch1;
 
 const bothOpenMatch2: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Const<"A"> }, "a", true, M.Const<"A">>,
-    M.Object<{}, never, true, M.Const<"A">>
+    M.Object<{ a: M.Const<"A"> }, "a", M.Const<"A">>,
+    M.Object<{}, never, M.Const<"A">>
   >,
   M.Never
 > = 1;
@@ -270,52 +270,41 @@ bothOpenMatch2;
 
 const bothOpenMatch3: A.Equals<
   M.Exclude<
-    M.Object<
-      { a: M.Enum<"A" | "B">; b: M.Const<"B"> },
-      "a",
-      true,
-      M.Const<"B">
-    >,
-    M.Object<{}, never, true, M.Const<"B">>
+    M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a", M.Const<"B">>,
+    M.Object<{}, never, M.Const<"B">>
   >,
-  M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a", true, M.Const<"B">>
+  M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a", M.Const<"B">>
 > = 1;
 bothOpenMatch3;
 
 const bothOpenMoreThan1FreeKey1: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Enum<"A" | "B"> }, never, true, M.Enum<"A" | "B">>,
-    M.Object<{}, never, true, M.Const<"A">>
+    M.Object<{ a: M.Enum<"A" | "B"> }, never, M.Enum<"A" | "B">>,
+    M.Object<{}, never, M.Const<"A">>
   >,
-  M.Object<{ a: M.Enum<"A" | "B"> }, never, true, M.Enum<"A" | "B">>
+  M.Object<{ a: M.Enum<"A" | "B"> }, never, M.Enum<"A" | "B">>
 > = 1;
 bothOpenMoreThan1FreeKey1;
 
 const bothOpenMoreThan1FreeKey2: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Const<"A"> }, "a", true>,
-    M.Object<{}, never, true, M.Const<"A">>
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
+    M.Object<{}, never, M.Const<"A">>
   >,
-  M.Object<{ a: M.Const<"A"> }, "a", true>
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 bothOpenMoreThan1FreeKey2;
 
 const bothOpenKeyAdded: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Enum<"A" | "B"> }, "a", true, M.Enum<"A" | "B">>,
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Enum<"A" | "B">>,
     M.Object<
       { a: M.Enum<"A" | "B">; b: M.Const<"B"> },
       "a" | "b",
-      true,
       M.Primitive<string>
     >
   >,
-  M.Object<
-    { a: M.Enum<"A" | "B">; b: M.Enum<"A"> },
-    "a",
-    true,
-    M.Enum<"A" | "B">
-  >
+  M.Object<{ a: M.Enum<"A" | "B">; b: M.Enum<"A"> }, "a", M.Enum<"A" | "B">>
 > = 1;
 bothOpenKeyAdded;
 
