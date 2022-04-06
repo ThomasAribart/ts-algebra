@@ -79,7 +79,7 @@ nonIntersectingArray;
 const intersectingTuple1: A.Equals<
   M.Intersect<
     M.Const<["foo", "bar"]>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Const<["foo", "bar"]>
 > = 1;
@@ -88,11 +88,7 @@ intersectingTuple1;
 const intersectingTuple2: A.Equals<
   M.Intersect<
     M.Const<["foo", 42, "bar"]>,
-    M.Tuple<
-      [M.Primitive<string>, M.Primitive<number>],
-      true,
-      M.Primitive<string>
-    >
+    M.Tuple<[M.Primitive<string>, M.Primitive<number>], M.Primitive<string>>
   >,
   M.Const<["foo", 42, "bar"]>
 > = 1;
@@ -101,7 +97,7 @@ intersectingTuple2;
 const nonIntersectingTuple1: A.Equals<
   M.Intersect<
     M.Const<["foo", 42]>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Never
 > = 1;
@@ -110,7 +106,7 @@ nonIntersectingTuple1;
 const nonIntersectingTuple2: A.Equals<
   M.Intersect<
     M.Const<"foo">,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Never
 > = 1;

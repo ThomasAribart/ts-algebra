@@ -219,15 +219,12 @@ type Resolved = M.Resolve<
 
 Used for finite, ordered lists of items of different types.
 
-Meta-tuples can have **additional items** (typed as [`M.Any`](#any) by default).
+Meta-tuples can have **additional items**, typed as [`M.Never`](#never) by default. Thus, any meta-tuple is considered **closed** (additional items not allowed), unless a representable additional items meta-type is specified, in which case it becomes **open**.
 
 **Arguments:**
 
 - <code>RequiredItems <i>(meta-type[])</i>:</code>
-- <code>IsOpen <i>(?boolean = false)</i>:</code> Wether the tuple allows
-  additional items
-- <code>AdditionalItems <i>(?meta-type = M.Any)</i>:</code> Type of
-  additional items
+- <code>AdditionalItems <i>(?meta-type = M.Never)</i>:</code> Type of additional items
 
 <!-- prettier-ignore -->
 ```typescript
@@ -241,15 +238,6 @@ type Resolved = M.Resolve<
 type Resolved = M.Resolve<
   M.Tuple<
     [M.Primitive<string>],
-    true
-  >
->;
-// => [string, ...unknown[]]
-
-type Resolved = M.Resolve<
-  M.Tuple<
-    [M.Primitive<string>],
-    true,
     M.Primitive<string>
   >
 >;
@@ -262,7 +250,7 @@ type Resolved = M.Resolve<
 
 Used for sets of key-value pairs (properties) which can be required or not.
 
-Meta-objects can have **additional properties**, typed as [`M.Never`](#never) by default. Thus, a meta-object is considered **closed** (additional properties not allowed), unless a representable additional property meta-type is specified, in which case it becomes **open**.
+Meta-objects can have **additional properties**, typed as [`M.Never`](#never) by default. Thus, any meta-object is considered **closed** (additional properties not allowed), unless a representable additional property meta-type is specified, in which case it becomes **open**.
 
 In presence of named properties, open meta-objects additional properties are resolved as `unknown` to avoid conflicts. However, they are used as long as the meta-type is not resolved (especially in [intersections](#intersect) and [exclusions](#exclude)).
 
@@ -395,18 +383,15 @@ Intersections are recursively propagated among tuple items and object properties
 type Intersected = M.Intersect<
   M.Tuple<
     [M.Primitive<number>],
-    true,
     M.Primitive<string>
   >,
   M.Tuple<
     [M.Enum<"pizza" | 42>],
-    true,
     M.Enum<"fries" | true>
   >
 >;
 // => M.Tuple<
 //  [M.Enum<42>],
-//  true,
 //  M.Enum<"fries">
 // >
 
@@ -541,12 +526,10 @@ type Excluded = M.Exclude<
 type Excluded = M.Exclude<
   M.Tuple<
     [M.Enum<"pizza" | 42>],
-    true,
     M.Enum<"fries" | true>
   >,
   M.Tuple<
     [M.Primitive<number>],
-    true,
     M.Primitive<string>
   >
 >;
@@ -623,7 +606,7 @@ If you need to use them, all type constraints are also exported:
 | `M.Enum`      | `M.EnumType` = `M.Enum<any>`                                           |
 | `M.Primitive` | `M.PrimitiveType` = `M.Primitive<null \| boolean \| number \| string>` |
 | `M.Array`     | `M.ArrayType` = `M.Array<M.Type>`                                      |
-| `M.Tuple`     | `M.TupleType` = `M.Tuple<M.Type[], boolean, M.Type>`                   |
+| `M.Tuple`     | `M.TupleType` = `M.Tuple<M.Type[], M.Type>`                            |
 | `M.Object`    | `M.ObjectType` = `M.Object<Record<string, M.Type>, string, M.Type>`    |
 | `M.Union`     | `M.UnionType` = `M.Union<M.Type>`                                      |
 | -             | `M.Type` = Union of the above                                          |

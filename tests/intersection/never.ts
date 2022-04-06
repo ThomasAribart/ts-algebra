@@ -44,7 +44,7 @@ neverToArray;
 // --- TUPLE ---
 
 const neverToTuple: A.Equals<
-  M.Intersect<M.Never, M.Tuple<[M.Primitive<string>], true>>,
+  M.Intersect<M.Never, M.Tuple<[M.Primitive<string>], M.Any>>,
   M.Never
 > = 1;
 neverToTuple;

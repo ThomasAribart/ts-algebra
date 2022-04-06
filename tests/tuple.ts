@@ -13,18 +13,14 @@ requiredNeverItem;
 // --- OPEN ---
 
 const test1: A.Equals<
-  M.Resolve<M.Tuple<[M.Primitive<string>, M.Primitive<number>], true>>,
+  M.Resolve<M.Tuple<[M.Primitive<string>, M.Primitive<number>], M.Any>>,
   [string, number, ...unknown[]]
 > = 1;
 test1;
 
 const test2: A.Equals<
   M.Resolve<
-    M.Tuple<
-      [M.Primitive<string>, M.Primitive<number>],
-      true,
-      M.Primitive<boolean>
-    >
+    M.Tuple<[M.Primitive<string>, M.Primitive<number>], M.Primitive<boolean>>
   >,
   [string, number, ...boolean[]]
 > = 1;

@@ -80,19 +80,19 @@ nonExcludingArray;
 // --- TUPLE ---
 
 const excludingTuple1: A.Equals<
-  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Primitive<string>], true>>,
+  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Primitive<string>], M.Any>>,
   M.Never
 > = 1;
 excludingTuple1;
 
 const excludingTuple2: A.Equals<
-  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Const<"A">], true>>,
+  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Const<"A">], M.Any>>,
   M.Never
 > = 1;
 excludingTuple2;
 
 const nonExcludingTuple: A.Equals<
-  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Primitive<number>], true>>,
+  M.Exclude<M.Const<["A"]>, M.Tuple<[M.Primitive<number>], M.Any>>,
   M.Const<["A"]>
 > = 1;
 nonExcludingTuple;

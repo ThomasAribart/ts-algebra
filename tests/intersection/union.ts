@@ -103,7 +103,7 @@ nonIntersectingArray;
 const nonIntersectingTuple: A.Equals<
   M.Intersect<
     M.Union<M.Const<"foo"> | M.Primitive<number>>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Union<M.Never>
 > = 1;

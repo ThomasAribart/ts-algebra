@@ -58,7 +58,7 @@ export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
 
 type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<
   A,
-  Tuple<[], true, ArrayValues<B>>
+  Tuple<[], ArrayValues<B>>
 >;
 
 type ExcludeTuples<
@@ -78,7 +78,7 @@ type ExcludeTuples<
 > = DoesTupleSizesMatch<A, B, C> extends true
   ? {
       moreThanTwo: A;
-      onlyOne: $Tuple<PropagateExclusion<C>, IsTupleOpen<A>, TupleOpenProps<A>>;
+      onlyOne: $Tuple<PropagateExclusion<C>, TupleOpenProps<A>>;
       none: OmitOmittableItems<A, C>;
     }[And<IsTupleOpen<A>, I> extends true ? "moreThanTwo" : GetTupleLength<N>]
   : A;

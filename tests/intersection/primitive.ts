@@ -79,7 +79,7 @@ arraysNeverIntersect;
 const tuplesNeverIntersect: A.Equals<
   M.Intersect<
     M.Primitive<string>,
-    M.Tuple<[M.Primitive<string>], true, M.Primitive<string>>
+    M.Tuple<[M.Primitive<string>], M.Primitive<string>>
   >,
   M.Never
 > = 1;

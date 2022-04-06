@@ -1,24 +1,21 @@
 import { L } from "ts-toolbelt";
 
-import { Any } from "./any";
+import { DoesExtend, Not } from "../utils";
+
 import { Never, NeverType } from "./never";
 import { Type } from "./type";
 import { Resolve } from "./resolve";
 
 export type TupleTypeId = "tuple";
 
-export type Tuple<
-  V extends Type[],
-  O extends boolean = false,
-  P extends Type = Any
-> = $Tuple<V, O, P>;
+export type Tuple<V extends Type[], P extends Type = Never> = $Tuple<V, P>;
 
-export type $Tuple<V, O = false, P = Any> = IsAnyValueNever<V> extends true
+export type $Tuple<V, P = Never> = IsAnyValueNever<V> extends true
   ? Never
   : {
       type: TupleTypeId;
       values: V;
-      isOpen: O;
+      isOpen: Not<DoesExtend<P, NeverType>>;
       openProps: P;
     };
 

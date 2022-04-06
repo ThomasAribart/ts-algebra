@@ -68,7 +68,7 @@ testArray;
 const testTuple: A.Equals<
   M.Resolve<
     M.Union<
-      | M.Tuple<[M.Primitive<string>, M.Primitive<number>], true>
+      | M.Tuple<[M.Primitive<string>, M.Primitive<number>], M.Any>
       | M.Tuple<[M.Primitive<string>, M.Primitive<boolean>]>
     >
   >,
