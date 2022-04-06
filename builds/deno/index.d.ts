@@ -73,14 +73,14 @@ declare type PrimitiveValue<T extends PrimitiveType> = T["value"];
 declare type ResolvePrimitive<T extends PrimitiveType> = PrimitiveValue<T>;
 
 declare type ObjectTypeId = "object";
-declare type _Object<V extends Record<string, Type> = {}, R extends string = never, O extends boolean = false, P extends Type = Any> = _$Object<V, R, O, P>;
-declare type _$Object<V = {}, R = never, O = false, P = Any> = DoesExtend<true, {
-    [key in Extract<R, string>]: key extends keyof V ? DoesExtend<V[key], NeverType> : O extends true ? DoesExtend<P, NeverType> : true;
+declare type _Object<V extends Record<string, Type> = {}, R extends string = never, P extends Type = Never> = _$Object<V, R, P>;
+declare type _$Object<V = {}, R = never, P = Never> = DoesExtend<true, {
+    [key in Extract<R, string>]: key extends keyof V ? DoesExtend<V[key], NeverType> : DoesExtend<P, NeverType>;
 }[Extract<R, string>]> extends true ? Never : {
     type: ObjectTypeId;
     values: V;
     required: R;
-    isOpen: O;
+    isOpen: Not<DoesExtend<P, NeverType>>;
     openProps: P;
 };
 declare type ObjectType = {
@@ -124,11 +124,11 @@ declare type Resolve<T extends Type> = $Resolve<T>;
 declare type $Resolve<T> = T extends AnyType ? ResolveAny : T extends NeverType ? ResolveNever : T extends ConstType ? ResolveConst<T> : T extends EnumType ? ResolveEnum<T> : T extends PrimitiveType ? ResolvePrimitive<T> : T extends ArrayType ? ResolveArray<T> : T extends TupleType ? ResolveTuple<T> : T extends ObjectType ? ResolveObject<T> : T extends UnionType ? ResolveUnion<T> : never;
 
 declare type TupleTypeId = "tuple";
-declare type Tuple<V extends Type[], O extends boolean = false, P extends Type = Any> = $Tuple<V, O, P>;
-declare type $Tuple<V, O = false, P = Any> = IsAnyValueNever<V> extends true ? Never : {
+declare type Tuple<V extends Type[], P extends Type = Never> = $Tuple<V, P>;
+declare type $Tuple<V, P = Never> = IsAnyValueNever<V> extends true ? Never : {
     type: TupleTypeId;
     values: V;
-    isOpen: O;
+    isOpen: Not<DoesExtend<P, NeverType>>;
     openProps: P;
 };
 declare type IsAnyValueNever<V> = {
@@ -195,12 +195,12 @@ declare type RecurseOnEnumValues$1<V, B> = V extends infer T ? $Intersect<Const<
 declare type IntersectPrimitive<A extends PrimitiveType, B> = B extends Type ? B extends AnyType ? A : B extends NeverType ? Never : B extends ConstType ? IntersectConstToPrimitive<B, A> : B extends EnumType ? IntersectEnumToPrimitive<B, A> : B extends PrimitiveType ? If<A.Equals<PrimitiveValue<A>, PrimitiveValue<B>>, A, Never> : B extends ArrayType ? Never : B extends TupleType ? Never : B extends ObjectType ? Never : B extends UnionType ? DistributeIntersection<B, A> : Never : Never;
 
 declare type IntersectTuple<A extends TupleType, B> = B extends AnyType ? A : B extends NeverType ? B : B extends ConstType ? IntersectConstToTuple<B, A> : B extends EnumType ? IntersectEnumToTuple<B, A> : B extends PrimitiveType ? Never : B extends ArrayType ? IntersectTupleToArray<A, B> : B extends TupleType ? IntersectTuples<A, B> : B extends ObjectType ? Never : B extends UnionType ? DistributeIntersection<B, A> : Never;
-declare type IntersectTupleToArray<T extends TupleType, A extends ArrayType, V extends any[] = IntersectTupleToArrayValues<TupleValues<T>, ArrayValues<A>>, O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>> = $Tuple<V, And<IsTupleOpen<T>, Not<DoesExtend<O, Never>>>, O>;
+declare type IntersectTupleToArray<T extends TupleType, A extends ArrayType, V extends any[] = IntersectTupleToArrayValues<TupleValues<T>, ArrayValues<A>>, O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>> = $Tuple<V, O>;
 declare type IntersectTupleToArrayValues<V extends Type[], T extends Type, R extends any[] = []> = {
     stop: L.Reverse<R>;
     continue: IntersectTupleToArrayValues<L.Tail<V>, T, L.Prepend<R, Intersect<L.Head<V>, T>>>;
 }[V extends [any, ...any[]] ? "continue" : "stop"];
-declare type IntersectTuples<A extends TupleType, B extends TupleType, V extends any[] = IntersectTupleValues<TupleValues<A>, TupleValues<B>, IsTupleOpen<A>, IsTupleOpen<B>, TupleOpenProps<A>, TupleOpenProps<B>>, O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>> = $Tuple<V, And<And<IsTupleOpen<A>, IsTupleOpen<B>>, Not<DoesExtend<O, Never>>>, O>;
+declare type IntersectTuples<A extends TupleType, B extends TupleType, V extends any[] = IntersectTupleValues<TupleValues<A>, TupleValues<B>, IsTupleOpen<A>, IsTupleOpen<B>, TupleOpenProps<A>, TupleOpenProps<B>>, O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>> = $Tuple<V, O>;
 declare type IntersectTupleValues<V1 extends Type[], V2 extends Type[], O1 extends boolean, O2 extends boolean, P1 extends Type, P2 extends Type, R extends any[] = []> = {
     stop: L.Reverse<R>;
     continue1: IntersectTupleValues<L.Tail<V1>, V2, O1, O2, P1, P2, L.Prepend<R, O2 extends true ? Intersect<L.Head<V1>, P2> : Never>>;
@@ -214,7 +214,7 @@ declare type IntersectArrays<A extends ArrayType, B extends ArrayType> = _$Array
 declare type IntersectObject<A extends ObjectType, B> = B extends Type ? B extends AnyType ? A : B extends NeverType ? Never : B extends ConstType ? IntersectConstToObject<B, A> : B extends EnumType ? IntersectEnumToObject<B, A> : B extends PrimitiveType ? Never : B extends ArrayType ? Never : B extends TupleType ? Never : B extends ObjectType ? IntersectObjects<A, B> : B extends UnionType ? DistributeIntersection<B, A> : Never : Never;
 declare type IntersectObjects<A extends ObjectType, B extends ObjectType, V extends Record<string, any> = IntersectObjectsValues<A, B>, O extends any = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>> = _$Object<{
     [key in keyof V]: V[key];
-}, ObjectRequiredKeys<A> | ObjectRequiredKeys<B>, And<And<IsObjectOpen<A>, IsObjectOpen<B>>, Not<DoesExtend<O, Never>>>, O>;
+}, ObjectRequiredKeys<A> | ObjectRequiredKeys<B>, O>;
 declare type IntersectObjectsValues<A extends ObjectType, B extends ObjectType> = {
     [key in Extract<keyof ObjectValues<A> | keyof ObjectValues<B>, string>]: $Intersect<ObjectValue<A, key>, ObjectValue<B, key>>;
 };
@@ -279,10 +279,10 @@ declare type Propagate<C extends CrossValueType> = ExclusionValue<C> extends Nev
 declare type IsOmittable<C extends CrossValueType> = And<Not<IsRequiredInSource<C>>, IsRequiredInExcluded<C>>;
 
 declare type ExcludeFromTuple<A extends TupleType, B> = B extends Type ? B extends AnyType ? Never : B extends NeverType ? A : B extends ConstType ? ExcludeConst<A, B> : B extends EnumType ? ExcludeEnum<A, B> : B extends PrimitiveType ? A : B extends ArrayType ? ExcludeArray<A, B> : B extends TupleType ? ExcludeTuples<A, B> : B extends ObjectType ? A : B extends UnionType ? ExcludeUnion<A, B> : Never : Never;
-declare type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<A, Tuple<[], true, ArrayValues<B>>>;
+declare type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<A, Tuple<[], ArrayValues<B>>>;
 declare type ExcludeTuples<A extends TupleType, B extends TupleType, C extends CrossValueType[] = CrossTupleValues<TupleValues<A>, TupleValues<B>, IsTupleOpen<A>, IsTupleOpen<B>, TupleOpenProps<A>, TupleOpenProps<B>>, N extends CrossValueType[] = NonNeverItems<C>, P = _Exclude<TupleOpenProps<A>, TupleOpenProps<B>>, I = Not<DoesExtend<P, NeverType>>> = DoesTupleSizesMatch<A, B, C> extends true ? {
     moreThanTwo: A;
-    onlyOne: $Tuple<PropagateExclusion$1<C>, IsTupleOpen<A>, TupleOpenProps<A>>;
+    onlyOne: $Tuple<PropagateExclusion$1<C>, TupleOpenProps<A>>;
     none: OmitOmittableItems<A, C>;
 }[And<IsTupleOpen<A>, I> extends true ? "moreThanTwo" : GetTupleLength<N>] : A;
 declare type CrossTupleValues<V1 extends Type[], V2 extends Type[], O1 extends boolean, O2 extends boolean, P1 extends Type, P2 extends Type, C extends CrossValueType[] = []> = {
@@ -354,12 +354,12 @@ declare type NonNeverKeys<C extends Record<string, CrossValueType>> = {
 }[Extract<keyof C, string>];
 declare type PropagateExclusion<A extends ObjectType, C extends Record<string, CrossValueType>> = _Object<{
     [key in keyof C]: Propagate<C[key]>;
-}, ObjectRequiredKeys<A>, IsObjectOpen<A>, ObjectOpenProps<A>>;
+}, ObjectRequiredKeys<A>, ObjectOpenProps<A>>;
 declare type OmitOmittableKeys<A extends ObjectType, C extends Record<string, CrossValueType>, K extends string = OmittableKeys<C>> = {
     moreThanTwo: A;
     onlyOne: _Object<{
         [key in keyof C]: key extends K ? Never : SourceValue<C[key]>;
-    }, ObjectRequiredKeys<A>, IsObjectOpen<A>, ObjectOpenProps<A>>;
+    }, ObjectRequiredKeys<A>, ObjectOpenProps<A>>;
     none: Never;
 }[GetUnionLength<K>];
 declare type OmittableKeys<C extends Record<string, CrossValueType>> = {
@@ -367,12 +367,10 @@ declare type OmittableKeys<C extends Record<string, CrossValueType>> = {
 }[Extract<keyof C, string>];
 declare type ExcludeConstFromObject<A extends ObjectType, B extends ConstType, V extends any = ConstValue<B>> = IsObject<V> extends true ? _$Exclude<A, _Object<{
     [key in Extract<keyof V, string>]: Const<V[key]>;
-}, Extract<keyof V, string>, false, Never>> : A;
+}, Extract<keyof V, string>, Never>> : A;
 
 declare type _Exclude<A extends Type, B extends Type> = _$Exclude<A, B>;
 declare type _$Exclude<A, B> = A extends AnyType ? ExcludeFromAny<A, B> : A extends NeverType ? Never : A extends ConstType ? ExcludeFromConst<A, B> : A extends EnumType ? ExcludeFromEnum<A, B> : A extends PrimitiveType ? ExcludeFromPrimitive<A, B> : A extends ArrayType ? ExcludeFromArray<A, B> : A extends TupleType ? ExcludeFromTuple<A, B> : A extends ObjectType ? ExcludeFromObject<A, B> : A extends UnionType ? DistributeUnion<A, B> : Never;
-
-declare type TypeId = AnyTypeId | NeverTypeId | ConstTypeId | EnumTypeId | PrimitiveTypeId | ArrayTypeId | TupleTypeId | ObjectTypeId | UnionTypeId;
 
 type index_Any = Any;
 type index_Never = Never;
@@ -380,8 +378,8 @@ type index_Const<V extends any> = Const<V>;
 type index_Enum<V extends any> = Enum<V>;
 type index_Primitive<T extends null | boolean | number | string> = Primitive<T>;
 type index_$Primitive<T> = $Primitive<T>;
-type index_Tuple<V extends Type[], O extends boolean = false, P extends Type = Any> = Tuple<V, O, P>;
-type index_$Tuple<V, O = false, P = Any> = $Tuple<V, O, P>;
+type index_Tuple<V extends Type[], P extends Type = Never> = Tuple<V, P>;
+type index_$Tuple<V, P = Never> = $Tuple<V, P>;
 type index_Union<V extends Type> = Union<V>;
 type index_$Union<V> = $Union<V>;
 type index_AnyType = AnyType;
@@ -394,16 +392,6 @@ type index_TupleType = TupleType;
 type index_ObjectType = ObjectType;
 type index_UnionType = UnionType;
 type index_Type = Type;
-type index_AnyTypeId = AnyTypeId;
-type index_NeverTypeId = NeverTypeId;
-type index_ConstTypeId = ConstTypeId;
-type index_EnumTypeId = EnumTypeId;
-type index_PrimitiveTypeId = PrimitiveTypeId;
-type index_ArrayTypeId = ArrayTypeId;
-type index_TupleTypeId = TupleTypeId;
-type index_ObjectTypeId = ObjectTypeId;
-type index_UnionTypeId = UnionTypeId;
-type index_TypeId = TypeId;
 type index_$Resolve<T> = $Resolve<T>;
 type index_Resolve<T extends Type> = Resolve<T>;
 type index_$Intersect<A, B> = $Intersect<A, B>;
@@ -434,16 +422,6 @@ declare namespace index {
     index_ObjectType as ObjectType,
     index_UnionType as UnionType,
     index_Type as Type,
-    index_AnyTypeId as AnyTypeId,
-    index_NeverTypeId as NeverTypeId,
-    index_ConstTypeId as ConstTypeId,
-    index_EnumTypeId as EnumTypeId,
-    index_PrimitiveTypeId as PrimitiveTypeId,
-    index_ArrayTypeId as ArrayTypeId,
-    index_TupleTypeId as TupleTypeId,
-    index_ObjectTypeId as ObjectTypeId,
-    index_UnionTypeId as UnionTypeId,
-    index_TypeId as TypeId,
     index_$Resolve as $Resolve,
     index_Resolve as Resolve,
     index_$Intersect as $Intersect,
