@@ -1,22 +1,16 @@
-import { Any, AnyType, AnyTypeId } from "./any";
-import { Never, NeverType, NeverTypeId } from "./never";
-import { Const, ConstType, ConstTypeId } from "./const";
-import { Enum, EnumType, EnumTypeId } from "./enum";
-import {
-  Primitive,
-  $Primitive,
-  PrimitiveType,
-  PrimitiveTypeId,
-} from "./primitive";
-import { _Array, _$Array, ArrayType, ArrayTypeId } from "./array";
-import { Tuple, $Tuple, TupleType, TupleTypeId } from "./tuple";
-import { _Object, _$Object, ObjectType, ObjectTypeId } from "./object";
-import { Union, $Union, UnionType, UnionTypeId } from "./union";
+import { Any, AnyType } from "./any";
+import { Never, NeverType } from "./never";
+import { Const, ConstType } from "./const";
+import { Enum, EnumType } from "./enum";
+import { Primitive, $Primitive, PrimitiveType } from "./primitive";
+import { _Array, _$Array, ArrayType } from "./array";
+import { Tuple, $Tuple, TupleType } from "./tuple";
+import { _Object, _$Object, ObjectType } from "./object";
+import { Union, $Union, UnionType } from "./union";
 import { Intersect, $Intersect } from "./intersection";
 import { _Exclude, _$Exclude } from "./exclusion";
 
 import { Type } from "./type";
-import { TypeId } from "./typeId";
 
 import { Resolve, $Resolve } from "./resolve";
 
@@ -47,17 +41,6 @@ export {
   ObjectType,
   UnionType,
   Type,
-  // --- IDS ---
-  AnyTypeId,
-  NeverTypeId,
-  ConstTypeId,
-  EnumTypeId,
-  PrimitiveTypeId,
-  ArrayTypeId,
-  TupleTypeId,
-  ObjectTypeId,
-  UnionTypeId,
-  TypeId,
   // --- METHODS ---
   $Resolve,
   Resolve,
