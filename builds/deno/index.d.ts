@@ -249,7 +249,7 @@ declare type ExcludeEnumValue<A extends Type, L extends any, V extends any> = $I
 declare type ExcludeFromPrimitive<A extends PrimitiveType, B> = B extends Type ? B extends AnyType ? Never : B extends NeverType ? A : B extends ConstType ? A : B extends EnumType ? A : B extends PrimitiveType ? PrimitiveValue<A> extends PrimitiveValue<B> ? Never : A : B extends ArrayType ? A : B extends TupleType ? A : B extends ObjectType ? A : B extends UnionType ? ExcludeUnion<A, B> : Never : Never;
 
 declare type ExcludeFromArray<A extends ArrayType, B> = B extends Type ? B extends AnyType ? Never : B extends NeverType ? A : B extends ConstType ? A : B extends EnumType ? A : B extends PrimitiveType ? A : B extends ArrayType ? ExcludeArrays<A, B> : B extends TupleType ? And<DoesExtend<A.Equals<TupleValues<B>, []>, 1>, IsTupleOpen<B>> extends true ? ExcludeArrays<A, _Array<TupleOpenProps<B>>> : A : B extends ObjectType ? A : B extends UnionType ? ExcludeUnion<A, B> : Never : Never;
-declare type ExcludeArrays<A extends ArrayType, B extends ArrayType> = _Exclude<ArrayValues<A>, ArrayValues<B>> extends NeverType ? Const<[]> : A;
+declare type ExcludeArrays<A extends ArrayType, B extends ArrayType> = _Exclude<ArrayValues<A>, ArrayValues<B>> extends NeverType ? NeverType : A;
 
 declare type CrossValue<V1 extends Type, P1 extends boolean, R1 extends boolean, V2 extends Type, P2 extends boolean, R2 extends boolean> = {
     sourceValue: V1;
