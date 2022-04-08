@@ -46,7 +46,7 @@ primitivesNeverExclude;
 
 const excludingArray: A.Equals<
   M.Exclude<M.Array<M.Primitive<string>>, M.Array<M.Primitive<string>>>,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingArray;
 
@@ -69,7 +69,7 @@ nonExcludingArray2;
 
 const excludingTuple: A.Equals<
   M.Exclude<M.Array<M.Primitive<string>>, M.Tuple<[], M.Primitive<string>>>,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingTuple;
 
@@ -109,7 +109,7 @@ const excludingUnion: A.Equals<
     M.Array<M.Primitive<string>>,
     M.Union<M.Array<M.Primitive<string>> | M.Array<M.Primitive<number>>>
   >,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingUnion;
 
@@ -132,7 +132,7 @@ const excludingIntersection: A.Equals<
       M.Array<M.Union<M.Primitive<string> | M.Primitive<number>>>
     >
   >,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingIntersection;
 
@@ -152,7 +152,7 @@ const excludingExclusion: A.Equals<
     M.Array<M.Const<"foo">>,
     M.Exclude<M.Array<M.Primitive<string>>, M.Const<[]>>
   >,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingExclusion;
 

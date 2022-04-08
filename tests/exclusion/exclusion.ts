@@ -58,7 +58,7 @@ const excludingArray1: A.Equals<
     M.Exclude<M.Array<M.Primitive<string>>, M.Never>,
     M.Array<M.Primitive<string>>
   >,
-  M.Const<[]>
+  M.Never
 > = 1;
 excludingArray1;
 

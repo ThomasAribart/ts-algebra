@@ -79,7 +79,7 @@ const excludingArray: A.Equals<
     M.Union<M.Array<M.Primitive<string>> | M.Array<M.Primitive<number>>>,
     M.Array<M.Primitive<number>>
   >,
-  M.Union<M.Array<M.Primitive<string>> | M.Const<[]>>
+  M.Union<M.Array<M.Primitive<string>> | M.Never>
 > = 1;
 excludingArray;
 
