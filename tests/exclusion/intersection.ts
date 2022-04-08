@@ -99,7 +99,7 @@ const excludingArray: A.Equals<
     M.Array<M.Primitive<number>>
   >,
   M.Union<
-    M.Union<M.Array<M.Primitive<string>> | M.Const<[]>> | M.Union<M.Const<[]>>
+    M.Union<M.Array<M.Primitive<string>> | M.Never> | M.Union<M.Never>
   >
 > = 1;
 excludingArray;
@@ -117,9 +117,9 @@ const nonExcludingArray: A.Equals<
     M.Array<M.Primitive<boolean>>
   >,
   M.Union<
-    | M.Union<M.Const<[]>>
-    | M.Union<M.Const<[]> | M.Array<M.Primitive<string>>>
-    | M.Union<M.Const<[]> | M.Array<M.Primitive<number>>>
+    | M.Union<M.Never>
+    | M.Union<M.Never | M.Array<M.Primitive<string>>>
+    | M.Union<M.Never | M.Array<M.Primitive<number>>>
   >
 > = 1;
 nonExcludingArray;

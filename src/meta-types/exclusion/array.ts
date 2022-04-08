@@ -4,7 +4,7 @@ import { And, DoesExtend } from "../../utils";
 
 import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
-import { Const, ConstType } from "../const";
+import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
 import { _Array, ArrayType, ArrayValues } from "../array";
@@ -47,5 +47,5 @@ type ExcludeArrays<A extends ArrayType, B extends ArrayType> = _Exclude<
   ArrayValues<A>,
   ArrayValues<B>
 > extends NeverType
-  ? Const<[]>
+  ? NeverType
   : A;
