@@ -180,7 +180,7 @@ type OmittableKeys<C extends Record<string, CrossValueType>> = {
 type ExcludeConstFromObject<
   A extends ObjectType,
   B extends ConstType,
-  V extends any = ConstValue<B>
+  V = ConstValue<B>
 > = IsObject<V> extends true
   ? _$Exclude<
       A,

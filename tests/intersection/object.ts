@@ -10,6 +10,51 @@ const anyAlwaysIntersect: A.Equals<
 > = 1;
 anyAlwaysIntersect;
 
+const objectToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Object<{ date: M.Primitive<string> }, "date">,
+    M.Any<true, { date: Date }>
+  >,
+  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+> = 1;
+objectToSerializedAny;
+
+const serializedObjectToAny: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Any
+  >,
+  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+> = 1;
+serializedObjectToAny;
+
+const serializedObjectToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Any<true, { date: Date }>
+  >,
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    true,
+    { date: Date } & { date: Date }
+  >
+> = 1;
+serializedObjectToSerializedAny;
+
 // --- NEVER ---
 
 const neverNeverIntersect: A.Equals<
@@ -56,6 +101,45 @@ const nonIntersectingConst2: A.Equals<
 > = 1;
 nonIntersectingConst2;
 
+const objectToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Object<{ date: M.Primitive<string> }, "date", M.Never>,
+    M.Const<{ date: "2022-01-01" }, true, { date: Date }>
+  >,
+  M.Const<{ date: "2022-01-01" }, true, { date: Date }>
+> = 1;
+objectToSerializedConst;
+
+const serializedObjectToConst: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Const<{ date: "2022-01-01" }>
+  >,
+  M.Const<{ date: "2022-01-01" }, true, { date: Date }>
+> = 1;
+serializedObjectToConst;
+
+const serializedObjectToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Const<{ date: "2022-01-01" }, true, { date: Date }>
+  >,
+  M.Const<{ date: "2022-01-01" }, true, { date: Date } & { date: Date }>
+> = 1;
+serializedObjectToSerializedConst;
+
 // --- ENUM ---
 
 const intersectingEnum: A.Equals<
@@ -84,6 +168,57 @@ const nonIntersectingEnum2: A.Equals<
   M.Enum<never>
 > = 1;
 nonIntersectingEnum2;
+
+const objectToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Object<{ date: M.Primitive<string> }, "date", M.Never>,
+    M.Enum<
+      { date: "2022-01-01" } | { date: "2023-01-01" },
+      true,
+      { date: Date }
+    >
+  >,
+  M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }, true, { date: Date }>
+> = 1;
+objectToSerializedEnum;
+
+const serializedObjectToEnum: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }>
+  >,
+  M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }, true, { date: Date }>
+> = 1;
+serializedObjectToEnum;
+
+const serializedObjectToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Enum<
+      { date: "2022-01-01" } | { date: "2023-01-01" },
+      true,
+      { date: Date }
+    >
+  >,
+  M.Enum<
+    { date: "2022-01-01" } | { date: "2023-01-01" },
+    true,
+    { date: Date } & { date: Date }
+  >
+> = 1;
+serializedObjectToSerializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -209,6 +344,63 @@ const nonIntersectingUnion2: A.Equals<
   M.Union<M.Never>
 > = 1;
 nonIntersectingUnion2;
+
+const objectToSerializedObject: A.Equals<
+  M.Intersect<
+    M.Object<{ date: M.Primitive<string> }, "date">,
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >
+  >,
+  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+> = 1;
+objectToSerializedObject;
+
+const serializedObjectToObject: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Object<{ date: M.Primitive<string> }, "date">
+  >,
+  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+> = 1;
+serializedObjectToObject;
+
+const serializedObjectToSerializedObject: A.Equals<
+  M.Intersect<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: unknown }
+    >
+  >,
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    true,
+    { date: Date } & { date: unknown }
+  >
+> = 1;
+serializedObjectToSerializedObject;
 
 // --- INTERSECTION ---
 

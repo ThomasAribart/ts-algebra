@@ -9,6 +9,7 @@ import { ObjectType } from "../object";
 import { UnionType } from "../union";
 import { Type } from "../type";
 
+import { IntersectAny } from "./any";
 import { IntersectConst } from "./const";
 import { IntersectEnum } from "./enum";
 import { IntersectPrimitive } from "./primitive";
@@ -20,7 +21,7 @@ import { IntersectUnion } from "./union";
 export type Intersect<A extends Type, B extends Type> = $Intersect<A, B>;
 
 export type $Intersect<A, B> = A extends AnyType
-  ? B
+  ? IntersectAny<A, B>
   : A extends NeverType
   ? A
   : A extends ConstType

@@ -41,10 +41,7 @@ type FilterExcluded<A extends EnumType, B extends Type> = Enum<
   RecurseOnEnumValues<EnumValues<A>, B>
 >;
 
-type RecurseOnEnumValues<
-  V extends any,
-  B extends Type
-> = V extends infer EnumValue
+type RecurseOnEnumValues<V, B extends Type> = V extends infer EnumValue
   ? _Exclude<Const<EnumValue>, B> extends NeverType
     ? never
     : EnumValue
@@ -53,11 +50,10 @@ type RecurseOnEnumValues<
 export type ExcludeEnum<
   A extends Type,
   B extends EnumType,
-  V extends any = EnumValues<B>
+  V = EnumValues<B>
 > = ExcludeEnumValue<A, U.Last<V>, V>;
 
-type ExcludeEnumValue<
-  A extends Type,
-  L extends any,
-  V extends any
-> = $Intersect<_Exclude<A, Const<L>>, _Exclude<A, Enum<U.Exclude<V, L>>>>;
+type ExcludeEnumValue<A extends Type, L, V> = $Intersect<
+  _Exclude<A, Const<L>>,
+  _Exclude<A, Enum<U.Exclude<V, L>>>
+>;

@@ -9,15 +9,25 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType, ObjectRequiredKeys, ObjectValue } from "../object";
 import { UnionType } from "../union";
-import { Type } from "../type";
+import { SerializableType, Type } from "../type";
 import { Resolve } from "../resolve";
 
 import { Intersect } from "./index";
 import { DistributeIntersection } from "./union";
+import { IntersectIsSerialized, IntersectDeserialized } from "./utils";
+
+export type MergeConstToSerializable<
+  A extends ConstType,
+  B extends SerializableType
+> = Const<
+  ConstValue<A>,
+  IntersectIsSerialized<A, B>,
+  IntersectDeserialized<A, B>
+>;
 
 export type IntersectConst<A extends ConstType, B> = B extends Type
   ? B extends AnyType
-    ? A
+    ? MergeConstToSerializable<A, B>
     : B extends NeverType
     ? Never
     : B extends ConstType
@@ -39,8 +49,10 @@ export type IntersectConst<A extends ConstType, B> = B extends Type
 
 type CheckExtendsResolved<
   A extends ConstType,
-  B extends Type
-> = ConstValue<A> extends Resolve<B> ? A : Never;
+  B extends SerializableType
+> = ConstValue<A> extends Resolve<B, { deserialize: false }>
+  ? MergeConstToSerializable<A, B>
+  : Never;
 
 export type IntersectConstToEnum<
   A extends ConstType,
@@ -73,7 +85,7 @@ type IntersectObjectConstToObject<
   A extends ConstType,
   B extends ObjectType,
   V = IntersectConstValuesToObjectValues<ConstValue<A>, B>
-> = NeverKeys<V> extends never ? A : Never;
+> = NeverKeys<V> extends never ? MergeConstToSerializable<A, B> : Never;
 
 type IntersectConstValuesToObjectValues<V, B extends ObjectType> = {
   [key in Extract<keyof V | ObjectRequiredKeys<B>, string>]: key extends keyof V

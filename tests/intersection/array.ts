@@ -10,6 +10,27 @@ const anyAlwaysIntersects: A.Equals<
 > = 1;
 anyAlwaysIntersects;
 
+const arrayToSerializedAny: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>>, M.Any<true, Date[]>>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+arrayToSerializedAny;
+
+const serializedArrayToAny: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>, true, Date[]>, M.Any>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+serializedArrayToAny;
+
+const serializedArrayToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Any<true, unknown[]>
+  >,
+  M.Array<M.Primitive<string>, true, Date[] & unknown[]>
+> = 1;
+serializedArrayToSerializedAny;
+
 // --- NEVER ---
 
 const neverNeverIntersects: A.Equals<
@@ -74,6 +95,27 @@ const nonIntersectingArray: A.Equals<
 > = 1;
 nonIntersectingArray;
 
+const arrayToSerializedArray: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>>, M.Array<M.Any, true, Date[]>>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+arrayToSerializedArray;
+
+const serializedArrayToArray: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>, true, Date[]>, M.Array>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+serializedArrayToArray;
+
+const serializedArrayToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Array<M.Any, true, unknown[]>
+  >,
+  M.Array<M.Primitive<string>, true, Date[] & unknown[]>
+> = 1;
+serializedArrayToSerializedArray;
+
 // --- TUPLE ---
 
 const intersectingTuple1: A.Equals<
@@ -129,6 +171,33 @@ const nonIntersectingTuple: A.Equals<
   M.Never
 > = 1;
 nonIntersectingTuple;
+
+const arrayToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+arrayToSerializedTuple;
+
+const serializedArrayToTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Tuple<[M.Primitive<string>]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
+> = 1;
+serializedArrayToTuple;
+
+const serializedArrayToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[] & [Date]>
+> = 1;
+serializedArrayToSerializedTuple;
 
 // --- OBJECT ---
 
