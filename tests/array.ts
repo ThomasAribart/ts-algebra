@@ -78,3 +78,17 @@ const test10: A.Equals<
   "foo"[]
 > = 1;
 test10;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<M.Array<M.Primitive<string>, true, Date[]>>,
+  Date[]
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<M.Array<M.Primitive<string>, true, Date[]>, { deserialize: false }>,
+  string[]
+> = 1;
+serializedIgnored;

@@ -3,8 +3,8 @@ import { A } from "ts-toolbelt";
 import { If, DoesExtend } from "../utils";
 
 import { Never, NeverType } from "./never";
+import { $Resolve, ResolveOptions } from "./resolve";
 import { Type } from "./type";
-import { $Resolve } from "./resolve";
 
 export type UnionTypeId = "union";
 
@@ -26,6 +26,12 @@ export type UnionType = {
 
 export type UnionValues<U extends UnionType> = U["values"];
 
-export type ResolveUnion<U extends UnionType> = RecurseOnUnion<UnionValues<U>>;
+export type ResolveUnion<
+  U extends UnionType,
+  O extends ResolveOptions
+> = RecurseOnUnion<UnionValues<U>, O>;
 
-type RecurseOnUnion<V extends Type> = V extends infer T ? $Resolve<T> : never;
+type RecurseOnUnion<
+  V extends Type,
+  O extends ResolveOptions
+> = V extends infer T ? $Resolve<T, O> : never;

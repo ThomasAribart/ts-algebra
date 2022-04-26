@@ -114,3 +114,20 @@ const testIntersections: A.Equals<
   "foo" | 42
 > = 1;
 testIntersections;
+
+// --- SERIALIZED ---
+
+const testSerialized: A.Equals<
+  M.Resolve<M.Union<M.Primitive<string, true, Date> | M.Primitive<boolean>>>,
+  Date | boolean
+> = 1;
+testSerialized;
+
+const testSerializedIgnored: A.Equals<
+  M.Resolve<
+    M.Union<M.Primitive<string, true, Date> | M.Primitive<boolean>>,
+    { deserialize: false }
+  >,
+  string | boolean
+> = 1;
+testSerializedIgnored;

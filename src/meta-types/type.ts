@@ -18,3 +18,9 @@ export type Type =
   | TupleType
   | ObjectType
   | UnionType;
+
+export type SerializableType = Type extends infer U
+  ? U extends { isSerialized: boolean; deserialized: unknown }
+    ? U
+    : never
+  : never;

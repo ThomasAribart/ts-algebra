@@ -51,3 +51,34 @@ const test4: A.Equals<
   never
 > = 1;
 test4;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >
+  >,
+  { date: Date }
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >,
+    { deserialize: false }
+  >,
+  { date: string }
+> = 1;
+serializedIgnored;
