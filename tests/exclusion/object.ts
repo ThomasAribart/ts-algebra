@@ -44,6 +44,15 @@ const constSizeMatches2: A.Equals<
 > = 1;
 constSizeMatches2;
 
+const serializedConst: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B" | "C"> }, "a">,
+    M.Const<{ a: "C" }, true, { a: string }>
+  >,
+  M.Object<{ a: M.Enum<"A" | "B"> }, "a">
+> = 1;
+serializedConst;
+
 // --- ENUM ---
 
 const enumTooSmall: A.Equals<
@@ -72,6 +81,15 @@ const enumSizesMatch: A.Equals<
   M.Never
 > = 1;
 enumSizesMatch;
+
+const serializedEnum: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Const<"A"> }, "a">,
+    M.Enum<{ a: "B" }, true, { a: string }>
+  >,
+  M.Object<{ a: M.Const<"A"> }, "a">
+> = 1;
+serializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -307,6 +325,39 @@ const bothOpenKeyAdded: A.Equals<
   M.Object<{ a: M.Enum<"A" | "B">; b: M.Enum<"A"> }, "a", M.Enum<"A" | "B">>
 > = 1;
 bothOpenKeyAdded;
+
+const propagatedSerialization: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never, true, { a: string }>,
+    M.Object<{ a: M.Const<"B"> }, "a", M.Never>
+  >,
+  M.Object<{ a: M.Enum<"A"> }, "a", M.Never, true, { a: string }>
+> = 1;
+propagatedSerialization;
+
+const omittableKeySerialization: A.Equals<
+  M.Exclude<
+    M.Object<
+      { a: M.Const<"A">; b: M.Const<"B"> },
+      "a",
+      M.Never,
+      true,
+      { a: string }
+    >,
+    M.Object<{ a: M.Const<"A">; b: M.Const<"B"> }, "a" | "b">
+  >,
+  M.Object<{ a: M.Const<"A">; b: M.Never }, "a", M.Never, true, { a: string }>
+> = 1;
+omittableKeySerialization;
+
+const excludedSerializationIsNotUsed: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never>,
+    M.Object<{ a: M.Const<"B"> }, "a", M.Never, true, { a: string }>
+  >,
+  M.Object<{ a: M.Enum<"A"> }, "a", M.Never>
+> = 1;
+excludedSerializationIsNotUsed;
 
 // --- UNION ---
 

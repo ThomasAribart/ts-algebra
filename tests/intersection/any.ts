@@ -7,17 +7,17 @@ import { M } from "index";
 const anyToAny: A.Equals<M.Intersect<M.Any, M.Any>, M.Any> = 1;
 anyToAny;
 
-const serializedAnyToAny: A.Equals<
-  M.Intersect<M.Any<true, "yolo">, M.Any>,
-  M.Any<true, "yolo">
-> = 1;
-serializedAnyToAny;
-
 const anyToSerializedAny: A.Equals<
   M.Intersect<M.Any, M.Any<true, "yolo">>,
   M.Any<true, "yolo">
 > = 1;
 anyToSerializedAny;
+
+const serializedAnyToAny: A.Equals<
+  M.Intersect<M.Any<true, "yolo">, M.Any>,
+  M.Any<true, "yolo">
+> = 1;
+serializedAnyToAny;
 
 const serializedAnyToSerializedAny: A.Equals<
   M.Intersect<M.Any<true, "yolo" | "swag">, M.Any<true, "yolo">>,
@@ -38,17 +38,17 @@ const anyToConst: A.Equals<
 > = 1;
 anyToConst;
 
-const serializedAnyToConst: A.Equals<
-  M.Intersect<M.Any<true, Date>, M.Const<"2022-01-01">>,
-  M.Const<"2022-01-01", true, Date>
-> = 1;
-serializedAnyToConst;
-
 const anyToSerializedConst: A.Equals<
   M.Intersect<M.Any, M.Const<"2022-01-01", true, Date>>,
   M.Const<"2022-01-01", true, Date>
 > = 1;
 anyToSerializedConst;
+
+const serializedAnyToConst: A.Equals<
+  M.Intersect<M.Any<true, Date>, M.Const<"2022-01-01">>,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+serializedAnyToConst;
 
 const serializedAnyToSerializedConst: A.Equals<
   M.Intersect<M.Any<true, unknown>, M.Const<"2022-01-01", true, Date>>,
@@ -64,17 +64,17 @@ const anyToEnum: A.Equals<
 > = 1;
 anyToEnum;
 
-const serializedAnyToEnum: A.Equals<
-  M.Intersect<M.Any<true, Date>, M.Enum<"2022-01-01" | "2023-01-01">>,
-  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
-> = 1;
-serializedAnyToEnum;
-
 const anyToSerializedEnum: A.Equals<
   M.Intersect<M.Any, M.Enum<"2022-01-01" | "2023-01-01", true, Date>>,
   M.Enum<"2022-01-01" | "2023-01-01", true, Date>
 > = 1;
 anyToSerializedEnum;
+
+const serializedAnyToEnum: A.Equals<
+  M.Intersect<M.Any<true, Date>, M.Enum<"2022-01-01" | "2023-01-01">>,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedAnyToEnum;
 
 const serializedAnyToSerializedEnum: A.Equals<
   M.Intersect<

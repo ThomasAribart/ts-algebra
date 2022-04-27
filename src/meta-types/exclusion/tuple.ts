@@ -19,6 +19,7 @@ import {
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
 import { Type } from "../type";
+import { Deserialized, IsSerialized } from "../utils";
 
 import { _Exclude } from "./index";
 import { ExcludeEnum } from "./enum";
@@ -58,7 +59,7 @@ export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
 
 type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<
   A,
-  Tuple<[], ArrayValues<B>>
+  Tuple<[], ArrayValues<B>, IsSerialized<B>, Deserialized<B>>
 >;
 
 type ExcludeTuples<
@@ -78,7 +79,12 @@ type ExcludeTuples<
 > = DoesTupleSizesMatch<A, B, C> extends true
   ? {
       moreThanTwo: A;
-      onlyOne: $Tuple<PropagateExclusion<C>, TupleOpenProps<A>>;
+      onlyOne: $Tuple<
+        PropagateExclusion<C>,
+        TupleOpenProps<A>,
+        IsSerialized<A>,
+        Deserialized<A>
+      >;
       none: OmitOmittableItems<A, C>;
     }[And<IsTupleOpen<A>, I> extends true ? "moreThanTwo" : GetTupleLength<N>]
   : A;
@@ -185,7 +191,12 @@ type OmitOmittableItems<
   I extends CrossValueType[] = OmittableItems<C>
 > = {
   moreThanTwo: S;
-  onlyOne: $Tuple<RequiredTupleValues<C>>;
+  onlyOne: $Tuple<
+    RequiredTupleValues<C>,
+    Never,
+    IsSerialized<S>,
+    Deserialized<S>
+  >;
   none: Never;
 }[GetTupleLength<I>];
 
@@ -212,7 +223,12 @@ type ExcludeConst<
   A extends TupleType,
   B extends ConstType,
   V = ConstValue<B>
-> = V extends any[] ? _Exclude<A, $Tuple<ExtractConstValues<V>>> : A;
+> = V extends any[]
+  ? _Exclude<
+      A,
+      $Tuple<ExtractConstValues<V>, Never, IsSerialized<B>, Deserialized<B>>
+    >
+  : A;
 
 type ExtractConstValues<V extends any[], R extends any[] = []> = {
   stop: L.Reverse<R>;

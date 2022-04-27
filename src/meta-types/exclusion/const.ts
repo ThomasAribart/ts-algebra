@@ -46,7 +46,7 @@ export type ExcludeFromConst<A extends ConstType, B> = B extends Type
 type CheckNotExtendsResolved<
   A extends ConstType,
   B extends Type
-> = ConstValue<A> extends Resolve<B> ? Never : A;
+> = ConstValue<A> extends Resolve<B, { deserialize: false }> ? Never : A;
 
 type ExcludeObject<A extends ConstType, B extends ObjectType> = IsObject<
   ConstValue<A>

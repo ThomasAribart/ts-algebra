@@ -32,6 +32,12 @@ const nonExcludingConst: A.Equals<
 > = 1;
 nonExcludingConst;
 
+const serializedConst: A.Equals<
+  M.Exclude<M.Enum<"A" | "B">, M.Const<"C", true, string>>,
+  M.Enum<"A" | "B">
+> = 1;
+serializedConst;
+
 // --- ENUM ---
 
 const excludingEnum: A.Equals<
@@ -45,6 +51,12 @@ const nonExcludingEnum: A.Equals<
   M.Enum<"A" | "B">
 > = 1;
 nonExcludingEnum;
+
+const serializedEnum: A.Equals<
+  M.Exclude<M.Enum<"A" | "B">, M.Enum<"C" | "D", true, string>>,
+  M.Enum<"A" | "B">
+> = 1;
+serializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -60,6 +72,12 @@ const nonExcludingPrimitive: A.Equals<
 > = 1;
 nonExcludingPrimitive;
 
+const serializedPrimitive: A.Equals<
+  M.Exclude<M.Enum<"A" | "B">, M.Primitive<number, true, string>>,
+  M.Enum<"A" | "B">
+> = 1;
+serializedPrimitive;
+
 // --- ARRAY ---
 
 const excludingArray: A.Equals<
@@ -73,6 +91,15 @@ const nonExcludingArray: A.Equals<
   M.Enum<["A"] | ["B"] | 42>
 > = 1;
 nonExcludingArray;
+
+const serializedArray: A.Equals<
+  M.Exclude<
+    M.Enum<["A"] | ["B"] | 42>,
+    M.Array<M.Primitive<number>, true, string[]>
+  >,
+  M.Enum<["A"] | ["B"] | 42>
+> = 1;
+serializedArray;
 
 // --- TUPLE ---
 
@@ -93,6 +120,15 @@ const nonExcludingTuple: A.Equals<
   M.Enum<["A", "B"]>
 > = 1;
 nonExcludingTuple;
+
+const serializedTuple: A.Equals<
+  M.Exclude<
+    M.Enum<["A", "B"]>,
+    M.Tuple<[M.Primitive<number>], M.Any, true, string[]>
+  >,
+  M.Enum<["A", "B"]>
+> = 1;
+serializedTuple;
 
 // --- OBJECT ---
 
@@ -170,6 +206,15 @@ const nonExcludingOpenObject: A.Equals<
   M.Enum<{ a: "A" } | { a: "B" }>
 > = 1;
 nonExcludingOpenObject;
+
+const serializedObject: A.Equals<
+  M.Exclude<
+    M.Enum<{ a: "A" } | { a: "B" }>,
+    M.Object<{}, never, M.Const<"C">, true, { a: "A" }>
+  >,
+  M.Enum<{ a: "A" } | { a: "B" }>
+> = 1;
+serializedObject;
 
 // --- UNION ---
 

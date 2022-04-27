@@ -20,6 +20,7 @@ import {
 } from "../object";
 import { UnionType } from "../union";
 import { Type } from "../type";
+import { Deserialized, IsSerialized } from "../utils";
 
 import { _Exclude, _$Exclude } from "./index";
 import { ExcludeEnum } from "./enum";
@@ -44,7 +45,11 @@ export type ExcludeFromObject<A extends ObjectType, B> = B extends Type
     ? ExcludeConstFromObject<A, B>
     : B extends EnumType
     ? ExcludeEnum<A, B>
-    : B extends PrimitiveType | ArrayType | TupleType
+    : B extends PrimitiveType
+    ? A
+    : B extends ArrayType
+    ? A
+    : B extends TupleType
     ? A
     : B extends ObjectType
     ? ExcludeObjects<A, B>
@@ -148,7 +153,9 @@ type PropagateExclusion<
     [key in keyof C]: Propagate<C[key]>;
   },
   ObjectRequiredKeys<A>,
-  ObjectOpenProps<A>
+  ObjectOpenProps<A>,
+  IsSerialized<A>,
+  Deserialized<A>
 >;
 
 // OMITTABLE KEYS
@@ -164,7 +171,9 @@ type OmitOmittableKeys<
       [key in keyof C]: key extends K ? Never : SourceValue<C[key]>;
     },
     ObjectRequiredKeys<A>,
-    ObjectOpenProps<A>
+    ObjectOpenProps<A>,
+    IsSerialized<A>,
+    Deserialized<A>
   >;
   none: Never;
 }[GetUnionLength<K>];
@@ -187,7 +196,9 @@ type ExcludeConstFromObject<
       _Object<
         { [key in Extract<keyof V, string>]: Const<V[key]> },
         Extract<keyof V, string>,
-        Never
+        Never,
+        IsSerialized<B>,
+        Deserialized<B>
       >
     >
   : A;
