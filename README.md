@@ -635,7 +635,7 @@ type Intersected = M.Intersect<
 // ...but doesn't intersect Timestamp
 ```
 
-In representable intersections:
+In representable [intersections](#intersect):
 
 - If no meta-type is serialized, the resulting intersection is not serialized.
 - If only one meta-type (left or right) is serialized, the resulting intersection inherits from its deserialization properties.
@@ -658,7 +658,7 @@ type Resolved = M.Resolve<
 // => Date & { brand: "timestamp" }
 ```
 
-In representable exclusions:
+In representable [exclusions](#exclude):
 
 - If the origin meta-type is not serialized, the resulting exclusion is not serialized.
 - If the origin meta-type is serialized, the resulting exclusion inherits of its deserialization properties.
