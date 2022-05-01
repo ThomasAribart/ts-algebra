@@ -13,7 +13,7 @@ sleep 1
 
 echo ""
 echo -e "${WHITE}What's the version of the new release?${NEUTRAL} (e.g. 1.8.0)"
-read -p "" version;
+read -p "" version
 tag=$version
 
 echo ""
@@ -21,31 +21,34 @@ echo -e "${WHITE}Is it an official release?${NEUTRAL} (Yy/Nn)"
 
 while true; do
   read -p "" isOfficialReleaseInput
-    case $isOfficialReleaseInput in
-        [Yy]* )
-          isOfficialRelease=true
+  case $isOfficialReleaseInput in
+  [Yy]*)
+    isOfficialRelease=true
 
-          branchName="master"
+    branchName="master"
 
-          break;;
-        [Nn]* )
-          isOfficialRelease=false
+    break
+    ;;
+  [Nn]*)
+    isOfficialRelease=false
 
-          echo ""
-          echo -e "${WHITE}Index of the beta?${NEUTRAL} (e.g. 0, 1...)"
-          read -p "" betaIndex
+    echo ""
+    echo -e "${WHITE}Index of the beta?${NEUTRAL} (e.g. 0, 1...)"
+    read -p "" betaIndex
 
-          tag+="-beta.";
-          tag+=$betaIndex
+    tag+="-beta."
+    tag+=$betaIndex
 
-          echo ""
-          echo -e "${WHITE}What's the branch name?${NEUTRAL}"
-          read -p "" branchName;
+    echo ""
+    echo -e "${WHITE}What's the branch name?${NEUTRAL}"
+    read -p "" branchName
 
-          break;;
-        * )
-          echo "Please answer Y or y for yes, N or n for no";;
-    esac
+    break
+    ;;
+  *)
+    echo "Please answer Y or y for yes, N or n for no"
+    ;;
+  esac
 done
 
 echo ""
@@ -64,9 +67,9 @@ git stash
 
 echo ""
 echo -e "${GREY}git checkout ${branchName}${NEUTRAL}"
-git checkout $branchName;
+git checkout $branchName
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo ""
@@ -83,7 +86,7 @@ echo ""
 echo -e "${GREY}Checking types${NEUTRAL}"
 yarn tsc --noEmit
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo ""
@@ -104,14 +107,14 @@ echo -e ""
 echo -e "${GREY}rm -rf lib${NEUTRAL}"
 rm -rf lib
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo -e ""
 echo -e "${GREY}rm -rf builds${NEUTRAL}"
 rm -rf builds
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo ""
@@ -119,10 +122,10 @@ echo -e "${WHITE}Building lib from src...${NEUTRAL}"
 sleep 1
 
 echo -e ""
-echo -e "${GREY}tsc --emitDeclarationOnly --declaration --declarationDir lib ./src/*.ts${NEUTRAL}"
-yarn tsc --emitDeclarationOnly --declaration --declarationDir lib ./src/*.ts
+echo -e "${GREY}build${NEUTRAL}"
+yarn build
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo ""
@@ -133,9 +136,8 @@ echo -e ""
 echo -e "${GREY}yarn rollup -c${NEUTRAL}"
 yarn rollup -c
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
-
 
 echo ""
 echo -e "${SUCCESS}🎉  Project built successfully!${NEUTRAL}"
@@ -167,8 +169,8 @@ echo -e ""
 echo -e "${GREY}git tag -a ${gitTag} -m '${gitTag} release'${NEUTRAL}"
 git tag -a ${gitTag} -m "${gitTag} release"
 if [ $? = 1 ]; then
-  git reset HEAD^ --hard;
-  exit 1;
+  git reset HEAD^ --hard
+  exit 1
 fi
 
 echo ""
@@ -184,16 +186,16 @@ echo -e "${GREY}npm publish${NEUTRAL}"
 if $isOfficialRelease; then
   npm publish
   if [ $? = 1 ]; then
-    git tag -d ${gitTag};
-    git reset HEAD^ --hard;
-    exit 1;
+    git tag -d ${gitTag}
+    git reset HEAD^ --hard
+    exit 1
   fi
-  else
-  npm publish --tag beta;
+else
+  npm publish --tag beta
   if [ $? = 1 ]; then
-    git tag -d ${gitTag};
-    git reset HEAD^ --hard;
-    exit 1;
+    git tag -d ${gitTag}
+    git reset HEAD^ --hard
+    exit 1
   fi
 fi
 
@@ -205,14 +207,14 @@ echo -e ""
 echo -e "${GREY}git push${NEUTRAL}"
 git push
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo -e ""
 echo -e "${GREY}git push --tag${NEUTRAL}"
 git push --tag
 if [ $? = 1 ]; then
-  exit 1;
+  exit 1
 fi
 
 echo ""
