@@ -206,28 +206,28 @@ const bothClosedImpossible2: A.Equals<
 > = 1;
 bothClosedImpossible2;
 
-// Closed value open excluded
-const closedValueOpenExcluded1: A.Equals<
+// Closed origin open substracted
+const closedOriginOpenSubstracted1: A.Equals<
   M.Exclude<
     M.Tuple<[M.Enum<"A" | "B">, M.Const<"B">]>,
     M.Tuple<[], M.Const<"B">>
   >,
   M.Tuple<[M.Enum<"A">, M.Const<"B">]>
 > = 1;
-closedValueOpenExcluded1;
+closedOriginOpenSubstracted1;
 
-const closedValueOpenExcluded2: A.Equals<
+const closedOriginOpenSubstracted2: A.Equals<
   M.Exclude<M.Tuple<[M.Const<"A">]>, M.Tuple<[], M.Const<"C">>>,
   M.Tuple<[M.Const<"A">]>
 > = 1;
-closedValueOpenExcluded2;
+closedOriginOpenSubstracted2;
 
-// Open value closed excluded
-const openValueClosedExcluded: A.Equals<
+// Open origin closed substracted
+const openOriginClosedSubstracted: A.Equals<
   M.Exclude<M.Tuple<[M.Const<"A">], M.Any>, M.Tuple<[M.Const<"A">]>>,
   M.Tuple<[M.Const<"A">], M.Any>
 > = 1;
-openValueClosedExcluded;
+openOriginClosedSubstracted;
 
 // Both open
 const bothOpenMatch1: A.Equals<
@@ -284,14 +284,14 @@ const omittableItemSerialization: A.Equals<
 > = 1;
 omittableItemSerialization;
 
-const excludedSerializationIsNotUsed: A.Equals<
+const substractedSerializationIsNotUsed: A.Equals<
   M.Exclude<
     M.Tuple<[M.Enum<"A" | "B">]>,
     M.Tuple<[M.Const<"B">], M.Never, true, string[]>
   >,
   M.Tuple<[M.Enum<"A">]>
 > = 1;
-excludedSerializationIsNotUsed;
+substractedSerializationIsNotUsed;
 
 // --- OBJECT ---
 

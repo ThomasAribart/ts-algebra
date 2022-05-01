@@ -27,12 +27,12 @@ import { ExcludeUnion } from "./union";
 import {
   CrossValue,
   CrossValueType,
-  SourceValue,
-  IsOutsideOfSourceScope,
-  IsOutsideOfExcludedScope,
+  OriginValue,
+  IsOutsideOfOriginScope,
+  IsOutsideOfSubstractedScope,
   Propagate,
   IsOmittable,
-  ExclusionValue,
+  ExclusionResult,
 } from "./utils";
 
 export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
@@ -150,20 +150,20 @@ type DoesTupleSizesMatch<
   C extends CrossValueType[]
 > = And<IsTupleOpen<S>, Not<IsTupleOpen<E>>> extends true
   ? false
-  : And<IsExcludedSmallEnough<C>, IsExcludedBigEnough<C>>;
+  : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
 
-type IsExcludedSmallEnough<C extends CrossValueType[]> = {
+type IsSubstractedSmallEnough<C extends CrossValueType[]> = {
   stop: true;
-  continue: IsOutsideOfSourceScope<L.Head<C>> extends true
+  continue: IsOutsideOfOriginScope<L.Head<C>> extends true
     ? false
-    : IsExcludedSmallEnough<L.Tail<C>>;
+    : IsSubstractedSmallEnough<L.Tail<C>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
-type IsExcludedBigEnough<C extends CrossValueType[]> = {
+type IsSubstractedBigEnough<C extends CrossValueType[]> = {
   stop: true;
-  continue: IsOutsideOfExcludedScope<L.Head<C>> extends true
+  continue: IsOutsideOfSubstractedScope<L.Head<C>> extends true
     ? false
-    : IsExcludedBigEnough<L.Tail<C>>;
+    : IsSubstractedBigEnough<L.Tail<C>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
 // PROPAGATION
@@ -173,7 +173,7 @@ type NonNeverItems<
   R extends CrossValueType[] = []
 > = {
   stop: R;
-  continue: ExclusionValue<L.Head<C>> extends NeverType
+  continue: ExclusionResult<L.Head<C>> extends NeverType
     ? NonNeverItems<L.Tail<C>, R>
     : NonNeverItems<L.Tail<C>, L.Prepend<R, L.Head<C>>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
@@ -214,7 +214,7 @@ type RequiredTupleValues<C extends CrossValueType[], R extends Type[] = []> = {
   stop: L.Reverse<R>;
   continue: IsOmittable<L.Head<C>> extends true
     ? L.Reverse<R>
-    : RequiredTupleValues<L.Tail<C>, L.Prepend<R, SourceValue<L.Head<C>>>>;
+    : RequiredTupleValues<L.Tail<C>, L.Prepend<R, OriginValue<L.Head<C>>>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
 // CONST

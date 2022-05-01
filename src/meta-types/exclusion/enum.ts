@@ -21,23 +21,23 @@ export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
     : B extends NeverType
     ? A
     : B extends ConstType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends EnumType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends PrimitiveType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends ArrayType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends TupleType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends ObjectType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends UnionType
     ? ExcludeUnion<A, B>
     : Never
   : Never;
 
-type FilterExcluded<A extends EnumType, B extends Type> = Enum<
+type FilterSubstracted<A extends EnumType, B extends Type> = Enum<
   RecurseOnEnumValues<EnumValues<A>, B>
 >;
 

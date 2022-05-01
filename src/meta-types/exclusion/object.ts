@@ -27,10 +27,10 @@ import { ExcludeEnum } from "./enum";
 import { ExcludeUnion } from "./union";
 import {
   CrossValue,
-  SourceValue,
-  ExclusionValue,
-  IsOutsideOfSourceScope,
-  IsOutsideOfExcludedScope,
+  OriginValue,
+  ExclusionResult,
+  IsOutsideOfOriginScope,
+  IsOutsideOfSubstractedScope,
   Propagate,
   IsOmittable,
   CrossValueType,
@@ -117,22 +117,22 @@ type DoesObjectSizesMatch<
   C extends Record<string, CrossValueType>
 > = And<IsObjectOpen<A>, Not<IsObjectOpen<B>>> extends true
   ? false
-  : And<IsExcludedSmallEnough<C>, IsExcludedBigEnough<C>>;
+  : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
 
-type IsExcludedSmallEnough<C extends Record<string, CrossValueType>> = Not<
+type IsSubstractedSmallEnough<C extends Record<string, CrossValueType>> = Not<
   DoesExtend<
     true,
     {
-      [key in keyof C]: IsOutsideOfSourceScope<C[key]>;
+      [key in keyof C]: IsOutsideOfOriginScope<C[key]>;
     }[keyof C]
   >
 >;
 
-type IsExcludedBigEnough<C extends Record<string, CrossValueType>> = Not<
+type IsSubstractedBigEnough<C extends Record<string, CrossValueType>> = Not<
   DoesExtend<
     true,
     {
-      [key in keyof C]: IsOutsideOfExcludedScope<C[key]>;
+      [key in keyof C]: IsOutsideOfSubstractedScope<C[key]>;
     }[keyof C]
   >
 >;
@@ -140,7 +140,7 @@ type IsExcludedBigEnough<C extends Record<string, CrossValueType>> = Not<
 // PROPAGATION
 
 type NonNeverKeys<C extends Record<string, CrossValueType>> = {
-  [key in Extract<keyof C, string>]: ExclusionValue<C[key]> extends NeverType
+  [key in Extract<keyof C, string>]: ExclusionResult<C[key]> extends NeverType
     ? never
     : key;
 }[Extract<keyof C, string>];
@@ -168,7 +168,7 @@ type OmitOmittableKeys<
   moreThanTwo: A;
   onlyOne: _Object<
     {
-      [key in keyof C]: key extends K ? Never : SourceValue<C[key]>;
+      [key in keyof C]: key extends K ? Never : OriginValue<C[key]>;
     },
     ObjectRequiredKeys<A>,
     ObjectOpenProps<A>,

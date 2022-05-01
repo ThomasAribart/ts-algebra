@@ -440,8 +440,8 @@ Takes two meta-types as arguments, and returns their exclusion as a meta-type.
 
 **Arguments:**
 
-- <code>SourceMetaType <i>(meta-type)</i></code>
-- <code>ExcludedMetaType <i>(meta-type)</i></code>
+- <code>OriginMetaType <i>(meta-type)</i></code>
+- <code>SubstractedMetaType <i>(meta-type)</i></code>
 
 <!-- prettier-ignore -->
 ```typescript
