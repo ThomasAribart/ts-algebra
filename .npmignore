@@ -1,11 +1,12 @@
 .github
 .vscode
+assets
 node_modules
 src
-tests
 scripts
 builds
 .gitignore
-babel.config.js
 tsconfig.json
+tsconfig.build.json
+rollup.config.js
 yarn.lock
