@@ -30,3 +30,17 @@ test5;
 
 const test6: A.Equals<M.Resolve<M.Const<{ foo: "bar" }>>, { foo: "bar" }> = 1;
 test6;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<M.Const<"2022-01-01", true, Date>>,
+  Date
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<M.Const<"2022-01-01", true, Date>, { deserialize: false }>,
+  "2022-01-01"
+> = 1;
+serializedIgnored;

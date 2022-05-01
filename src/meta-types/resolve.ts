@@ -9,24 +9,38 @@ import { ObjectType, ResolveObject } from "./object";
 import { UnionType, ResolveUnion } from "./union";
 import { Type } from "./type";
 
-export type Resolve<T extends Type> = $Resolve<T>;
+export type ResolveOptions = {
+  deserialize: boolean;
+};
 
-export type $Resolve<T> = T extends AnyType
-  ? ResolveAny
+export type ResolveDefaultOptions = {
+  deserialize: true;
+};
+
+export type Resolve<
+  T extends Type,
+  O extends ResolveOptions = ResolveDefaultOptions
+> = $Resolve<T, O>;
+
+export type $Resolve<
+  T,
+  O extends ResolveOptions = ResolveDefaultOptions
+> = T extends AnyType
+  ? ResolveAny<T, O>
   : T extends NeverType
   ? ResolveNever
   : T extends ConstType
-  ? ResolveConst<T>
+  ? ResolveConst<T, O>
   : T extends EnumType
-  ? ResolveEnum<T>
+  ? ResolveEnum<T, O>
   : T extends PrimitiveType
-  ? ResolvePrimitive<T>
+  ? ResolvePrimitive<T, O>
   : T extends ArrayType
-  ? ResolveArray<T>
+  ? ResolveArray<T, O>
   : T extends TupleType
-  ? ResolveTuple<T>
+  ? ResolveTuple<T, O>
   : T extends ObjectType
-  ? ResolveObject<T>
+  ? ResolveObject<T, O>
   : T extends UnionType
-  ? ResolveUnion<T>
+  ? ResolveUnion<T, O>
   : never;

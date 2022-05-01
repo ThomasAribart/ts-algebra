@@ -2,14 +2,6 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anysAlwaysExclude: A.Equals<
-  M.Exclude<M.Intersect<M.Enum<"A" | "B">, M.Const<"A">>, M.Any>,
-  M.Never
-> = 1;
-anysAlwaysExclude;
-
 // --- NEVER ---
 
 const neversNeverExclude: A.Equals<
@@ -17,6 +9,14 @@ const neversNeverExclude: A.Equals<
   M.Const<"A">
 > = 1;
 neversNeverExclude;
+
+// --- ANY ---
+
+const anysAlwaysExclude: A.Equals<
+  M.Exclude<M.Intersect<M.Enum<"A" | "B">, M.Const<"A">>, M.Any>,
+  M.Never
+> = 1;
+anysAlwaysExclude;
 
 // --- CONSTS ---
 
@@ -98,9 +98,7 @@ const excludingArray: A.Equals<
     >,
     M.Array<M.Primitive<number>>
   >,
-  M.Union<
-    M.Union<M.Array<M.Primitive<string>> | M.Never> | M.Union<M.Never>
-  >
+  M.Union<M.Union<M.Array<M.Primitive<string>> | M.Never> | M.Union<M.Never>>
 > = 1;
 excludingArray;
 

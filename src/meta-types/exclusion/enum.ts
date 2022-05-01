@@ -1,7 +1,7 @@
 import { U } from "ts-toolbelt";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType } from "../const";
 import { Enum, EnumType, EnumValues } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -16,35 +16,32 @@ import { _Exclude } from "./index";
 import { ExcludeUnion } from "./union";
 
 export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends EnumType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends PrimitiveType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends ArrayType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends TupleType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends ObjectType
-    ? FilterExcluded<A, B>
+    ? FilterSubstracted<A, B>
     : B extends UnionType
     ? ExcludeUnion<A, B>
     : Never
   : Never;
 
-type FilterExcluded<A extends EnumType, B extends Type> = Enum<
+type FilterSubstracted<A extends EnumType, B extends Type> = Enum<
   RecurseOnEnumValues<EnumValues<A>, B>
 >;
 
-type RecurseOnEnumValues<
-  V extends any,
-  B extends Type
-> = V extends infer EnumValue
+type RecurseOnEnumValues<V, B extends Type> = V extends infer EnumValue
   ? _Exclude<Const<EnumValue>, B> extends NeverType
     ? never
     : EnumValue
@@ -53,11 +50,10 @@ type RecurseOnEnumValues<
 export type ExcludeEnum<
   A extends Type,
   B extends EnumType,
-  V extends any = EnumValues<B>
+  V = EnumValues<B>
 > = ExcludeEnumValue<A, U.Last<V>, V>;
 
-type ExcludeEnumValue<
-  A extends Type,
-  L extends any,
-  V extends any
-> = $Intersect<_Exclude<A, Const<L>>, _Exclude<A, Enum<U.Exclude<V, L>>>>;
+type ExcludeEnumValue<A extends Type, L, V> = $Intersect<
+  _Exclude<A, Const<L>>,
+  _Exclude<A, Enum<U.Exclude<V, L>>>
+>;

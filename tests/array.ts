@@ -7,15 +7,15 @@ import { M } from "index";
 const neverValue: A.Equals<M.Array<M.Never>, M.Array<M.Never>> = 1;
 neverValue;
 
-// --- ANY ---
-
-const test1: A.Equals<M.Resolve<M.Array<M.Any>>, unknown[]> = 1;
-test1;
-
 //  --- NEVER ---
 
 const test2: A.Equals<M.Resolve<M.Array<M.Never>>, []> = 1;
 test2;
+
+// --- ANY ---
+
+const test1: A.Equals<M.Resolve<M.Array<M.Any>>, unknown[]> = 1;
+test1;
 
 // --- CONST ---
 
@@ -78,3 +78,17 @@ const test10: A.Equals<
   "foo"[]
 > = 1;
 test10;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<M.Array<M.Primitive<string>, true, Date[]>>,
+  Date[]
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<M.Array<M.Primitive<string>, true, Date[]>, { deserialize: false }>,
+  string[]
+> = 1;
+serializedIgnored;

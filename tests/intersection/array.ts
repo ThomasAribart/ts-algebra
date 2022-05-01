@@ -2,6 +2,14 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const neverNeverIntersects: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>>, M.Never>,
+  M.Never
+> = 1;
+neverNeverIntersects;
+
 // --- ANY ---
 
 const anyAlwaysIntersects: A.Equals<
@@ -10,13 +18,26 @@ const anyAlwaysIntersects: A.Equals<
 > = 1;
 anyAlwaysIntersects;
 
-// --- NEVER ---
-
-const neverNeverIntersects: A.Equals<
-  M.Intersect<M.Array<M.Primitive<string>>, M.Never>,
-  M.Never
+const arrayToSerializedAny: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>>, M.Any<true, Date[]>>,
+  M.Array<M.Primitive<string>, true, Date[]>
 > = 1;
-neverNeverIntersects;
+arrayToSerializedAny;
+
+const serializedArrayToAny: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>, true, Date[]>, M.Any>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+serializedArrayToAny;
+
+const serializedArrayToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Any<true, unknown[]>
+  >,
+  M.Array<M.Primitive<string>, true, Date[] & unknown[]>
+> = 1;
+serializedArrayToSerializedAny;
 
 // --- CONSTS ---
 
@@ -74,6 +95,27 @@ const nonIntersectingArray: A.Equals<
 > = 1;
 nonIntersectingArray;
 
+const arrayToSerializedArray: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>>, M.Array<M.Any, true, Date[]>>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+arrayToSerializedArray;
+
+const serializedArrayToArray: A.Equals<
+  M.Intersect<M.Array<M.Primitive<string>, true, Date[]>, M.Array>,
+  M.Array<M.Primitive<string>, true, Date[]>
+> = 1;
+serializedArrayToArray;
+
+const serializedArrayToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Array<M.Any, true, unknown[]>
+  >,
+  M.Array<M.Primitive<string>, true, Date[] & unknown[]>
+> = 1;
+serializedArrayToSerializedArray;
+
 // --- TUPLE ---
 
 const intersectingTuple1: A.Equals<
@@ -130,6 +172,33 @@ const nonIntersectingTuple: A.Equals<
 > = 1;
 nonIntersectingTuple;
 
+const arrayToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+arrayToSerializedTuple;
+
+const serializedArrayToTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Tuple<[M.Primitive<string>]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
+> = 1;
+serializedArrayToTuple;
+
+const serializedArrayToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Array<M.Primitive<string>, true, Date[]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[] & [Date]>
+> = 1;
+serializedArrayToSerializedTuple;
+
 // --- OBJECT ---
 
 const objectsNeverIntersect: A.Equals<
@@ -143,23 +212,23 @@ objectsNeverIntersect;
 
 // --- UNION ---
 
-const numberIsExcluded1: A.Equals<
+const numberIsSubstracted1: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
     M.Union<M.Array<M.Primitive<string>> | M.Array<M.Primitive<number>>>
   >,
   M.Union<M.Array<M.Primitive<string>> | M.Array<M.Never>>
 > = 1;
-numberIsExcluded1;
+numberIsSubstracted1;
 
-const numberIsExcluded2: A.Equals<
+const numberIsSubstracted2: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
     M.Union<M.Const<["foo"]> | M.Array<M.Primitive<number>>>
   >,
   M.Union<M.Const<["foo"]> | M.Array<M.Never>>
 > = 1;
-numberIsExcluded2;
+numberIsSubstracted2;
 
 const tupleIsKept: A.Equals<
   M.Intersect<

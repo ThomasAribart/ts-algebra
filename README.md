@@ -59,8 +59,8 @@ Think of meta-types as a parallel universe where all kinds of magic can happen �
 - [Installation](#%EF%B8%8F-installation)
 - [Cardinality](#-cardinality)
 - [Meta-types](#-meta-types)
-  - [Any](#any)
   - [Never](#never)
+  - [Any](#any)
   - [Const](#const)
   - [Enum](#enum)
   - [Primitive](#primitive)
@@ -110,18 +110,6 @@ There are drawbacks to this choice (the said property is hard to find and debug)
 
 ## ✨ Meta-types
 
-### Any
-
-<!-- prettier-ignore -->
-```typescript
-import { M } from "ts-algebra";
-
-type Resolved = M.Resolve<
-  M.Any
->;
-// => unknown
-```
-
 ### Never
 
 <!-- prettier-ignore -->
@@ -134,6 +122,23 @@ type Resolved = M.Resolve<
 // => never
 ```
 
+### Any
+
+**Arguments:**
+
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+
+<!-- prettier-ignore -->
+```typescript
+import { M } from "ts-algebra";
+
+type Resolved = M.Resolve<
+  M.Any
+>;
+// => unknown
+```
+
 ### Const
 
 Used for types with [cardinalities](#meta-types) of 1.
@@ -141,6 +146,8 @@ Used for types with [cardinalities](#meta-types) of 1.
 **Arguments:**
 
 - <code>Value <i>(type)</i></code>
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -159,6 +166,8 @@ Used for types with finite [cardinalities](#meta-types).
 **Arguments:**
 
 - <code>Values <i>(type union)</i></code>
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -179,6 +188,8 @@ Used for either `string`, `number`, `boolean` or `null`.
 **Arguments:**
 
 - <code>Value <i>(string | number | boolean | null)</i></code>
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -197,6 +208,8 @@ Used for lists of items of the same type.
 **Arguments:**
 
 - <code>Items <i>(?meta-type = M.Any)</i></code>
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -225,6 +238,8 @@ Meta-tuples can have **additional items**, typed as [`M.Never`](#never) by defau
 
 - <code>RequiredItems <i>(meta-type[])</i>:</code>
 - <code>AdditionalItems <i>(?meta-type = M.Never)</i>:</code> Type of additional items
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -259,6 +274,8 @@ In presence of named properties, open meta-objects additional properties are res
 - <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
 - <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
 - <code>AdditionalProperties <i>(?meta-type = M.Never)</i>:</code> The type of additional properties
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
 
 ```typescript
 import { M } from "ts-algebra";
@@ -310,6 +327,8 @@ type Food = M.Resolve<
 ```
 
 > ☝️ A meta-union is [non-representable](#✨-meta-types) if it is empty, or if none of its elements is representable
+
+> ☝️ Along with [M.Never](#never), M.Union is the only meta-type that doesn't support [serialization](#📦-deserialization)
 
 ## 🔧 Methods
 
@@ -440,8 +459,8 @@ Takes two meta-types as arguments, and returns their exclusion as a meta-type.
 
 **Arguments:**
 
-- <code>SourceMetaType <i>(meta-type)</i></code>
-- <code>ExcludedMetaType <i>(meta-type)</i></code>
+- <code>OriginMetaType <i>(meta-type)</i></code>
+- <code>SubstractedMetaType <i>(meta-type)</i></code>
 
 <!-- prettier-ignore -->
 ```typescript
@@ -584,6 +603,64 @@ type Excluded = M.Exclude<
 >;
 // => M.Enum<"pizza">
 ```
+
+## 📦 Deserialization
+
+All meta-types except [`M.Never`](#never) and [`M.Union`](#union) can carry an extra type for [deserialization](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html) purposes. This extra-type will be passed along in operations and override the resolved type.
+
+For instance, it is common to deserialize timestamps as `Date` objects. The last two arguments of [`M.Primitive`](#primitive) can be used to implement this:
+
+<!-- prettier-ignore -->
+```typescript
+type MetaTimestamp = M.Primitive<
+  string,
+  true, // <= enables deserialization (false by default)
+  Date // <= overrides resolved type
+>;
+
+type Resolved = M.Resolve<MetaTimestamp>;
+// => Date
+```
+
+Note that `MetaTimestamp` will still be considered as a string meta-type until it is resolved: Deserialization only take effect **at resolution time**.
+
+<!-- prettier-ignore -->
+```typescript
+type Intersected = M.Intersect<
+  MetaTimestamp,
+  M.Object<{}, never, M.Any> // <= Date is an object...
+>;
+// => M.Never
+// ...but doesn't intersect Timestamp
+```
+
+In representable intersections:
+
+- If no meta-type is serialized, the resulting intersection is not serialized.
+- If only one meta-type (left or right) is serialized, the resulting intersection inherits from its deserialization properties.
+- If both left and right meta-types are serialized, the resulting intersection inherits from both deserialization properties, through a conventional intersection (`A & B`).
+
+<!-- prettier-ignore -->
+```typescript
+type MetaBrandedString = M.Primitive<
+  string,
+  true,
+  { brand: "timestamp" }
+>;
+
+type Resolved = M.Resolve<
+  M.Intersect<
+    MetaTimestamp,
+    MetaBrandedString
+  >
+>
+// => Date & { brand: "timestamp" }
+```
+
+In representable exclusions:
+
+- If the origin meta-type is not serialized, the resulting exclusion is not serialized.
+- If the origin meta-type is serialized, the resulting exclusion inherits of its deserialization properties.
 
 ## 🚧 Type constraints
 

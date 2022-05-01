@@ -1,25 +1,38 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
-import { _$Array, ArrayType, ArrayValues } from "../array";
+import { _Array, _$Array, ArrayType, ArrayValues } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Type } from "../type";
+import { Type, SerializableType } from "../type";
 
 import { Intersect } from "./index";
 import { IntersectConstToArray } from "./const";
 import { IntersectEnumToArray } from "./enum";
 import { IntersectTupleToArray } from "./tuple";
 import { DistributeIntersection } from "./union";
+import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+
+export type MergeArrayValuesToSerializable<
+  V extends Type,
+  A extends ArrayType,
+  B extends SerializableType
+> = $MergeArrayValuesToSerializable<V, A, B>;
+
+type $MergeArrayValuesToSerializable<
+  V,
+  A extends ArrayType,
+  B extends SerializableType
+> = _$Array<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectArray<A extends ArrayType, B> = B extends Type
-  ? B extends AnyType
-    ? A
-    : B extends NeverType
-    ? Never
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
+    ? MergeArrayValuesToSerializable<ArrayValues<A>, A, B>
     : B extends ConstType
     ? IntersectConstToArray<B, A>
     : B extends EnumType
@@ -37,6 +50,11 @@ export type IntersectArray<A extends ArrayType, B> = B extends Type
     : Never
   : Never;
 
-type IntersectArrays<A extends ArrayType, B extends ArrayType> = _$Array<
-  Intersect<ArrayValues<A>, ArrayValues<B>>
+type IntersectArrays<
+  A extends ArrayType,
+  B extends ArrayType
+> = $MergeArrayValuesToSerializable<
+  Intersect<ArrayValues<A>, ArrayValues<B>>,
+  A,
+  B
 >;

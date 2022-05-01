@@ -10,14 +10,6 @@ noItems;
 const neverItems: A.Equals<M.Union<M.Never>, M.Never> = 1;
 neverItems;
 
-// --- ANY ---
-
-const testAny: A.Equals<
-  M.Resolve<M.Union<M.Any | M.Primitive<string>>>,
-  unknown
-> = 1;
-testAny;
-
 // --- NEVER ---
 
 const testNeverNonEmpty: A.Equals<
@@ -28,6 +20,14 @@ testNeverNonEmpty;
 
 const testNeverEmpty: A.Equals<M.Resolve<M.Union<never>>, never> = 1;
 testNeverEmpty;
+
+// --- ANY ---
+
+const testAny: A.Equals<
+  M.Resolve<M.Union<M.Any | M.Primitive<string>>>,
+  unknown
+> = 1;
+testAny;
 
 // --- CONSTS ---
 
@@ -114,3 +114,20 @@ const testIntersections: A.Equals<
   "foo" | 42
 > = 1;
 testIntersections;
+
+// --- SERIALIZED ---
+
+const testSerialized: A.Equals<
+  M.Resolve<M.Union<M.Primitive<string, true, Date> | M.Primitive<boolean>>>,
+  Date | boolean
+> = 1;
+testSerialized;
+
+const testSerializedIgnored: A.Equals<
+  M.Resolve<
+    M.Union<M.Primitive<string, true, Date> | M.Primitive<boolean>>,
+    { deserialize: false }
+  >,
+  string | boolean
+> = 1;
+testSerializedIgnored;

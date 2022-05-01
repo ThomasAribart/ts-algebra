@@ -26,3 +26,20 @@ test3;
 
 const test4: A.Equals<M.Resolve<M.Enum<{ foo: "bar" }>>, { foo: "bar" }> = 1;
 test4;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<M.Enum<"2022-01-01" | "2022-02-01", true, Date>>,
+  Date
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<
+    M.Enum<"2022-01-01" | "2022-02-01", true, Date>,
+    { deserialize: false }
+  >,
+  "2022-01-01" | "2022-02-01"
+> = 1;
+serializedIgnored;

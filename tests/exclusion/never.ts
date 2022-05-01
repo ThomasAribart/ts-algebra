@@ -2,15 +2,15 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anNeverExclude: A.Equals<M.Exclude<M.Never, M.Any>, M.Never> = 1;
-anNeverExclude;
-
 // --- NEVER ---
 
 const neveNeverExclude: A.Equals<M.Exclude<M.Never, M.Never>, M.Never> = 1;
 neveNeverExclude;
+
+// --- ANY ---
+
+const anNeverExclude: A.Equals<M.Exclude<M.Never, M.Any>, M.Never> = 1;
+anNeverExclude;
 
 // --- CONSTS ---
 

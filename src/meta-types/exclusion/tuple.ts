@@ -2,8 +2,8 @@ import { A, L } from "ts-toolbelt";
 
 import { And, DoesExtend, Not, If } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType, ConstValue } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -19,6 +19,7 @@ import {
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
 import { Type } from "../type";
+import { Deserialized, IsSerialized } from "../utils";
 
 import { _Exclude } from "./index";
 import { ExcludeEnum } from "./enum";
@@ -26,19 +27,19 @@ import { ExcludeUnion } from "./union";
 import {
   CrossValue,
   CrossValueType,
-  SourceValue,
-  IsOutsideOfSourceScope,
-  IsOutsideOfExcludedScope,
+  OriginValue,
+  IsOutsideOfOriginScope,
+  IsOutsideOfSubstractedScope,
   Propagate,
   IsOmittable,
-  ExclusionValue,
+  ExclusionResult,
 } from "./utils";
 
 export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? ExcludeConst<A, B>
     : B extends EnumType
@@ -58,7 +59,7 @@ export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
 
 type ExcludeArray<A extends TupleType, B extends ArrayType> = ExcludeTuples<
   A,
-  Tuple<[], ArrayValues<B>>
+  Tuple<[], ArrayValues<B>, IsSerialized<B>, Deserialized<B>>
 >;
 
 type ExcludeTuples<
@@ -78,7 +79,12 @@ type ExcludeTuples<
 > = DoesTupleSizesMatch<A, B, C> extends true
   ? {
       moreThanTwo: A;
-      onlyOne: $Tuple<PropagateExclusion<C>, TupleOpenProps<A>>;
+      onlyOne: $Tuple<
+        PropagateExclusion<C>,
+        TupleOpenProps<A>,
+        IsSerialized<A>,
+        Deserialized<A>
+      >;
       none: OmitOmittableItems<A, C>;
     }[And<IsTupleOpen<A>, I> extends true ? "moreThanTwo" : GetTupleLength<N>]
   : A;
@@ -144,20 +150,20 @@ type DoesTupleSizesMatch<
   C extends CrossValueType[]
 > = And<IsTupleOpen<S>, Not<IsTupleOpen<E>>> extends true
   ? false
-  : And<IsExcludedSmallEnough<C>, IsExcludedBigEnough<C>>;
+  : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
 
-type IsExcludedSmallEnough<C extends CrossValueType[]> = {
+type IsSubstractedSmallEnough<C extends CrossValueType[]> = {
   stop: true;
-  continue: IsOutsideOfSourceScope<L.Head<C>> extends true
+  continue: IsOutsideOfOriginScope<L.Head<C>> extends true
     ? false
-    : IsExcludedSmallEnough<L.Tail<C>>;
+    : IsSubstractedSmallEnough<L.Tail<C>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
-type IsExcludedBigEnough<C extends CrossValueType[]> = {
+type IsSubstractedBigEnough<C extends CrossValueType[]> = {
   stop: true;
-  continue: IsOutsideOfExcludedScope<L.Head<C>> extends true
+  continue: IsOutsideOfSubstractedScope<L.Head<C>> extends true
     ? false
-    : IsExcludedBigEnough<L.Tail<C>>;
+    : IsSubstractedBigEnough<L.Tail<C>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
 // PROPAGATION
@@ -167,7 +173,7 @@ type NonNeverItems<
   R extends CrossValueType[] = []
 > = {
   stop: R;
-  continue: ExclusionValue<L.Head<C>> extends NeverType
+  continue: ExclusionResult<L.Head<C>> extends NeverType
     ? NonNeverItems<L.Tail<C>, R>
     : NonNeverItems<L.Tail<C>, L.Prepend<R, L.Head<C>>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
@@ -185,7 +191,12 @@ type OmitOmittableItems<
   I extends CrossValueType[] = OmittableItems<C>
 > = {
   moreThanTwo: S;
-  onlyOne: $Tuple<RequiredTupleValues<C>>;
+  onlyOne: $Tuple<
+    RequiredTupleValues<C>,
+    Never,
+    IsSerialized<S>,
+    Deserialized<S>
+  >;
   none: Never;
 }[GetTupleLength<I>];
 
@@ -203,7 +214,7 @@ type RequiredTupleValues<C extends CrossValueType[], R extends Type[] = []> = {
   stop: L.Reverse<R>;
   continue: IsOmittable<L.Head<C>> extends true
     ? L.Reverse<R>
-    : RequiredTupleValues<L.Tail<C>, L.Prepend<R, SourceValue<L.Head<C>>>>;
+    : RequiredTupleValues<L.Tail<C>, L.Prepend<R, OriginValue<L.Head<C>>>>;
 }[C extends [any, ...any[]] ? "continue" : "stop"];
 
 // CONST
@@ -212,7 +223,12 @@ type ExcludeConst<
   A extends TupleType,
   B extends ConstType,
   V = ConstValue<B>
-> = V extends any[] ? _Exclude<A, $Tuple<ExtractConstValues<V>>> : A;
+> = V extends any[]
+  ? _Exclude<
+      A,
+      $Tuple<ExtractConstValues<V>, Never, IsSerialized<B>, Deserialized<B>>
+    >
+  : A;
 
 type ExtractConstValues<V extends any[], R extends any[] = []> = {
   stop: L.Reverse<R>;

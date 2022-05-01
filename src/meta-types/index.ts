@@ -1,5 +1,5 @@
-import { Any, AnyType } from "./any";
 import { Never, NeverType } from "./never";
+import { Any, AnyType } from "./any";
 import { Const, ConstType } from "./const";
 import { Enum, EnumType } from "./enum";
 import { Primitive, $Primitive, PrimitiveType } from "./primitive";
@@ -16,8 +16,8 @@ import { Resolve, $Resolve } from "./resolve";
 
 export {
   // --- META-TYPES ---
-  Any,
   Never,
+  Any,
   Const,
   Enum,
   Primitive,
@@ -31,8 +31,8 @@ export {
   Union,
   $Union,
   // --- DEFINITIONS ---
-  AnyType,
   NeverType,
+  AnyType,
   ConstType,
   EnumType,
   PrimitiveType,

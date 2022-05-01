@@ -2,15 +2,15 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const neverToAny: A.Equals<M.Intersect<M.Never, M.Any>, M.Never> = 1;
-neverToAny;
-
 // --- NEVER ---
 
 const neverToNever: A.Equals<M.Intersect<M.Never, M.Never>, M.Never> = 1;
 neverToNever;
+
+// --- ANY ---
+
+const neverToAny: A.Equals<M.Intersect<M.Never, M.Any>, M.Never> = 1;
+neverToAny;
 
 // --- CONSTS ---
 

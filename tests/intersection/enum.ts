@@ -2,6 +2,14 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const neverNeverIntersect: A.Equals<
+  M.Intersect<M.Enum<"foo" | "bar">, M.Never>,
+  M.Never
+> = 1;
+neverNeverIntersect;
+
 // --- ANY ---
 
 const anyAlwaysIntersect: A.Equals<
@@ -10,13 +18,26 @@ const anyAlwaysIntersect: A.Equals<
 > = 1;
 anyAlwaysIntersect;
 
-// --- NEVER ---
-
-const neverNeverIntersect: A.Equals<
-  M.Intersect<M.Enum<"foo" | "bar">, M.Never>,
-  M.Never
+const enumToSerializedAny: A.Equals<
+  M.Intersect<M.Enum<"2022-01-01" | "2023-01-01">, M.Any<true, Date>>,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
 > = 1;
-neverNeverIntersect;
+enumToSerializedAny;
+
+const serializedEnumToAny: A.Equals<
+  M.Intersect<M.Enum<"2022-01-01" | "2023-01-01", true, Date>, M.Any>,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedEnumToAny;
+
+const serializedEnumToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>,
+    M.Any<true, unknown>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedEnumToSerializedAny;
 
 // --- CONSTS ---
 
@@ -32,6 +53,33 @@ const nonIntersectingConst: A.Equals<
 > = 1;
 nonIntersectingConst;
 
+const enumToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01">,
+    M.Const<"2022-01-01", true, Date>
+  >,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+enumToSerializedConst;
+
+const serializedEnumToConst: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>,
+    M.Const<"2022-01-01">
+  >,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+serializedEnumToConst;
+
+const serializedEnumToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>,
+    M.Const<"2022-01-01", true, Date>
+  >,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+serializedEnumToSerializedConst;
+
 // --- ENUM ---
 
 const intersectingEnum: A.Equals<
@@ -45,6 +93,33 @@ const nonIntersectingEnum: A.Equals<
   M.Enum<never>
 > = 1;
 nonIntersectingEnum;
+
+const enumToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Enum<"2021-01-01" | "2022-01-01">,
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+  >,
+  M.Enum<"2022-01-01", true, Date>
+> = 1;
+enumToSerializedEnum;
+
+const serializedEnumToEnum: A.Equals<
+  M.Intersect<
+    M.Enum<"2021-01-01" | "2022-01-01", true, Date>,
+    M.Enum<"2022-01-01" | "2023-01-01">
+  >,
+  M.Enum<"2022-01-01", true, Date>
+> = 1;
+serializedEnumToEnum;
+
+const serializedEnumToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Enum<"2021-01-01" | "2022-01-01", true, Date>,
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+  >,
+  M.Enum<"2022-01-01", true, Date>
+> = 1;
+serializedEnumToSerializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -72,6 +147,33 @@ const nonIntersectingPrimitive: A.Equals<
 > = 1;
 nonIntersectingPrimitive;
 
+const enumToSerializedPrimitive: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01">,
+    M.Primitive<string, true, Date>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+enumToSerializedPrimitive;
+
+const serializedEnumToPrimitive: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>,
+    M.Primitive<string>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedEnumToPrimitive;
+
+const serializedEnumToSerializedPrimitive: A.Equals<
+  M.Intersect<
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>,
+    M.Primitive<string, true, Date>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedEnumToSerializedPrimitive;
+
 // --- ARRAY ---
 
 const intersectingArray: A.Equals<
@@ -85,6 +187,33 @@ const nonIntersectingArray: A.Equals<
   M.Enum<never>
 > = 1;
 nonIntersectingArray;
+
+const enumToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"]>,
+    M.Array<M.Primitive<string>, true, Date[]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, Date[]>
+> = 1;
+enumToSerializedArray;
+
+const serializedEnumToArray: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>,
+    M.Array<M.Primitive<string>>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+> = 1;
+serializedEnumToArray;
+
+const serializedEnumToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>,
+    M.Array<M.Primitive<string>, true, Date[]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date] & Date[]>
+> = 1;
+serializedEnumToSerializedArray;
 
 // --- TUPLE ---
 
@@ -106,6 +235,33 @@ const nonIntersectingTuple: A.Equals<
 > = 1;
 nonIntersectingTuple;
 
+const enumToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, Date[]>
+> = 1;
+enumToSerializedTuple;
+
+const serializedEnumToTuple: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>,
+    M.Tuple<[M.Primitive<string>]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+> = 1;
+serializedEnumToTuple;
+
+const serializedEnumToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+> = 1;
+serializedEnumToSerializedTuple;
+
 // --- OBJECT ---
 
 const intersectingObject: A.Equals<
@@ -125,6 +281,57 @@ const nonIntersectingObject: A.Equals<
   M.Enum<never>
 > = 1;
 nonIntersectingObject;
+
+const enumToSerializedObject: A.Equals<
+  M.Intersect<
+    M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }>,
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >
+  >,
+  M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }, true, { date: Date }>
+> = 1;
+enumToSerializedObject;
+
+const serializedEnumToObject: A.Equals<
+  M.Intersect<
+    M.Enum<
+      { date: "2022-01-01" } | { date: "2023-01-01" },
+      true,
+      { date: Date }
+    >,
+    M.Object<{ date: M.Primitive<string> }, "date", M.Never>
+  >,
+  M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }, true, { date: Date }>
+> = 1;
+serializedEnumToObject;
+
+const serializedEnumToSerializedObject: A.Equals<
+  M.Intersect<
+    M.Enum<
+      { date: "2022-01-01" } | { date: "2023-01-01" },
+      true,
+      { date: Date }
+    >,
+    M.Object<
+      { date: M.Primitive<string> },
+      "date",
+      M.Never,
+      true,
+      { date: Date }
+    >
+  >,
+  M.Enum<
+    { date: "2022-01-01" } | { date: "2023-01-01" },
+    true,
+    { date: Date } & { date: Date }
+  >
+> = 1;
+serializedEnumToSerializedObject;
 
 // --- UNION ---
 

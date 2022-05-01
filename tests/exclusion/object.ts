@@ -2,14 +2,6 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anysAlwaysExclude: A.Equals<
-  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a">, M.Any>,
-  M.Never
-> = 1;
-anysAlwaysExclude;
-
 // --- NEVER ---
 
 const neversNeverExclude: A.Equals<
@@ -17,6 +9,14 @@ const neversNeverExclude: A.Equals<
   M.Object<{ a: M.Const<"A"> }, "a">
 > = 1;
 neversNeverExclude;
+
+// --- ANY ---
+
+const anysAlwaysExclude: A.Equals<
+  M.Exclude<M.Object<{ a: M.Const<"A"> }, "a">, M.Any>,
+  M.Never
+> = 1;
+anysAlwaysExclude;
 
 // --- CONSTS ---
 
@@ -43,6 +43,15 @@ const constSizeMatches2: A.Equals<
   M.Object<{ a: M.Enum<"A" | "B"> }, "a">
 > = 1;
 constSizeMatches2;
+
+const serializedConst: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B" | "C"> }, "a">,
+    M.Const<{ a: "C" }, true, { a: string }>
+  >,
+  M.Object<{ a: M.Enum<"A" | "B"> }, "a">
+> = 1;
+serializedConst;
 
 // --- ENUM ---
 
@@ -72,6 +81,15 @@ const enumSizesMatch: A.Equals<
   M.Never
 > = 1;
 enumSizesMatch;
+
+const serializedEnum: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Const<"A"> }, "a">,
+    M.Enum<{ a: "B" }, true, { a: string }>
+  >,
+  M.Object<{ a: M.Const<"A"> }, "a">
+> = 1;
+serializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -220,34 +238,34 @@ const bothClosedTooManyOmittableKeys: A.Equals<
 > = 1;
 bothClosedTooManyOmittableKeys;
 
-// Closed value open excluded
-const closedValueOpenExcluded1: A.Equals<
+// Closed origin open substracted
+const closedOriginOpenSubstracted1: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a">,
     M.Object<{}, never, M.Const<"B">>
   >,
   M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a">
 > = 1;
-closedValueOpenExcluded1;
+closedOriginOpenSubstracted1;
 
-const closedValueOpenExcluded2: A.Equals<
+const closedOriginOpenSubstracted2: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a">,
     M.Object<{}, never, M.Const<"C">>
   >,
   M.Object<{ a: M.Const<"A"> }, "a">
 > = 1;
-closedValueOpenExcluded2;
+closedOriginOpenSubstracted2;
 
-// Open value closed excluded
-const openValueClosedExcluded: A.Equals<
+// Open origin closed substracted
+const openOriginClosedSubstracted: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
     M.Object<{ a: M.Const<"A"> }, "a">
   >,
   M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
-openValueClosedExcluded;
+openOriginClosedSubstracted;
 
 // Both open
 const bothOpenMatch1: A.Equals<
@@ -307,6 +325,39 @@ const bothOpenKeyAdded: A.Equals<
   M.Object<{ a: M.Enum<"A" | "B">; b: M.Enum<"A"> }, "a", M.Enum<"A" | "B">>
 > = 1;
 bothOpenKeyAdded;
+
+const propagatedSerialization: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never, true, { a: string }>,
+    M.Object<{ a: M.Const<"B"> }, "a", M.Never>
+  >,
+  M.Object<{ a: M.Enum<"A"> }, "a", M.Never, true, { a: string }>
+> = 1;
+propagatedSerialization;
+
+const omittableKeySerialization: A.Equals<
+  M.Exclude<
+    M.Object<
+      { a: M.Const<"A">; b: M.Const<"B"> },
+      "a",
+      M.Never,
+      true,
+      { a: string }
+    >,
+    M.Object<{ a: M.Const<"A">; b: M.Const<"B"> }, "a" | "b">
+  >,
+  M.Object<{ a: M.Const<"A">; b: M.Never }, "a", M.Never, true, { a: string }>
+> = 1;
+omittableKeySerialization;
+
+const substractedSerializationIsNotUsed: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never>,
+    M.Object<{ a: M.Const<"B"> }, "a", M.Never, true, { a: string }>
+  >,
+  M.Object<{ a: M.Enum<"A"> }, "a", M.Never>
+> = 1;
+substractedSerializationIsNotUsed;
 
 // --- UNION ---
 

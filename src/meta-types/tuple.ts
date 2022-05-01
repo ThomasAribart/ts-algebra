@@ -1,22 +1,35 @@
 import { L } from "ts-toolbelt";
 
-import { DoesExtend, Not } from "../utils";
+import { DoesExtend, Not, And } from "../utils";
 
 import { Never, NeverType } from "./never";
 import { Type } from "./type";
-import { Resolve } from "./resolve";
+import { Resolve, ResolveOptions } from "./resolve";
+import { Deserialized, IsSerialized } from "./utils";
 
 export type TupleTypeId = "tuple";
 
-export type Tuple<V extends Type[], P extends Type = Never> = $Tuple<V, P>;
+export type Tuple<
+  V extends Type[],
+  P extends Type = Never,
+  I extends boolean = false,
+  D extends unknown = never
+> = $Tuple<V, P, I, D>;
 
-export type $Tuple<V, P = Never> = IsAnyValueNever<V> extends true
+export type $Tuple<
+  V,
+  P = Never,
+  I = false,
+  D = never
+> = IsAnyValueNever<V> extends true
   ? Never
   : {
       type: TupleTypeId;
       values: V;
       isOpen: Not<DoesExtend<P, NeverType>>;
       openProps: P;
+      isSerialized: I;
+      deserialized: D;
     };
 
 type IsAnyValueNever<V> = {
@@ -33,6 +46,8 @@ export type TupleType = {
   values: Type[];
   isOpen: boolean;
   openProps: Type;
+  isSerialized: boolean;
+  deserialized: unknown;
 };
 
 export type TupleValues<T extends TupleType> = T["values"];
@@ -41,11 +56,23 @@ export type IsTupleOpen<T extends TupleType> = T["isOpen"];
 
 export type TupleOpenProps<T extends TupleType> = T["openProps"];
 
-export type ResolveTuple<T extends TupleType> = IsTupleOpen<T> extends true
-  ? L.Concat<RecurseOnTuple<TupleValues<T>>, [...Resolve<TupleOpenProps<T>>[]]>
-  : RecurseOnTuple<TupleValues<T>>;
+export type ResolveTuple<T extends TupleType, O extends ResolveOptions> = And<
+  O["deserialize"],
+  IsSerialized<T>
+> extends true
+  ? Deserialized<T>
+  : IsTupleOpen<T> extends true
+  ? L.Concat<
+      RecurseOnTuple<TupleValues<T>, O>,
+      [...Resolve<TupleOpenProps<T>, O>[]]
+    >
+  : RecurseOnTuple<TupleValues<T>, O>;
 
-type RecurseOnTuple<V extends Type[], R extends any[] = []> = {
+type RecurseOnTuple<
+  V extends Type[],
+  O extends ResolveOptions,
+  R extends any[] = []
+> = {
   stop: L.Reverse<R>;
-  continue: RecurseOnTuple<L.Tail<V>, L.Prepend<R, Resolve<L.Head<V>>>>;
+  continue: RecurseOnTuple<L.Tail<V>, O, L.Prepend<R, Resolve<L.Head<V>, O>>>;
 }[V extends [any, ...any[]] ? "continue" : "stop"];

@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType, PrimitiveValue } from "../primitive";
@@ -12,10 +12,10 @@ import { Type } from "../type";
 import { ExcludeUnion } from "./union";
 
 export type ExcludeFromPrimitive<A extends PrimitiveType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? A
     : B extends EnumType

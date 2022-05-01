@@ -39,3 +39,20 @@ const neverItem: A.Equals<
   never
 > = 1;
 neverItem;
+
+// --- SERIALIZED ---
+
+const serialized: A.Equals<
+  M.Resolve<M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>>,
+  [Date]
+> = 1;
+serialized;
+
+const serializedIgnored: A.Equals<
+  M.Resolve<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    { deserialize: false }
+  >,
+  [string]
+> = 1;
+serializedIgnored;

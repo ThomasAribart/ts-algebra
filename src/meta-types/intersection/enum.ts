@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType } from "../const";
 import { Enum, EnumType, EnumValues } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -7,17 +7,24 @@ import { ArrayType } from "../array";
 import { TupleType } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Type } from "../type";
+import { SerializableType, Type } from "../type";
 
 import { $Intersect } from "./index";
 import { IntersectConstToEnum } from "./const";
 import { DistributeIntersection } from "./union";
+import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+
+export type MergeEnumValuesToSerializable<
+  V,
+  A extends EnumType,
+  B extends SerializableType
+> = Enum<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectEnum<A extends EnumType, B> = B extends Type
-  ? B extends AnyType
-    ? A
-    : B extends NeverType
-    ? Never
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
+    ? MergeEnumValuesToSerializable<EnumValues<A>, A, B>
     : B extends ConstType
     ? IntersectConstToEnum<B, A>
     : B extends EnumType
@@ -35,9 +42,16 @@ export type IntersectEnum<A extends EnumType, B> = B extends Type
     : Never
   : Never;
 
-type FilterUnintersecting<A extends EnumType, B> = Enum<
-  RecurseOnEnumValues<EnumValues<A>, B>
->;
+type FilterUnintersecting<
+  A extends EnumType,
+  B extends SerializableType
+> = MergeEnumValuesToSerializable<RecurseOnEnumValues<EnumValues<A>, B>, A, B>;
+
+type RecurseOnEnumValues<V, B> = V extends infer T
+  ? $Intersect<Const<T>, B> extends Never
+    ? never
+    : T
+  : never;
 
 export type IntersectEnumToPrimitive<
   A extends EnumType,
@@ -58,9 +72,3 @@ export type IntersectEnumToObject<
   A extends EnumType,
   B extends ObjectType
 > = FilterUnintersecting<A, B>;
-
-type RecurseOnEnumValues<V, B> = V extends infer T
-  ? $Intersect<Const<T>, B> extends Never
-    ? never
-    : T
-  : never;

@@ -1,5 +1,5 @@
-import { AnyTypeId } from "./any";
 import { NeverTypeId } from "./never";
+import { AnyTypeId } from "./any";
 import { ConstTypeId } from "./const";
 import { EnumTypeId } from "./enum";
 import { PrimitiveTypeId } from "./primitive";
@@ -9,8 +9,8 @@ import { ObjectTypeId } from "./object";
 import { UnionTypeId } from "./union";
 
 export type TypeId =
-  | AnyTypeId
   | NeverTypeId
+  | AnyTypeId
   | ConstTypeId
   | EnumTypeId
   | PrimitiveTypeId

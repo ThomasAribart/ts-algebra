@@ -13,49 +13,51 @@ export type CrossValue<
   P2 extends boolean,
   R2 extends boolean
 > = {
-  sourceValue: V1;
-  isPossibleInSource: P1;
-  isRequiredInSource: R1;
-  isPossibleInExcluded: P2;
-  isRequiredInExcluded: R2;
-  exclusionValue: _$Exclude<V1, V2>;
+  originValue: V1;
+  isPossibleInOrigin: P1;
+  isRequiredInOrigin: R1;
+  isPossibleInSubstracted: P2;
+  isRequiredInSubstracted: R2;
+  exclusionResult: _$Exclude<V1, V2>;
 };
 
 export type CrossValueType = {
-  sourceValue: Type;
-  isPossibleInSource: boolean;
-  isRequiredInSource: boolean;
-  isPossibleInExcluded: boolean;
-  isRequiredInExcluded: boolean;
-  exclusionValue: any;
+  originValue: Type;
+  isPossibleInOrigin: boolean;
+  isRequiredInOrigin: boolean;
+  isPossibleInSubstracted: boolean;
+  isRequiredInSubstracted: boolean;
+  exclusionResult: any;
 };
 
-export type SourceValue<C extends CrossValueType> = C["sourceValue"];
+export type OriginValue<C extends CrossValueType> = C["originValue"];
 
-type IsPossibleInSource<C extends CrossValueType> = C["isPossibleInSource"];
+type IsPossibleInOrigin<C extends CrossValueType> = C["isPossibleInOrigin"];
 
-type IsRequiredInSource<C extends CrossValueType> = C["isRequiredInSource"];
+type IsRequiredInOrigin<C extends CrossValueType> = C["isRequiredInOrigin"];
 
-type IsPossibleInExcluded<C extends CrossValueType> = C["isPossibleInExcluded"];
+type IsPossibleInSubstracted<C extends CrossValueType> =
+  C["isPossibleInSubstracted"];
 
-type IsRequiredInExcluded<C extends CrossValueType> = C["isRequiredInExcluded"];
+type IsRequiredInSubstracted<C extends CrossValueType> =
+  C["isRequiredInSubstracted"];
 
-export type ExclusionValue<C extends CrossValueType> = C["exclusionValue"];
+export type ExclusionResult<C extends CrossValueType> = C["exclusionResult"];
 
-export type IsOutsideOfSourceScope<C extends CrossValueType> = And<
-  IsRequiredInExcluded<C>,
-  Not<IsPossibleInSource<C>>
+export type IsOutsideOfOriginScope<C extends CrossValueType> = And<
+  IsRequiredInSubstracted<C>,
+  Not<IsPossibleInOrigin<C>>
 >;
 
-export type IsOutsideOfExcludedScope<C extends CrossValueType> = And<
-  IsRequiredInSource<C>,
-  Not<IsPossibleInExcluded<C>>
+export type IsOutsideOfSubstractedScope<C extends CrossValueType> = And<
+  IsRequiredInOrigin<C>,
+  Not<IsPossibleInSubstracted<C>>
 >;
 
 export type Propagate<C extends CrossValueType> =
-  ExclusionValue<C> extends NeverType ? SourceValue<C> : ExclusionValue<C>;
+  ExclusionResult<C> extends NeverType ? OriginValue<C> : ExclusionResult<C>;
 
 export type IsOmittable<C extends CrossValueType> = And<
-  Not<IsRequiredInSource<C>>,
-  IsRequiredInExcluded<C>
+  Not<IsRequiredInOrigin<C>>,
+  IsRequiredInSubstracted<C>
 >;

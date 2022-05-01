@@ -2,14 +2,6 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anysAlwaysExclude: A.Equals<
-  M.Exclude<M.Tuple<[M.Const<"A">, M.Const<"B">], M.Any>, M.Any>,
-  M.Never
-> = 1;
-anysAlwaysExclude;
-
 // --- NEVER ---
 
 const neversNeverExclude: A.Equals<
@@ -17,6 +9,14 @@ const neversNeverExclude: A.Equals<
   M.Tuple<[M.Const<"A">, M.Const<"B">], M.Any>
 > = 1;
 neversNeverExclude;
+
+// --- ANY ---
+
+const anysAlwaysExclude: A.Equals<
+  M.Exclude<M.Tuple<[M.Const<"A">, M.Const<"B">], M.Any>, M.Any>,
+  M.Never
+> = 1;
+anysAlwaysExclude;
 
 // --- CONSTS ---
 
@@ -38,6 +38,12 @@ const constSizeMatches: A.Equals<
 > = 1;
 constSizeMatches;
 
+const serializedConst: A.Equals<
+  M.Exclude<M.Tuple<[M.Const<"A">]>, M.Const<["A", "B"], true, string[]>>,
+  M.Tuple<[M.Const<"A">]>
+> = 1;
+serializedConst;
+
 // --- ENUM ---
 
 const enumTooSmall: A.Equals<
@@ -57,6 +63,12 @@ const enumSizesMatch: A.Equals<
   M.Never
 > = 1;
 enumSizesMatch;
+
+const serializedEnum: A.Equals<
+  M.Exclude<M.Tuple<[M.Const<"A">]>, M.Enum<["B"], true, string[]>>,
+  M.Tuple<[M.Const<"A">]>
+> = 1;
+serializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -194,28 +206,28 @@ const bothClosedImpossible2: A.Equals<
 > = 1;
 bothClosedImpossible2;
 
-// Closed value open excluded
-const closedValueOpenExcluded1: A.Equals<
+// Closed origin open substracted
+const closedOriginOpenSubstracted1: A.Equals<
   M.Exclude<
     M.Tuple<[M.Enum<"A" | "B">, M.Const<"B">]>,
     M.Tuple<[], M.Const<"B">>
   >,
   M.Tuple<[M.Enum<"A">, M.Const<"B">]>
 > = 1;
-closedValueOpenExcluded1;
+closedOriginOpenSubstracted1;
 
-const closedValueOpenExcluded2: A.Equals<
+const closedOriginOpenSubstracted2: A.Equals<
   M.Exclude<M.Tuple<[M.Const<"A">]>, M.Tuple<[], M.Const<"C">>>,
   M.Tuple<[M.Const<"A">]>
 > = 1;
-closedValueOpenExcluded2;
+closedOriginOpenSubstracted2;
 
-// Open value closed excluded
-const openValueClosedExcluded: A.Equals<
+// Open origin closed substracted
+const openOriginClosedSubstracted: A.Equals<
   M.Exclude<M.Tuple<[M.Const<"A">], M.Any>, M.Tuple<[M.Const<"A">]>>,
   M.Tuple<[M.Const<"A">], M.Any>
 > = 1;
-openValueClosedExcluded;
+openOriginClosedSubstracted;
 
 // Both open
 const bothOpenMatch1: A.Equals<
@@ -253,6 +265,33 @@ const bothOpenItemAdded: A.Equals<
   M.Tuple<[M.Enum<"A" | "B">, M.Enum<"A">], M.Enum<"A" | "B">>
 > = 1;
 bothOpenItemAdded;
+
+const propagatedSerialization: A.Equals<
+  M.Exclude<
+    M.Tuple<[M.Enum<"A" | "B">], M.Never, true, ["B", "B"]>,
+    M.Tuple<[M.Const<"B">]>
+  >,
+  M.Tuple<[M.Enum<"A">], M.Never, true, ["B", "B"]>
+> = 1;
+propagatedSerialization;
+
+const omittableItemSerialization: A.Equals<
+  M.Exclude<
+    M.Tuple<[M.Const<"A">], M.Const<"A">, true, Date[]>,
+    M.Tuple<[M.Const<"A">, M.Const<"A">], M.Const<"A">>
+  >,
+  M.Tuple<[M.Const<"A">], M.Never, true, Date[]>
+> = 1;
+omittableItemSerialization;
+
+const substractedSerializationIsNotUsed: A.Equals<
+  M.Exclude<
+    M.Tuple<[M.Enum<"A" | "B">]>,
+    M.Tuple<[M.Const<"B">], M.Never, true, string[]>
+  >,
+  M.Tuple<[M.Enum<"A">]>
+> = 1;
+substractedSerializationIsNotUsed;
 
 // --- OBJECT ---
 

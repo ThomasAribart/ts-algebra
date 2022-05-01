@@ -2,6 +2,14 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const neversNeverIntersect: A.Equals<
+  M.Intersect<M.Tuple<[M.Primitive<string>], M.Any>, M.Never>,
+  M.Never
+> = 1;
+neversNeverIntersect;
+
 // --- ANY ---
 
 const anysAlwaysIntersect: A.Equals<
@@ -10,13 +18,26 @@ const anysAlwaysIntersect: A.Equals<
 > = 1;
 anysAlwaysIntersect;
 
-// --- NEVER ---
-
-const neversNeverIntersect: A.Equals<
-  M.Intersect<M.Tuple<[M.Primitive<string>], M.Any>, M.Never>,
-  M.Never
+const tupleToSerializedAny: A.Equals<
+  M.Intersect<M.Tuple<[M.Primitive<string>]>, M.Any<true, Date[]>>,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
 > = 1;
-neversNeverIntersect;
+tupleToSerializedAny;
+
+const serializedTupleToAny: A.Equals<
+  M.Intersect<M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>, M.Any>,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+serializedTupleToAny;
+
+const serializedTupleToSerializedAny: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Any<true, unknown[]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date] & unknown[]>
+> = 1;
+serializedTupleToSerializedAny;
 
 // --- CONSTS ---
 
@@ -56,6 +77,33 @@ const nonIntersectingConst2: A.Equals<
 > = 1;
 nonIntersectingConst2;
 
+const tupleToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>]>,
+    M.Const<["2022-01-01"], true, [Date]>
+  >,
+  M.Const<["2022-01-01"], true, [Date]>
+> = 1;
+tupleToSerializedConst;
+
+const serializedTupleToConst: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Const<["2022-01-01"]>
+  >,
+  M.Const<["2022-01-01"], true, [Date]>
+> = 1;
+serializedTupleToConst;
+
+const serializedTupleToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Const<["2022-01-01"], true, [Date]>
+  >,
+  M.Const<["2022-01-01"], true, [Date]>
+> = 1;
+serializedTupleToSerializedConst;
+
 // --- ENUM ---
 
 const intersectingEnum1: A.Equals<
@@ -88,6 +136,33 @@ const nonIntersectingEnum: A.Equals<
   M.Enum<never>
 > = 1;
 nonIntersectingEnum;
+
+const tupleToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>]>,
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+> = 1;
+tupleToSerializedEnum;
+
+const serializedTupleToEnum: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>,
+    M.Enum<["2022-01-01"] | ["2023-01-01"]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, Date[]>
+> = 1;
+serializedTupleToEnum;
+
+const serializedTupleToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+  >,
+  M.Enum<["2022-01-01"] | ["2023-01-01"], true, [Date]>
+> = 1;
+serializedTupleToSerializedEnum;
 
 // --- PRIMITIVES ---
 
@@ -152,6 +227,33 @@ const nonIntersectingArray: A.Equals<
   M.Never
 > = 1;
 nonIntersectingArray;
+
+const tupleToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>]>,
+    M.Array<M.Primitive<string>, true, Date[]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
+> = 1;
+tupleToSerializedArray;
+
+const serializedTupleToArray: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Array<M.Primitive<string>>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+serializedTupleToArray;
+
+const serializedTupleToSerializedArray: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Array<M.Primitive<string>, true, Date[]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, Date[] & [Date]>
+> = 1;
+serializedTupleToSerializedArray;
 
 // --- TUPLE ---
 
@@ -235,6 +337,33 @@ const nonIntersectingTuple2: A.Equals<
   M.Never
 > = 1;
 nonIntersectingTuple2;
+
+const tupleToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+tupleToSerializedTuple;
+
+const serializedTupleToTuple: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Tuple<[M.Primitive<string>]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>
+> = 1;
+serializedTupleToTuple;
+
+const serializedTupleToSerializedTuple: A.Equals<
+  M.Intersect<
+    M.Tuple<[M.Primitive<string>], M.Never, true, [Date]>,
+    M.Tuple<[M.Primitive<string>], M.Never, true, Date[]>
+  >,
+  M.Tuple<[M.Primitive<string>], M.Never, true, [Date] & Date[]>
+> = 1;
+serializedTupleToSerializedTuple;
 
 // --- OBJECT ---
 

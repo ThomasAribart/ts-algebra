@@ -1,7 +1,7 @@
 import { L } from "ts-toolbelt";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -15,17 +15,32 @@ import {
 } from "../tuple";
 import { ObjectType } from "../object";
 import { UnionType } from "../union";
-import { Type } from "../type";
+import { Type, SerializableType } from "../type";
 
 import { Intersect, $Intersect } from "./index";
 import { IntersectConstToTuple } from "./const";
 import { IntersectEnumToTuple } from "./enum";
 import { DistributeIntersection } from "./union";
+import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type IntersectTuple<A extends TupleType, B> = B extends AnyType
-  ? A
-  : B extends NeverType
+export type MergeTuplePropsToSerializable<
+  V extends Type[],
+  P extends Type,
+  A extends TupleType,
+  B extends SerializableType
+> = $MergeTuplePropsToSerializable<V, P, A, B>;
+
+type $MergeTuplePropsToSerializable<
+  V,
+  P,
+  A extends TupleType,
+  B extends SerializableType
+> = $Tuple<V, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
+
+export type IntersectTuple<A extends TupleType, B> = B extends NeverType
   ? B
+  : B extends AnyType
+  ? MergeTuplePropsToSerializable<TupleValues<A>, TupleOpenProps<A>, A, B>
   : B extends ConstType
   ? IntersectConstToTuple<B, A>
   : B extends EnumType
@@ -47,7 +62,7 @@ export type IntersectTupleToArray<
   A extends ArrayType,
   V extends any[] = IntersectTupleToArrayValues<TupleValues<T>, ArrayValues<A>>,
   O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>
-> = $Tuple<V, O>;
+> = $MergeTuplePropsToSerializable<V, O, T, A>;
 
 type IntersectTupleToArrayValues<
   V extends Type[],
@@ -74,7 +89,7 @@ type IntersectTuples<
     TupleOpenProps<B>
   >,
   O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>
-> = $Tuple<V, O>;
+> = $MergeTuplePropsToSerializable<V, O, A, B>;
 
 type IntersectTupleValues<
   V1 extends Type[],

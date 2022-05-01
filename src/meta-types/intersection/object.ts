@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -14,18 +14,41 @@ import {
   ObjectOpenProps,
 } from "../object";
 import { UnionType } from "../union";
-import { Type } from "../type";
+import { Type, SerializableType } from "../type";
 
 import { Intersect, $Intersect } from "./index";
 import { IntersectConstToObject } from "./const";
 import { IntersectEnumToObject } from "./enum";
 import { DistributeIntersection } from "./union";
+import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+
+export type MergeObjectPropsToSerializable<
+  V extends Record<string, Type>,
+  R extends string,
+  P extends Type,
+  A extends ObjectType,
+  B extends SerializableType
+> = $MergeObjectPropsToSerializable<V, R, P, A, B>;
+
+type $MergeObjectPropsToSerializable<
+  V,
+  R,
+  P,
+  A extends ObjectType,
+  B extends SerializableType
+> = _$Object<V, R, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectObject<A extends ObjectType, B> = B extends Type
-  ? B extends AnyType
-    ? A
-    : B extends NeverType
-    ? Never
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
+    ? MergeObjectPropsToSerializable<
+        ObjectValues<A>,
+        ObjectRequiredKeys<A>,
+        ObjectOpenProps<A>,
+        A,
+        B
+      >
     : B extends ConstType
     ? IntersectConstToObject<B, A>
     : B extends EnumType
@@ -47,13 +70,15 @@ type IntersectObjects<
   A extends ObjectType,
   B extends ObjectType,
   V extends Record<string, any> = IntersectObjectsValues<A, B>,
-  O extends any = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>
-> = _$Object<
+  O = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>
+> = $MergeObjectPropsToSerializable<
   {
     [key in keyof V]: V[key];
   },
   ObjectRequiredKeys<A> | ObjectRequiredKeys<B>,
-  O
+  O,
+  A,
+  B
 >;
 
 type IntersectObjectsValues<A extends ObjectType, B extends ObjectType> = {

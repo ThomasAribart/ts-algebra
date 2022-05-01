@@ -1,5 +1,5 @@
-import { AnyType } from "./any";
 import { NeverType } from "./never";
+import { AnyType } from "./any";
 import { ConstType } from "./const";
 import { EnumType } from "./enum";
 import { PrimitiveType } from "./primitive";
@@ -9,8 +9,8 @@ import { ObjectType } from "./object";
 import { UnionType } from "./union";
 
 export type Type =
-  | AnyType
   | NeverType
+  | AnyType
   | ConstType
   | EnumType
   | PrimitiveType
@@ -18,3 +18,9 @@ export type Type =
   | TupleType
   | ObjectType
   | UnionType;
+
+export type SerializableType = Type extends infer U
+  ? U extends { isSerialized: boolean; deserialized: unknown }
+    ? U
+    : never
+  : never;

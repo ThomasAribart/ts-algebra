@@ -2,14 +2,6 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anyAlwaysIntersect: A.Equals<
-  M.Intersect<M.Exclude<M.Primitive<string>, M.Const<"bar">>, M.Any>,
-  M.Primitive<string>
-> = 1;
-anyAlwaysIntersect;
-
 // --- NEVER ---
 
 const neverNeverIntersect: A.Equals<
@@ -17,6 +9,14 @@ const neverNeverIntersect: A.Equals<
   M.Never
 > = 1;
 neverNeverIntersect;
+
+// --- ANY ---
+
+const anyAlwaysIntersect: A.Equals<
+  M.Intersect<M.Exclude<M.Primitive<string>, M.Const<"bar">>, M.Any>,
+  M.Primitive<string>
+> = 1;
+anyAlwaysIntersect;
 
 // --- CONSTS ---
 

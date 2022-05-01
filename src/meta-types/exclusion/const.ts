@@ -1,7 +1,7 @@
 import { IsObject } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType, ConstValue } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -22,10 +22,10 @@ import { _Exclude } from "./index";
 import { ExcludeUnion } from "./union";
 
 export type ExcludeFromConst<A extends ConstType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? CheckNotExtendsResolved<A, B>
     : B extends EnumType
@@ -46,7 +46,7 @@ export type ExcludeFromConst<A extends ConstType, B> = B extends Type
 type CheckNotExtendsResolved<
   A extends ConstType,
   B extends Type
-> = ConstValue<A> extends Resolve<B> ? Never : A;
+> = ConstValue<A> extends Resolve<B, { deserialize: false }> ? Never : A;
 
 type ExcludeObject<A extends ConstType, B extends ObjectType> = IsObject<
   ConstValue<A>

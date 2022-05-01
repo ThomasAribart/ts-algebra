@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -21,10 +21,10 @@ import { DistributeUnion } from "./union";
 // Prefixed with _ to not confuse with native TS Exclude
 export type _Exclude<A extends Type, B extends Type> = _$Exclude<A, B>;
 
-export type _$Exclude<A, B> = A extends AnyType
+export type _$Exclude<A, B> = A extends NeverType
+  ? A
+  : A extends AnyType
   ? ExcludeFromAny<A, B>
-  : A extends NeverType
-  ? Never
   : A extends ConstType
   ? ExcludeFromConst<A, B>
   : A extends EnumType

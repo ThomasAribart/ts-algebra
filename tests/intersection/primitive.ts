@@ -2,6 +2,14 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const neverNeverIntersect: A.Equals<
+  M.Intersect<M.Primitive<string>, M.Never>,
+  M.Never
+> = 1;
+neverNeverIntersect;
+
 // --- ANY ---
 
 const anyAlwaysIntersect: A.Equals<
@@ -10,13 +18,23 @@ const anyAlwaysIntersect: A.Equals<
 > = 1;
 anyAlwaysIntersect;
 
-// --- NEVER ---
-
-const neverNeverIntersect: A.Equals<
-  M.Intersect<M.Primitive<string>, M.Never>,
-  M.Never
+const primitiveToSerializedAny: A.Equals<
+  M.Intersect<M.Primitive<string>, M.Any<true, Date>>,
+  M.Primitive<string, true, Date>
 > = 1;
-neverNeverIntersect;
+primitiveToSerializedAny;
+
+const serializedPrimitiveToAny: A.Equals<
+  M.Intersect<M.Primitive<string, true, Date>, M.Any>,
+  M.Primitive<string, true, Date>
+> = 1;
+serializedPrimitiveToAny;
+
+const serializedPrimitiveToSerializedAny: A.Equals<
+  M.Intersect<M.Primitive<string, true, Date>, M.Any<true, unknown>>,
+  M.Primitive<string, true, Date>
+> = 1;
+serializedPrimitiveToSerializedAny;
 
 // --- CONSTS ---
 
@@ -31,6 +49,27 @@ const nonIntersectingConst: A.Equals<
   M.Never
 > = 1;
 nonIntersectingConst;
+
+const primitiveToSerializedConst: A.Equals<
+  M.Intersect<M.Primitive<string>, M.Const<"2022-01-01", true, Date>>,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+primitiveToSerializedConst;
+
+const serializedPrimitiveToConst: A.Equals<
+  M.Intersect<M.Primitive<string, true, Date>, M.Const<"2022-01-01">>,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+serializedPrimitiveToConst;
+
+const serializedPrimitiveToSerializedConst: A.Equals<
+  M.Intersect<
+    M.Primitive<string, true, Date>,
+    M.Const<"2022-01-01", true, Date>
+  >,
+  M.Const<"2022-01-01", true, Date>
+> = 1;
+serializedPrimitiveToSerializedConst;
 
 // --- ENUM ---
 
@@ -52,6 +91,33 @@ const nonIntersectingEnum: A.Equals<
 > = 1;
 nonIntersectingEnum;
 
+const primitiveToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Primitive<string>,
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+primitiveToSerializedEnum;
+
+const serializedPrimitiveToEnum: A.Equals<
+  M.Intersect<
+    M.Primitive<string, true, Date>,
+    M.Enum<"2022-01-01" | "2023-01-01">
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedPrimitiveToEnum;
+
+const serializedPrimitiveToSerializedEnum: A.Equals<
+  M.Intersect<
+    M.Primitive<string, true, Date>,
+    M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+  >,
+  M.Enum<"2022-01-01" | "2023-01-01", true, Date>
+> = 1;
+serializedPrimitiveToSerializedEnum;
+
 // --- PRIMITIVES ---
 
 const intersectingPrimitive: A.Equals<
@@ -65,6 +131,24 @@ const nonIntersectingPrimitive: A.Equals<
   M.Never
 > = 1;
 nonIntersectingPrimitive;
+
+const primitiveToSerializedPrimitive: A.Equals<
+  M.Intersect<M.Primitive<string>, M.Primitive<string, true, Date>>,
+  M.Primitive<string, true, Date>
+> = 1;
+primitiveToSerializedPrimitive;
+
+const serializedPrimitiveToPrimitive: A.Equals<
+  M.Intersect<M.Primitive<string, true, Date>, M.Primitive<string>>,
+  M.Primitive<string, true, Date>
+> = 1;
+serializedPrimitiveToPrimitive;
+
+const serializedPrimitiveToSerializedPrimitive: A.Equals<
+  M.Intersect<M.Primitive<string, true, Date>, M.Primitive<string, true, Date>>,
+  M.Primitive<string, true, Date>
+> = 1;
+serializedPrimitiveToSerializedPrimitive;
 
 // --- ARRAY ---
 

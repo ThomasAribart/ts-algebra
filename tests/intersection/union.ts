@@ -2,14 +2,6 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
-// --- ANY ---
-
-const anysAlwaysIntersect: A.Equals<
-  M.Intersect<M.Union<M.Const<"foo"> | M.Primitive<number>>, M.Any>,
-  M.Union<M.Const<"foo"> | M.Primitive<number>>
-> = 1;
-anysAlwaysIntersect;
-
 // --- NEVER ---
 
 const neversNeverIntersect: A.Equals<
@@ -17,6 +9,14 @@ const neversNeverIntersect: A.Equals<
   M.Never
 > = 1;
 neversNeverIntersect;
+
+// --- ANY ---
+
+const anysAlwaysIntersect: A.Equals<
+  M.Intersect<M.Union<M.Const<"foo"> | M.Primitive<number>>, M.Any>,
+  M.Union<M.Const<"foo"> | M.Primitive<number>>
+> = 1;
+anysAlwaysIntersect;
 
 // --- CONSTS ---
 
