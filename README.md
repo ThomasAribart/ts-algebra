@@ -72,6 +72,7 @@ Think of meta-types as a parallel universe where all kinds of magic can happen �
   - [Resolve](#resolve)
   - [Intersect](#intersect)
   - [Exclude](#exclude)
+- [Deserialization](#-deserialization)
 - [Type constraints](#-type-constraints)
 - [Unsafe types](#%EF%B8%8F-unsafe-types-and-methods)
 
@@ -126,8 +127,8 @@ type Resolved = M.Resolve<
 
 **Arguments:**
 
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -146,8 +147,8 @@ Used for types with [cardinalities](#meta-types) of 1.
 **Arguments:**
 
 - <code>Value <i>(type)</i></code>
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -166,8 +167,8 @@ Used for types with finite [cardinalities](#meta-types).
 **Arguments:**
 
 - <code>Values <i>(type union)</i></code>
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -188,8 +189,8 @@ Used for either `string`, `number`, `boolean` or `null`.
 **Arguments:**
 
 - <code>Value <i>(string | number | boolean | null)</i></code>
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -208,8 +209,8 @@ Used for lists of items of the same type.
 **Arguments:**
 
 - <code>Items <i>(?meta-type = M.Any)</i></code>
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -238,8 +239,8 @@ Meta-tuples can have **additional items**, typed as [`M.Never`](#never) by defau
 
 - <code>RequiredItems <i>(meta-type[])</i>:</code>
 - <code>AdditionalItems <i>(?meta-type = M.Never)</i>:</code> Type of additional items
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 <!-- prettier-ignore -->
 ```typescript
@@ -274,8 +275,8 @@ In presence of named properties, open meta-objects additional properties are res
 - <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
 - <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
 - <code>AdditionalProperties <i>(?meta-type = M.Never)</i>:</code> The type of additional properties
-- <code>IsSerialized <i>(?boolean = false)</i></code>: See [Deserialization](#📦-deserialization)
-- <code>Deserialized <i>(?type = never)</i></code>: See [Deserialization](#📦-deserialization)
+- <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
+- <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
 ```typescript
 import { M } from "ts-algebra";
@@ -328,7 +329,7 @@ type Food = M.Resolve<
 
 > ☝️ A meta-union is [non-representable](#✨-meta-types) if it is empty, or if none of its elements is representable
 
-> ☝️ Along with [M.Never](#never), M.Union is the only meta-type that doesn't support [serialization](#📦-deserialization)
+> ☝️ Along with [M.Never](#never), M.Union is the only meta-type that doesn't support [serialization](#-deserialization)
 
 ## 🔧 Methods
 
