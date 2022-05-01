@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -29,10 +29,10 @@ type $MergeArrayValuesToSerializable<
 > = _$Array<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectArray<A extends ArrayType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? MergeArrayValuesToSerializable<ArrayValues<A>, A, B>
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? IntersectConstToArray<B, A>
     : B extends EnumType

@@ -2,6 +2,11 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const anyToNever: A.Equals<M.Intersect<M.Any, M.Never>, M.Never> = 1;
+anyToNever;
+
 // --- ANY ---
 
 const anyToAny: A.Equals<M.Intersect<M.Any, M.Any>, M.Any> = 1;
@@ -24,11 +29,6 @@ const serializedAnyToSerializedAny: A.Equals<
   M.Any<true, "yolo">
 > = 1;
 serializedAnyToSerializedAny;
-
-// --- NEVER ---
-
-const anyToNever: A.Equals<M.Intersect<M.Any, M.Never>, M.Never> = 1;
-anyToNever;
 
 // --- CONSTS ---
 

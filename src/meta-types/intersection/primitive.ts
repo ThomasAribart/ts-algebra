@@ -2,8 +2,8 @@ import { A } from "ts-toolbelt";
 
 import { If } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveValue, PrimitiveType, Primitive } from "../primitive";
@@ -28,10 +28,10 @@ export type MergePrimitiveToSerializable<
 >;
 
 export type IntersectPrimitive<A extends PrimitiveType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? MergePrimitiveToSerializable<A, B>
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? IntersectConstToPrimitive<B, A>
     : B extends EnumType

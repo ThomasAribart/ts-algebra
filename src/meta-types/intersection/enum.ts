@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType } from "../const";
 import { Enum, EnumType, EnumValues } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -21,10 +21,10 @@ export type MergeEnumValuesToSerializable<
 > = Enum<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectEnum<A extends EnumType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? MergeEnumValuesToSerializable<EnumValues<A>, A, B>
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? IntersectConstToEnum<B, A>
     : B extends EnumType

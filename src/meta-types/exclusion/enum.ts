@@ -1,7 +1,7 @@
 import { U } from "ts-toolbelt";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType } from "../const";
 import { Enum, EnumType, EnumValues } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -16,10 +16,10 @@ import { _Exclude } from "./index";
 import { ExcludeUnion } from "./union";
 
 export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? FilterSubstracted<A, B>
     : B extends EnumType

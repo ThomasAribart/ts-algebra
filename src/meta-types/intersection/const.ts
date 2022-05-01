@@ -1,7 +1,7 @@
 import { IsObject } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType, ConstValue } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -26,10 +26,10 @@ export type MergeConstToSerializable<
 >;
 
 export type IntersectConst<A extends ConstType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? MergeConstToSerializable<A, B>
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? CheckExtendsResolved<A, B>
     : B extends EnumType

@@ -2,6 +2,14 @@ import { A } from "ts-toolbelt";
 
 import { M } from "index";
 
+// --- NEVER ---
+
+const neverNeverIntersect: A.Equals<
+  M.Intersect<M.Const<"foo">, M.Never>,
+  M.Never
+> = 1;
+neverNeverIntersect;
+
 // --- ANY ---
 
 const anyAlwaysIntersect: A.Equals<
@@ -27,14 +35,6 @@ const serializedConstToSerializedAny: A.Equals<
   M.Const<"2022-01-01", true, Date>
 > = 1;
 serializedConstToSerializedAny;
-
-// --- NEVER ---
-
-const neverNeverIntersect: A.Equals<
-  M.Intersect<M.Const<"foo">, M.Never>,
-  M.Never
-> = 1;
-neverNeverIntersect;
 
 // --- CONSTS ---
 

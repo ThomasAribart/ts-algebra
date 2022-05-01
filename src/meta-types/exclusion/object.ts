@@ -2,8 +2,8 @@ import { A, U } from "ts-toolbelt";
 
 import { And, Or, Not, DoesExtend, IsObject, If } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType, ConstValue } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -37,10 +37,10 @@ import {
 } from "./utils";
 
 export type ExcludeFromObject<A extends ObjectType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? ExcludeConstFromObject<A, B>
     : B extends EnumType

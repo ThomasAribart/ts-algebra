@@ -1,7 +1,7 @@
 import { L } from "ts-toolbelt";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -37,10 +37,10 @@ type $MergeTuplePropsToSerializable<
   B extends SerializableType
 > = $Tuple<V, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
-export type IntersectTuple<A extends TupleType, B> = B extends AnyType
-  ? MergeTuplePropsToSerializable<TupleValues<A>, TupleOpenProps<A>, A, B>
-  : B extends NeverType
+export type IntersectTuple<A extends TupleType, B> = B extends NeverType
   ? B
+  : B extends AnyType
+  ? MergeTuplePropsToSerializable<TupleValues<A>, TupleOpenProps<A>, A, B>
   : B extends ConstType
   ? IntersectConstToTuple<B, A>
   : B extends EnumType

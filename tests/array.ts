@@ -7,15 +7,15 @@ import { M } from "index";
 const neverValue: A.Equals<M.Array<M.Never>, M.Array<M.Never>> = 1;
 neverValue;
 
-// --- ANY ---
-
-const test1: A.Equals<M.Resolve<M.Array<M.Any>>, unknown[]> = 1;
-test1;
-
 //  --- NEVER ---
 
 const test2: A.Equals<M.Resolve<M.Array<M.Never>>, []> = 1;
 test2;
+
+// --- ANY ---
+
+const test1: A.Equals<M.Resolve<M.Array<M.Any>>, unknown[]> = 1;
+test1;
 
 // --- CONST ---
 

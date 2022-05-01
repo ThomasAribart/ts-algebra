@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -39,7 +39,9 @@ type $MergeObjectPropsToSerializable<
 > = _$Object<V, R, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectObject<A extends ObjectType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? MergeObjectPropsToSerializable<
         ObjectValues<A>,
         ObjectRequiredKeys<A>,
@@ -47,8 +49,6 @@ export type IntersectObject<A extends ObjectType, B> = B extends Type
         A,
         B
       >
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? IntersectConstToObject<B, A>
     : B extends EnumType

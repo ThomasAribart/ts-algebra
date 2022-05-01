@@ -1,5 +1,5 @@
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { ConstType } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -12,10 +12,10 @@ import { Type } from "../type";
 import { $Intersect } from "./index";
 
 export type IntersectUnion<A extends UnionType, B> = B extends Type
-  ? B extends AnyType
+  ? B extends NeverType
+    ? B
+    : B extends AnyType
     ? A
-    : B extends NeverType
-    ? Never
     : B extends ConstType
     ? DistributeIntersection<A, B>
     : B extends EnumType

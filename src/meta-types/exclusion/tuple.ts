@@ -2,8 +2,8 @@ import { A, L } from "ts-toolbelt";
 
 import { And, DoesExtend, Not, If } from "../../utils";
 
-import { AnyType } from "../any";
 import { Never, NeverType } from "../never";
+import { AnyType } from "../any";
 import { Const, ConstType, ConstValue } from "../const";
 import { EnumType } from "../enum";
 import { PrimitiveType } from "../primitive";
@@ -36,10 +36,10 @@ import {
 } from "./utils";
 
 export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
-  ? B extends AnyType
-    ? Never
-    : B extends NeverType
+  ? B extends NeverType
     ? A
+    : B extends AnyType
+    ? Never
     : B extends ConstType
     ? ExcludeConst<A, B>
     : B extends EnumType
