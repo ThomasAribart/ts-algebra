@@ -199,7 +199,7 @@ type NonNeverItems<
     ? T extends CrossValueType[]
       ? ExclusionResult<H> extends NeverType
         ? NonNeverItems<T, R>
-        : NonNeverItems<T, [H, ...R]>
+        : NonNeverItems<T, [...R, H]>
       : never
     : never
   : R;
@@ -241,7 +241,7 @@ type OmittableItems<
     H extends CrossValueType
     ? T extends CrossValueType[]
       ? IsOmittable<H> extends true
-        ? OmittableItems<T, [H, ...R]>
+        ? OmittableItems<T, [...R, H]>
         : OmittableItems<T, R>
       : never
     : never
