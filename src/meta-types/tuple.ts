@@ -65,7 +65,8 @@ type RecurseOnTuple<
   O extends ResolveOptions,
   R extends any[] = []
 > = V extends [infer H, ...infer T]
-  ? H extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends Type
     ? T extends Type[]
       ? RecurseOnTuple<T, O, [...R, Resolve<H, O>]>
       : never

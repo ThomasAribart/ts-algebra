@@ -96,10 +96,12 @@ type CrossTupleValues<
   P2 extends Type,
   C extends CrossValueType[] = []
 > = V1 extends [infer H1, ...infer T1]
-  ? H1 extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H1 extends Type
     ? T1 extends Type[]
       ? V2 extends [infer H2, ...infer T2]
-        ? H2 extends Type
+        ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+          H2 extends Type
           ? T2 extends Type[]
             ? CrossTupleValues<
                 T1,
@@ -124,7 +126,8 @@ type CrossTupleValues<
       : never
     : never
   : V2 extends [infer H2, ...infer T2]
-  ? H2 extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H2 extends Type
     ? T2 extends Type[]
       ? CrossTupleValues<
           [],
@@ -161,7 +164,8 @@ type IsSubstractedSmallEnough<C extends CrossValueType[]> = C extends [
   infer H,
   ...infer T
 ]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? IsOutsideOfOriginScope<H> extends true
         ? false
@@ -174,7 +178,8 @@ type IsSubstractedBigEnough<C extends CrossValueType[]> = C extends [
   infer H,
   ...infer T
 ]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? IsOutsideOfSubstractedScope<H> extends true
         ? false
@@ -189,7 +194,8 @@ type NonNeverItems<
   C extends CrossValueType[],
   R extends CrossValueType[] = []
 > = C extends [infer H, ...infer T]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? ExclusionResult<H> extends NeverType
         ? NonNeverItems<T, R>
@@ -202,7 +208,8 @@ type PropagateExclusion<
   C extends CrossValueType[],
   R extends any[] = []
 > = C extends [infer H, ...infer T]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? PropagateExclusion<T, [...R, Propagate<H>]>
       : never
@@ -230,7 +237,8 @@ type OmittableItems<
   C extends CrossValueType[],
   R extends CrossValueType[] = []
 > = C extends [infer H, ...infer T]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? IsOmittable<H> extends true
         ? OmittableItems<T, [H, ...R]>
@@ -243,7 +251,8 @@ type RequiredTupleValues<
   C extends CrossValueType[],
   R extends Type[] = []
 > = C extends [infer H, ...infer T]
-  ? H extends CrossValueType
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends CrossValueType
     ? T extends CrossValueType[]
       ? IsOmittable<H> extends true
         ? R

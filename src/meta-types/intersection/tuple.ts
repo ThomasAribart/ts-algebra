@@ -67,7 +67,8 @@ type IntersectTupleToArrayValues<
   T extends Type,
   R extends any[] = []
 > = V extends [infer H, ...infer Tl]
-  ? H extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H extends Type
     ? Tl extends Type[]
       ? IntersectTupleToArrayValues<Tl, T, [...R, Intersect<H, T>]>
       : never
@@ -97,10 +98,12 @@ type IntersectTupleValues<
   P2 extends Type,
   R extends any[] = []
 > = V1 extends [infer H1, ...infer T1]
-  ? H1 extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H1 extends Type
     ? T1 extends Type[]
       ? V2 extends [infer H2, ...infer T2]
-        ? H2 extends Type
+        ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+          H2 extends Type
           ? T2 extends Type[]
             ? IntersectTupleValues<
                 T1,
@@ -125,7 +128,8 @@ type IntersectTupleValues<
       : never
     : never
   : V2 extends [infer H2, ...infer T2]
-  ? H2 extends Type
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    H2 extends Type
     ? T2 extends Type[]
       ? IntersectTupleValues<
           V1,
