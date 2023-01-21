@@ -1,5 +1,3 @@
-import { L } from "ts-toolbelt";
-
 import { Never, NeverType } from "../never";
 import { AnyType } from "../any";
 import { ConstType } from "../const";
@@ -68,14 +66,13 @@ type IntersectTupleToArrayValues<
   V extends Type[],
   T extends Type,
   R extends any[] = []
-> = {
-  stop: L.Reverse<R>;
-  continue: IntersectTupleToArrayValues<
-    L.Tail<V>,
-    T,
-    L.Prepend<R, Intersect<L.Head<V>, T>>
-  >;
-}[V extends [any, ...any[]] ? "continue" : "stop"];
+> = V extends [infer H, ...infer Tl]
+  ? H extends Type
+    ? Tl extends Type[]
+      ? IntersectTupleToArrayValues<Tl, T, [...R, Intersect<H, T>]>
+      : never
+    : never
+  : R;
 
 type IntersectTuples<
   A extends TupleType,
@@ -99,39 +96,46 @@ type IntersectTupleValues<
   P1 extends Type,
   P2 extends Type,
   R extends any[] = []
-> = {
-  stop: L.Reverse<R>;
-  continue1: IntersectTupleValues<
-    L.Tail<V1>,
-    V2,
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<R, O2 extends true ? Intersect<L.Head<V1>, P2> : Never>
-  >;
-  continue2: IntersectTupleValues<
-    V1,
-    L.Tail<V2>,
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<R, O1 extends true ? Intersect<L.Head<V2>, P1> : Never>
-  >;
-  continueBoth: IntersectTupleValues<
-    L.Tail<V1>,
-    L.Tail<V2>,
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<R, Intersect<L.Head<V1>, L.Head<V2>>>
-  >;
-}[V1 extends [any, ...any[]]
-  ? V2 extends [any, ...any[]]
-    ? "continueBoth"
-    : "continue1"
-  : V2 extends [any, ...any[]]
-  ? "continue2"
-  : "stop"];
+> = V1 extends [infer H1, ...infer T1]
+  ? H1 extends Type
+    ? T1 extends Type[]
+      ? V2 extends [infer H2, ...infer T2]
+        ? H2 extends Type
+          ? T2 extends Type[]
+            ? IntersectTupleValues<
+                T1,
+                T2,
+                O1,
+                O2,
+                P1,
+                P2,
+                [...R, Intersect<H1, H2>]
+              >
+            : never
+          : never
+        : IntersectTupleValues<
+            T1,
+            V2,
+            O1,
+            O2,
+            P1,
+            P2,
+            [...R, O2 extends true ? Intersect<H1, P2> : Never]
+          >
+      : never
+    : never
+  : V2 extends [infer H2, ...infer T2]
+  ? H2 extends Type
+    ? T2 extends Type[]
+      ? IntersectTupleValues<
+          V1,
+          T2,
+          O1,
+          O2,
+          P1,
+          P2,
+          [...R, O1 extends true ? Intersect<H2, P1> : Never]
+        >
+      : never
+    : never
+  : R;

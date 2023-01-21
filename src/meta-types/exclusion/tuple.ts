@@ -1,6 +1,4 @@
-import { A, L } from "ts-toolbelt";
-
-import { And, DoesExtend, Not, If } from "../../utils";
+import { And, DoesExtend, Not, If, Tail } from "../../utils";
 
 import { Never, NeverType } from "../never";
 import { AnyType } from "../any";
@@ -97,49 +95,56 @@ type CrossTupleValues<
   P1 extends Type,
   P2 extends Type,
   C extends CrossValueType[] = []
-> = {
-  stop: L.Reverse<C>;
-  continue1: CrossTupleValues<
-    L.Tail<V1>,
-    [],
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<C, CrossValue<L.Head<V1>, true, true, P2, O2, false>>
-  >;
-  continue2: CrossTupleValues<
-    [],
-    L.Tail<V2>,
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<C, CrossValue<P1, O1, false, L.Head<V2>, true, true>>
-  >;
-  continueBoth: CrossTupleValues<
-    L.Tail<V1>,
-    L.Tail<V2>,
-    O1,
-    O2,
-    P1,
-    P2,
-    L.Prepend<C, CrossValue<L.Head<V1>, true, true, L.Head<V2>, true, true>>
-  >;
-}[V1 extends [any, ...any[]]
-  ? V2 extends [any, ...any[]]
-    ? "continueBoth"
-    : "continue1"
-  : V2 extends [any, ...any[]]
-  ? "continue2"
-  : "stop"];
+> = V1 extends [infer H1, ...infer T1]
+  ? H1 extends Type
+    ? T1 extends Type[]
+      ? V2 extends [infer H2, ...infer T2]
+        ? H2 extends Type
+          ? T2 extends Type[]
+            ? CrossTupleValues<
+                T1,
+                T2,
+                O1,
+                O2,
+                P1,
+                P2,
+                [...C, CrossValue<H1, true, true, H2, true, true>]
+              >
+            : never
+          : never
+        : CrossTupleValues<
+            T1,
+            [],
+            O1,
+            O2,
+            P1,
+            P2,
+            [...C, CrossValue<H1, true, true, P2, O2, false>]
+          >
+      : never
+    : never
+  : V2 extends [infer H2, ...infer T2]
+  ? H2 extends Type
+    ? T2 extends Type[]
+      ? CrossTupleValues<
+          [],
+          T2,
+          O1,
+          O2,
+          P1,
+          P2,
+          [...C, CrossValue<P1, O1, false, H2, true, true>]
+        >
+      : never
+    : never
+  : C;
 
 // UTILS
 
-type GetTupleLength<T extends any[], R extends any[] = L.Tail<T>> = If<
-  A.Equals<T, []>,
+type GetTupleLength<T extends any[], R extends any[] = Tail<T>> = If<
+  DoesExtend<T, []>,
   "none",
-  If<A.Equals<R, []>, "onlyOne", "moreThanTwo">
+  If<DoesExtend<R, []>, "onlyOne", "moreThanTwo">
 >;
 
 // SIZE CHECK
@@ -152,36 +157,57 @@ type DoesTupleSizesMatch<
   ? false
   : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
 
-type IsSubstractedSmallEnough<C extends CrossValueType[]> = {
-  stop: true;
-  continue: IsOutsideOfOriginScope<L.Head<C>> extends true
-    ? false
-    : IsSubstractedSmallEnough<L.Tail<C>>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+type IsSubstractedSmallEnough<C extends CrossValueType[]> = C extends [
+  infer H,
+  ...infer T
+]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? IsOutsideOfOriginScope<H> extends true
+        ? false
+        : IsSubstractedSmallEnough<T>
+      : never
+    : never
+  : true;
 
-type IsSubstractedBigEnough<C extends CrossValueType[]> = {
-  stop: true;
-  continue: IsOutsideOfSubstractedScope<L.Head<C>> extends true
-    ? false
-    : IsSubstractedBigEnough<L.Tail<C>>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+type IsSubstractedBigEnough<C extends CrossValueType[]> = C extends [
+  infer H,
+  ...infer T
+]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? IsOutsideOfSubstractedScope<H> extends true
+        ? false
+        : IsSubstractedBigEnough<T>
+      : never
+    : never
+  : true;
 
 // PROPAGATION
 
 type NonNeverItems<
   C extends CrossValueType[],
   R extends CrossValueType[] = []
-> = {
-  stop: R;
-  continue: ExclusionResult<L.Head<C>> extends NeverType
-    ? NonNeverItems<L.Tail<C>, R>
-    : NonNeverItems<L.Tail<C>, L.Prepend<R, L.Head<C>>>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+> = C extends [infer H, ...infer T]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? ExclusionResult<H> extends NeverType
+        ? NonNeverItems<T, R>
+        : NonNeverItems<T, [H, ...R]>
+      : never
+    : never
+  : R;
 
-type PropagateExclusion<C extends CrossValueType[], R extends any[] = []> = {
-  stop: L.Reverse<R>;
-  continue: PropagateExclusion<L.Tail<C>, L.Prepend<R, Propagate<L.Head<C>>>>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+type PropagateExclusion<
+  C extends CrossValueType[],
+  R extends any[] = []
+> = C extends [infer H, ...infer T]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? PropagateExclusion<T, [...R, Propagate<H>]>
+      : never
+    : never
+  : R;
 
 // OMITTABLE ITEMS
 
@@ -203,19 +229,28 @@ type OmitOmittableItems<
 type OmittableItems<
   C extends CrossValueType[],
   R extends CrossValueType[] = []
-> = {
-  stop: R;
-  continue: IsOmittable<L.Head<C>> extends true
-    ? OmittableItems<L.Tail<C>, L.Prepend<R, L.Head<C>>>
-    : OmittableItems<L.Tail<C>, R>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+> = C extends [infer H, ...infer T]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? IsOmittable<H> extends true
+        ? OmittableItems<T, [H, ...R]>
+        : OmittableItems<T, R>
+      : never
+    : never
+  : R;
 
-type RequiredTupleValues<C extends CrossValueType[], R extends Type[] = []> = {
-  stop: L.Reverse<R>;
-  continue: IsOmittable<L.Head<C>> extends true
-    ? L.Reverse<R>
-    : RequiredTupleValues<L.Tail<C>, L.Prepend<R, OriginValue<L.Head<C>>>>;
-}[C extends [any, ...any[]] ? "continue" : "stop"];
+type RequiredTupleValues<
+  C extends CrossValueType[],
+  R extends Type[] = []
+> = C extends [infer H, ...infer T]
+  ? H extends CrossValueType
+    ? T extends CrossValueType[]
+      ? IsOmittable<H> extends true
+        ? R
+        : RequiredTupleValues<T, [...R, OriginValue<H>]>
+      : never
+    : never
+  : R;
 
 // CONST
 
@@ -230,7 +265,9 @@ type ExcludeConst<
     >
   : A;
 
-type ExtractConstValues<V extends any[], R extends any[] = []> = {
-  stop: L.Reverse<R>;
-  continue: ExtractConstValues<L.Tail<V>, L.Prepend<R, Const<L.Head<V>>>>;
-}[V extends [any, ...any[]] ? "continue" : "stop"];
+type ExtractConstValues<V extends any[], R extends any[] = []> = V extends [
+  infer H,
+  ...infer T
+]
+  ? ExtractConstValues<T, [...R, Const<H>]>
+  : R;

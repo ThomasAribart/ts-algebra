@@ -1,6 +1,4 @@
-import { A } from "ts-toolbelt";
-
-import { If, And } from "../utils";
+import { If, And, IsNever } from "../utils";
 
 import { Never } from "./never";
 import { ResolveOptions } from "./resolve";
@@ -9,7 +7,7 @@ import { Deserialized, IsSerialized } from "./utils";
 export type ConstTypeId = "const";
 
 export type Const<V, I extends boolean = false, D = never> = If<
-  A.Equals<V, never>,
+  IsNever<V>,
   Never,
   {
     type: ConstTypeId;

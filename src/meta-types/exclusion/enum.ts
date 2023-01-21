@@ -1,4 +1,4 @@
-import { U } from "ts-toolbelt";
+import { UnionLast } from "../../utils/unionLast";
 
 import { Never, NeverType } from "../never";
 import { AnyType } from "../any";
@@ -51,9 +51,9 @@ export type ExcludeEnum<
   A extends Type,
   B extends EnumType,
   V = EnumValues<B>
-> = ExcludeEnumValue<A, U.Last<V>, V>;
+> = ExcludeEnumValue<A, UnionLast<V>, V>;
 
 type ExcludeEnumValue<A extends Type, L, V> = $Intersect<
   _Exclude<A, Const<L>>,
-  _Exclude<A, Enum<U.Exclude<V, L>>>
+  _Exclude<A, Enum<Exclude<V, L>>>
 >;

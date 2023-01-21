@@ -1,5 +1,3 @@
-import { L } from "ts-toolbelt";
-
 import { DoesExtend, Not, And } from "../utils";
 
 import { Never, NeverType } from "./never";
@@ -32,14 +30,11 @@ export type $Tuple<
       deserialized: D;
     };
 
-type IsAnyValueNever<V> = {
-  stop: false;
-  continue: V extends any[]
-    ? L.Head<V> extends NeverType
-      ? true
-      : IsAnyValueNever<L.Tail<V>>
-    : true;
-}[V extends [any, ...any[]] ? "continue" : "stop"];
+type IsAnyValueNever<V> = V extends [infer H, ...infer T]
+  ? H extends NeverType
+    ? true
+    : IsAnyValueNever<T>
+  : false;
 
 export type TupleType = {
   type: TupleTypeId;
@@ -62,17 +57,17 @@ export type ResolveTuple<T extends TupleType, O extends ResolveOptions> = And<
 > extends true
   ? Deserialized<T>
   : IsTupleOpen<T> extends true
-  ? L.Concat<
-      RecurseOnTuple<TupleValues<T>, O>,
-      [...Resolve<TupleOpenProps<T>, O>[]]
-    >
+  ? [...RecurseOnTuple<TupleValues<T>, O>, ...Resolve<TupleOpenProps<T>, O>[]]
   : RecurseOnTuple<TupleValues<T>, O>;
 
 type RecurseOnTuple<
   V extends Type[],
   O extends ResolveOptions,
   R extends any[] = []
-> = {
-  stop: L.Reverse<R>;
-  continue: RecurseOnTuple<L.Tail<V>, O, L.Prepend<R, Resolve<L.Head<V>, O>>>;
-}[V extends [any, ...any[]] ? "continue" : "stop"];
+> = V extends [infer H, ...infer T]
+  ? H extends Type
+    ? T extends Type[]
+      ? RecurseOnTuple<T, O, [...R, Resolve<H, O>]>
+      : never
+    : never
+  : R;

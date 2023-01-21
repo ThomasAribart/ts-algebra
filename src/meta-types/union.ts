@@ -1,6 +1,4 @@
-import { A } from "ts-toolbelt";
-
-import { If, DoesExtend } from "../utils";
+import { If, IsNever, DoesExtend } from "../utils";
 
 import { Never, NeverType } from "./never";
 import { $Resolve, ResolveOptions } from "./resolve";
@@ -12,7 +10,7 @@ export type Union<V extends Type> = $Union<V>;
 
 // TOIMPROVE: Maybe we can filter out Never values at instanciation
 export type $Union<V> = If<
-  A.Equals<V, never>,
+  IsNever<V>,
   Never, // V extends NeverType should not be used as it spreads the union (Union<A | B> => Union<A> | Union<B>)
   DoesExtend<V, NeverType> extends true
     ? Never
