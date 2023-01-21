@@ -238,7 +238,7 @@ Meta-tuples can have **additional items**, typed as [`M.Never`](#never) by defau
 **Arguments:**
 
 - <code>RequiredItems <i>(meta-type[])</i>:</code>
-- <code>AdditionalItems <i>(?meta-type = M.Never)</i>:</code> Type of additional items
+- <code>AdditionalItems <i>(?meta-type = M.Never)</i></code>: Type of additional items
 - <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
 - <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
@@ -274,7 +274,7 @@ In presence of named properties, open meta-objects additional properties are res
 
 - <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
 - <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
-- <code>AdditionalProperties <i>(?meta-type = M.Never)</i>:</code> The type of additional properties
+- <code>AdditionalProperties <i>(?meta-type = M.Never)</i></code>: The type of additional properties
 - <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
 - <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
