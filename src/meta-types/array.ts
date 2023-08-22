@@ -1,26 +1,50 @@
-import type { And, Prettify } from "../utils";
+import type { And, If, Prettify } from "~/utils";
+
 import type { Any } from "./any";
 import type { NeverType } from "./never";
 import type { Resolve, ResolveOptions } from "./resolve";
 import type { Type } from "./type";
 import type { Deserialized, IsSerialized } from "./utils";
 
+/**
+ * Type id of the `Array` meta-type
+ */
 export type ArrayTypeId = "array";
 
-// Prefixed with _ to not confuse with native Array type
+/**
+ * Defines an `Array` meta-type
+ * @param VALUES MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
 export type _Array<
-  V extends Type = Any,
-  I extends boolean = false,
-  D = never,
-> = _$Array<V, I, D>;
+  // ☝️ Prefixed with _ to not confuse with native Array type
+  VALUES extends Type = Any,
+  IS_SERIALIZED extends boolean = false,
+  DESERIALIZED = never,
+> = _$Array<VALUES, IS_SERIALIZED, DESERIALIZED>;
 
-export type _$Array<V = Any, I = false, D = never> = {
+/**
+ * Defines an `Array` meta-type (without type constraints)
+ * @param VALUES MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
+export type _$Array<
+  VALUES = Any,
+  IS_SERIALIZED = false,
+  DESERIALIZED = never,
+> = {
+  // ☝️ Prefixed with _ to not confuse with native Array type
   type: ArrayTypeId;
-  values: V;
-  isSerialized: I;
-  deserialized: D;
+  values: VALUES;
+  isSerialized: IS_SERIALIZED;
+  deserialized: DESERIALIZED;
 };
 
+/**
+ * Any `Array` meta-type
+ */
 export type ArrayType = {
   type: ArrayTypeId;
   values: Type;
@@ -28,13 +52,21 @@ export type ArrayType = {
   deserialized: unknown;
 };
 
-export type ArrayValues<A extends ArrayType> = A["values"];
+export type ArrayValues<META_ARRAY extends ArrayType> = META_ARRAY["values"];
 
-export type ResolveArray<T extends ArrayType, O extends ResolveOptions> = And<
-  O["deserialize"],
-  IsSerialized<T>
-> extends true
-  ? Deserialized<T>
-  : ArrayValues<T> extends NeverType
-  ? []
-  : Prettify<Resolve<ArrayValues<T>, O>[]>;
+/**
+ * Resolves an `Array` meta-type to its encapsulated type
+ * @param META_ARRAY ArrayType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
+export type ResolveArray<
+  META_ARRAY extends ArrayType,
+  OPTIONS extends ResolveOptions,
+> = If<
+  And<OPTIONS["deserialize"], IsSerialized<META_ARRAY>>,
+  Deserialized<META_ARRAY>,
+  ArrayValues<META_ARRAY> extends NeverType
+    ? []
+    : Prettify<Resolve<ArrayValues<META_ARRAY>, OPTIONS>[]>
+>;

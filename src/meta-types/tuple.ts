@@ -1,40 +1,64 @@
-import type { And, DoesExtend, Not } from "../utils";
+import type { And, DoesExtend, If, Not } from "~/utils";
+
 import type { Never, NeverType } from "./never";
 import type { Resolve, ResolveOptions } from "./resolve";
 import type { Type } from "./type";
 import type { Deserialized, IsSerialized } from "./utils";
 
+/**
+ * Type id of the `Tuple` meta-type
+ */
 export type TupleTypeId = "tuple";
 
+/**
+ * Defines a `Tuple` meta-type
+ * @param VALUES MetaType[]
+ * @param OPEN_PROPS MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
 export type Tuple<
-  V extends Type[],
-  P extends Type = Never,
-  I extends boolean = false,
-  D = never,
-> = $Tuple<V, P, I, D>;
+  VALUES extends Type[],
+  OPEN_PROPS extends Type = Never,
+  IS_SERIALIZED extends boolean = false,
+  DESERIALIZED = never,
+> = $Tuple<VALUES, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
 
+/**
+ * Defines a `Tuple` meta-type (without type constraints)
+ * @param VALUES MetaType[]
+ * @param OPEN_PROPS MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
 export type $Tuple<
-  V,
-  P = Never,
-  I = false,
-  D = never,
-> = IsAnyValueNever<V> extends true
+  VALUES,
+  OPEN_PROPS = Never,
+  IS_SERIALIZED = false,
+  DESERIALIZED = never,
+> = IsAnyValueNever<VALUES> extends true
   ? Never
   : {
       type: TupleTypeId;
-      values: V;
-      isOpen: Not<DoesExtend<P, NeverType>>;
-      openProps: P;
-      isSerialized: I;
-      deserialized: D;
+      values: VALUES;
+      isOpen: Not<DoesExtend<OPEN_PROPS, NeverType>>;
+      openProps: OPEN_PROPS;
+      isSerialized: IS_SERIALIZED;
+      deserialized: DESERIALIZED;
     };
 
-type IsAnyValueNever<V> = V extends [infer H, ...infer T]
-  ? H extends NeverType
+type IsAnyValueNever<VALUES> = VALUES extends [
+  infer VALUES_HEAD,
+  ...infer VALUES_TAIL,
+]
+  ? VALUES_HEAD extends NeverType
     ? true
-    : IsAnyValueNever<T>
+    : IsAnyValueNever<VALUES_TAIL>
   : false;
 
+/**
+ * Any `Tuple` meta-type
+ */
 export type TupleType = {
   type: TupleTypeId;
   values: Type[];
@@ -44,30 +68,48 @@ export type TupleType = {
   deserialized: unknown;
 };
 
-export type TupleValues<T extends TupleType> = T["values"];
+export type TupleValues<META_TUPLE extends TupleType> = META_TUPLE["values"];
 
-export type IsTupleOpen<T extends TupleType> = T["isOpen"];
+export type IsTupleOpen<META_TUPLE extends TupleType> = META_TUPLE["isOpen"];
 
-export type TupleOpenProps<T extends TupleType> = T["openProps"];
+export type TupleOpenProps<META_TUPLE extends TupleType> =
+  META_TUPLE["openProps"];
 
-export type ResolveTuple<T extends TupleType, O extends ResolveOptions> = And<
-  O["deserialize"],
-  IsSerialized<T>
-> extends true
-  ? Deserialized<T>
-  : IsTupleOpen<T> extends true
-  ? [...RecurseOnTuple<TupleValues<T>, O>, ...Resolve<TupleOpenProps<T>, O>[]]
-  : RecurseOnTuple<TupleValues<T>, O>;
+/**
+ * Resolves a `Tuple` meta-type to its encapsulated type
+ * @param META_TUPLE TupleType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
+export type ResolveTuple<
+  META_TUPLE extends TupleType,
+  OPTIONS extends ResolveOptions,
+> = If<
+  And<OPTIONS["deserialize"], IsSerialized<META_TUPLE>>,
+  Deserialized<META_TUPLE>,
+  If<
+    IsTupleOpen<META_TUPLE>,
+    [
+      ...RecurseOnTuple<TupleValues<META_TUPLE>, OPTIONS>,
+      ...Resolve<TupleOpenProps<META_TUPLE>, OPTIONS>[],
+    ],
+    RecurseOnTuple<TupleValues<META_TUPLE>, OPTIONS>
+  >
+>;
 
 type RecurseOnTuple<
-  V extends Type[],
-  O extends ResolveOptions,
-  R extends unknown[] = [],
-> = V extends [infer H, ...infer T]
+  VALUES extends Type[],
+  OPTIONS extends ResolveOptions,
+  RESULT extends unknown[] = [],
+> = VALUES extends [infer VALUES_HEAD, ...infer VALUES_TAIL]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-    H extends Type
-    ? T extends Type[]
-      ? RecurseOnTuple<T, O, [...R, Resolve<H, O>]>
+    VALUES_HEAD extends Type
+    ? VALUES_TAIL extends Type[]
+      ? RecurseOnTuple<
+          VALUES_TAIL,
+          OPTIONS,
+          [...RESULT, Resolve<VALUES_HEAD, OPTIONS>]
+        >
       : never
     : never
-  : R;
+  : RESULT;

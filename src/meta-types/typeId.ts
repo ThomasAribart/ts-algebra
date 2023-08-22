@@ -8,6 +8,9 @@ import type { PrimitiveTypeId } from "./primitive";
 import type { TupleTypeId } from "./tuple";
 import type { UnionTypeId } from "./union";
 
+/**
+ * Union of all meta-type ids
+ */
 export type TypeId =
   | NeverTypeId
   | AnyTypeId

@@ -15,7 +15,7 @@ module.exports = {
           "TSTypeAliasDeclaration",
           "TSInterfaceDeclaration",
           "TSMethodSignature",
-          "TSPropertySignature",
+          // "TSPropertySignature",
           "TSDeclareFunction",
           "TSEnumDeclaration",
         ],
