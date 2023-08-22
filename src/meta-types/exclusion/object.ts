@@ -1,46 +1,46 @@
-import {
+/* eslint-disable max-lines */
+import type {
   And,
-  Or,
-  Not,
   DoesExtend,
-  IsObject,
   If,
   IsNever,
+  IsObject,
+  Not,
+  Or,
   UnionPop,
-} from "../../utils";
+} from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType, ConstValue } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import {
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { Const, ConstType, ConstValue } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type {
   _Object,
-  ObjectType,
-  ObjectValues,
-  ObjectValue,
-  ObjectRequiredKeys,
   IsObjectOpen,
   ObjectOpenProps,
+  ObjectRequiredKeys,
+  ObjectType,
+  ObjectValue,
+  ObjectValues,
 } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-import { Deserialized, IsSerialized } from "../utils";
-
-import { _Exclude, _$Exclude } from "./index";
-import { ExcludeEnum } from "./enum";
-import { ExcludeUnion } from "./union";
-import {
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { Deserialized, IsSerialized } from "../utils";
+import type { ExcludeEnum } from "./enum";
+import type { _$Exclude, _Exclude } from "./index";
+import type { ExcludeUnion } from "./union";
+import type {
   CrossValue,
-  OriginValue,
+  CrossValueType,
   ExclusionResult,
+  IsOmittable,
   IsOutsideOfOriginScope,
   IsOutsideOfSubstractedScope,
+  OriginValue,
   Propagate,
-  IsOmittable,
-  CrossValueType,
 } from "./utils";
 
 export type ExcludeFromObject<A extends ObjectType, B> = B extends Type
@@ -70,7 +70,7 @@ type ExcludeObjects<
   B extends ObjectType,
   C extends Record<string, CrossValueType> = ExcludeObjectValues<A, B>,
   R extends string = NonNeverKeys<C>,
-  P = _Exclude<ObjectOpenProps<A>, ObjectOpenProps<B>>
+  P = _Exclude<ObjectOpenProps<A>, ObjectOpenProps<B>>,
 > = DoesObjectSizesMatch<A, B, C> extends true
   ? {
       moreThanTwo: A;
@@ -121,7 +121,7 @@ type IsRequiredIn<O extends ObjectType, K extends string> = DoesExtend<
 type DoesObjectSizesMatch<
   A extends ObjectType,
   B extends ObjectType,
-  C extends Record<string, CrossValueType>
+  C extends Record<string, CrossValueType>,
 > = And<IsObjectOpen<A>, Not<IsObjectOpen<B>>> extends true
   ? false
   : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
@@ -154,7 +154,7 @@ type NonNeverKeys<C extends Record<string, CrossValueType>> = {
 
 type PropagateExclusion<
   A extends ObjectType,
-  C extends Record<string, CrossValueType>
+  C extends Record<string, CrossValueType>,
 > = _Object<
   {
     [key in keyof C]: Propagate<C[key]>;
@@ -170,7 +170,7 @@ type PropagateExclusion<
 type OmitOmittableKeys<
   A extends ObjectType,
   C extends Record<string, CrossValueType>,
-  K extends string = OmittableKeys<C>
+  K extends string = OmittableKeys<C>,
 > = {
   moreThanTwo: A;
   onlyOne: _Object<
@@ -196,7 +196,7 @@ type OmittableKeys<C extends Record<string, CrossValueType>> = {
 type ExcludeConstFromObject<
   A extends ObjectType,
   B extends ConstType,
-  V = ConstValue<B>
+  V = ConstValue<B>,
 > = IsObject<V> extends true
   ? _$Exclude<
       A,

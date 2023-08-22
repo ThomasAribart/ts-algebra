@@ -1,19 +1,17 @@
-import { UnionLast } from "../../utils/unionLast";
-
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType } from "../const";
-import { Enum, EnumType, EnumValues } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { _Array, ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { $Intersect } from "../intersection";
-import { Type } from "../type";
-
-import { _Exclude } from "./index";
-import { ExcludeUnion } from "./union";
+import type { UnionLast } from "../../utils/unionLast";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { Const, ConstType } from "../const";
+import type { Enum, EnumType, EnumValues } from "../enum";
+import type { $Intersect } from "../intersection";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { _Exclude } from "./index";
+import type { ExcludeUnion } from "./union";
 
 export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
   ? B extends NeverType
@@ -50,7 +48,7 @@ type RecurseOnEnumValues<V, B extends Type> = V extends infer EnumValue
 export type ExcludeEnum<
   A extends Type,
   B extends EnumType,
-  V = EnumValues<B>
+  V = EnumValues<B>,
 > = ExcludeEnumValue<A, UnionLast<V>, V>;
 
 type ExcludeEnumValue<A extends Type, L, V> = $Intersect<

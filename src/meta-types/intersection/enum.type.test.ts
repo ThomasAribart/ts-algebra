@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- NEVER ---
 
@@ -304,7 +304,7 @@ const serializedEnumToObject: A.Equals<
       true,
       { date: Date }
     >,
-    M.Object<{ date: M.Primitive<string> }, "date", M.Never>
+    M.Object<{ date: M.Primitive<string> }, "date">
   >,
   M.Enum<{ date: "2022-01-01" } | { date: "2023-01-01" }, true, { date: Date }>
 > = 1;

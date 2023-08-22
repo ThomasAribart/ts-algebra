@@ -1,8 +1,10 @@
 /**
- * Return `true` if `A` or `B` extend `true`, `false` otherwise
- *
- * @param A Type
- * @param B Type
- * @return Boolean
+ * Return `true` if `BOOL_A` or `BOOL_B` extend `true`, `false` otherwise
+ * @param BOOL_A Type
+ * @param BOOL_B Type
+ * @returns Boolean
  */
-export type Or<A, B> = A extends true ? true : B extends true ? true : false;
+export type Or<
+  BOOL_A extends boolean,
+  BOOL_B extends boolean,
+> = BOOL_A extends true ? true : BOOL_B extends true ? true : false;

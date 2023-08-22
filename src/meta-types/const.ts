@@ -1,34 +1,58 @@
-import { If, And, IsNever } from "../utils";
+import type { And, If, IsNever } from "~/utils";
 
-import { Never } from "./never";
-import { ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { Never } from "./never";
+import type { ResolveOptions } from "./resolve";
+import type { Deserialized, IsSerialized } from "./utils";
 
+/**
+ * Type id of the `Const` meta-type
+ */
 export type ConstTypeId = "const";
 
-export type Const<V, I extends boolean = false, D = never> = If<
-  IsNever<V>,
+/**
+ * Defines a `Const` meta-type
+ * @param VALUE Type
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
+export type Const<
+  VALUE,
+  IS_SERIALIZED extends boolean = false,
+  DESERIALIZED = never,
+> = If<
+  IsNever<VALUE>,
   Never,
   {
     type: ConstTypeId;
-    value: V;
-    isSerialized: I;
-    deserialized: D;
+    value: VALUE;
+    isSerialized: IS_SERIALIZED;
+    deserialized: DESERIALIZED;
   }
 >;
 
+/**
+ * Any `Const` meta-type
+ */
 export type ConstType = {
   type: ConstTypeId;
-  value: any;
+  value: unknown;
   isSerialized: boolean;
   deserialized: unknown;
 };
 
-export type ConstValue<C extends ConstType> = C["value"];
+export type ConstValue<META_CONST extends ConstType> = META_CONST["value"];
 
-export type ResolveConst<T extends ConstType, O extends ResolveOptions> = And<
-  O["deserialize"],
-  IsSerialized<T>
-> extends true
-  ? Deserialized<T>
-  : ConstValue<T>;
+/**
+ * Resolves a `Const` meta-type to its encapsulated type
+ * @param META_CONST ConstType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
+export type ResolveConst<
+  META_CONST extends ConstType,
+  OPTIONS extends ResolveOptions,
+> = If<
+  And<OPTIONS["deserialize"], IsSerialized<META_CONST>>,
+  Deserialized<META_CONST>,
+  ConstValue<META_CONST>
+>;

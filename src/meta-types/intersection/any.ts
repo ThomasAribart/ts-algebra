@@ -1,27 +1,26 @@
-import { Never, NeverType } from "../never";
-import { Any, AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType, EnumValues } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType, ArrayValues } from "../array";
-import { TupleType, TupleValues, TupleOpenProps } from "../tuple";
-import {
+import type { Any, AnyType } from "../any";
+import type { ArrayType, ArrayValues } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType, EnumValues } from "../enum";
+import type { Never, NeverType } from "../never";
+import type {
+  ObjectOpenProps,
+  ObjectRequiredKeys,
   ObjectType,
   ObjectValues,
-  ObjectRequiredKeys,
-  ObjectOpenProps,
 } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-
-import { MergeConstToSerializable } from "./const";
-import { MergeEnumValuesToSerializable } from "./enum";
-import { MergePrimitiveToSerializable } from "./primitive";
-import { MergeArrayValuesToSerializable } from "./array";
-import { MergeTuplePropsToSerializable } from "./tuple";
-import { MergeObjectPropsToSerializable } from "./object";
-import { DistributeIntersection } from "./union";
-import { IntersectIsSerialized, IntersectDeserialized } from "./utils";
+import type { PrimitiveType } from "../primitive";
+import type { TupleOpenProps, TupleType, TupleValues } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { MergeArrayValuesToSerializable } from "./array";
+import type { MergeConstToSerializable } from "./const";
+import type { MergeEnumValuesToSerializable } from "./enum";
+import type { MergeObjectPropsToSerializable } from "./object";
+import type { MergePrimitiveToSerializable } from "./primitive";
+import type { MergeTuplePropsToSerializable } from "./tuple";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type IntersectAny<A extends AnyType, B> = B extends Type
   ? B extends NeverType

@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 const test1: A.Equals<
   M.Resolve<M.Exclude<M.Enum<"foo" | 42>, M.Primitive<string>>>,

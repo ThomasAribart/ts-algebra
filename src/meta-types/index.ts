@@ -1,20 +1,18 @@
-import { Never, NeverType } from "./never";
-import { Any, AnyType } from "./any";
-import { Const, ConstType } from "./const";
-import { Enum, EnumType } from "./enum";
-import { Primitive, $Primitive, PrimitiveType } from "./primitive";
-import { _Array, _$Array, ArrayType } from "./array";
-import { Tuple, $Tuple, TupleType } from "./tuple";
-import { _Object, _$Object, ObjectType } from "./object";
-import { Union, $Union, UnionType } from "./union";
-import { Intersect, $Intersect } from "./intersection";
-import { _Exclude, _$Exclude } from "./exclusion";
+import type { Any, AnyType } from "./any";
+import type { _$Array, _Array, ArrayType } from "./array";
+import type { Const, ConstType } from "./const";
+import type { Enum, EnumType } from "./enum";
+import type { _$Exclude, _Exclude } from "./exclusion";
+import type { $Intersect, Intersect } from "./intersection";
+import type { Never, NeverType } from "./never";
+import type { _$Object, _Object, ObjectType } from "./object";
+import type { $Primitive, Primitive, PrimitiveType } from "./primitive";
+import type { $Resolve, Resolve } from "./resolve";
+import type { $Tuple, Tuple, TupleType } from "./tuple";
+import type { Type } from "./type";
+import type { $Union, Union, UnionType } from "./union";
 
-import { Type } from "./type";
-
-import { Resolve, $Resolve } from "./resolve";
-
-export {
+export type {
   // --- META-TYPES ---
   Never,
   Any,

@@ -1,25 +1,24 @@
-import { IsObject } from "../../utils";
+import type { IsObject } from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType, ConstValue } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { _Array, ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import {
-  ObjectType,
-  ObjectValues,
-  ObjectRequiredKeys,
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { Const, ConstType, ConstValue } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type {
   IsObjectOpen,
   ObjectOpenProps,
+  ObjectRequiredKeys,
+  ObjectType,
+  ObjectValues,
 } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-import { Resolve } from "../resolve";
-
-import { _Exclude } from "./index";
-import { ExcludeUnion } from "./union";
+import type { PrimitiveType } from "../primitive";
+import type { Resolve } from "../resolve";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { _Exclude } from "./index";
+import type { ExcludeUnion } from "./union";
 
 export type ExcludeFromConst<A extends ConstType, B> = B extends Type
   ? B extends NeverType
@@ -45,7 +44,7 @@ export type ExcludeFromConst<A extends ConstType, B> = B extends Type
 
 type CheckNotExtendsResolved<
   A extends ConstType,
-  B extends Type
+  B extends Type,
 > = ConstValue<A> extends Resolve<B, { deserialize: false }> ? Never : A;
 
 type ExcludeObject<A extends ConstType, B extends ObjectType> = IsObject<
@@ -59,7 +58,7 @@ type ExcludeObject<A extends ConstType, B extends ObjectType> = IsObject<
 type ExcludeObjectFromConst<
   A extends ConstType,
   B extends ObjectType,
-  X = ExcludeConstValues<ConstValue<A>, B>
+  X = ExcludeConstValues<ConstValue<A>, B>,
 > = NonNeverKeys<X> extends never ? Never : A;
 
 type NonNeverKeys<O> = {

@@ -1,7 +1,10 @@
 /**
- * Return `true` if `A` extends `false`, `false` if `A` extends `true`, `never` otherwise
- *
- * @param A Type
- * @return Boolean
+ * Return `true` if `BOOL` extends `false`, `false` if `BOOL` extends `true`, `never` otherwise
+ * @param BOOL Type
+ * @returns Boolean
  */
-export type Not<A> = A extends false ? true : A extends true ? false : never;
+export type Not<BOOL extends boolean> = BOOL extends false
+  ? true
+  : BOOL extends true
+  ? false
+  : never;

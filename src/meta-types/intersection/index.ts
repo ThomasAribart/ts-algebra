@@ -1,22 +1,21 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-
-import { IntersectAny } from "./any";
-import { IntersectConst } from "./const";
-import { IntersectEnum } from "./enum";
-import { IntersectPrimitive } from "./primitive";
-import { IntersectArray } from "./array";
-import { IntersectTuple } from "./tuple";
-import { IntersectObject } from "./object";
-import { IntersectUnion } from "./union";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { IntersectAny } from "./any";
+import type { IntersectArray } from "./array";
+import type { IntersectConst } from "./const";
+import type { IntersectEnum } from "./enum";
+import type { IntersectObject } from "./object";
+import type { IntersectPrimitive } from "./primitive";
+import type { IntersectTuple } from "./tuple";
+import type { IntersectUnion } from "./union";
 
 export type Intersect<A extends Type, B extends Type> = $Intersect<A, B>;
 

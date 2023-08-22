@@ -1,13 +1,12 @@
-import { IsObject } from "./extends";
+import type { IsObject } from "./extends";
 
 /**
  * Resolves generic definitions in hover windows to human-friendly results
- *
- * @param T Type
- * @return Type
+ * @param TYPE Type
+ * @returns Type
  */
-export type Prettify<T> = IsObject<T> extends true
+export type Prettify<TYPE> = IsObject<TYPE> extends true
   ? {
-      [K in keyof T]: K extends keyof T ? T[K] : never;
+      [KEY in keyof TYPE]: KEY extends keyof TYPE ? TYPE[KEY] : never;
     }
-  : T;
+  : TYPE;

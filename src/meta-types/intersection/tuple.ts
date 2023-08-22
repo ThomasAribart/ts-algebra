@@ -1,38 +1,37 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType, ArrayValues } from "../array";
-import {
+import type { AnyType } from "../any";
+import type { ArrayType, ArrayValues } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type {
   $Tuple,
-  TupleType,
-  TupleValues,
   IsTupleOpen,
   TupleOpenProps,
+  TupleType,
+  TupleValues,
 } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { Type, SerializableType } from "../type";
-
-import { Intersect, $Intersect } from "./index";
-import { IntersectConstToTuple } from "./const";
-import { IntersectEnumToTuple } from "./enum";
-import { DistributeIntersection } from "./union";
-import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+import type { SerializableType, Type } from "../type";
+import type { UnionType } from "../union";
+import type { IntersectConstToTuple } from "./const";
+import type { IntersectEnumToTuple } from "./enum";
+import type { $Intersect, Intersect } from "./index";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeTuplePropsToSerializable<
   V extends Type[],
   P extends Type,
   A extends TupleType,
-  B extends SerializableType
+  B extends SerializableType,
 > = $MergeTuplePropsToSerializable<V, P, A, B>;
 
 type $MergeTuplePropsToSerializable<
   V,
   P,
   A extends TupleType,
-  B extends SerializableType
+  B extends SerializableType,
 > = $Tuple<V, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectTuple<A extends TupleType, B> = B extends NeverType
@@ -58,14 +57,17 @@ export type IntersectTuple<A extends TupleType, B> = B extends NeverType
 export type IntersectTupleToArray<
   T extends TupleType,
   A extends ArrayType,
-  V extends any[] = IntersectTupleToArrayValues<TupleValues<T>, ArrayValues<A>>,
-  O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>
+  V extends unknown[] = IntersectTupleToArrayValues<
+    TupleValues<T>,
+    ArrayValues<A>
+  >,
+  O = $Intersect<TupleOpenProps<T>, ArrayValues<A>>,
 > = $MergeTuplePropsToSerializable<V, O, T, A>;
 
 type IntersectTupleToArrayValues<
   V extends Type[],
   T extends Type,
-  R extends any[] = []
+  R extends unknown[] = [],
 > = V extends [infer H, ...infer Tl]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends Type
@@ -78,7 +80,7 @@ type IntersectTupleToArrayValues<
 type IntersectTuples<
   A extends TupleType,
   B extends TupleType,
-  V extends any[] = IntersectTupleValues<
+  V extends unknown[] = IntersectTupleValues<
     TupleValues<A>,
     TupleValues<B>,
     IsTupleOpen<A>,
@@ -86,7 +88,7 @@ type IntersectTuples<
     TupleOpenProps<A>,
     TupleOpenProps<B>
   >,
-  O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>
+  O = $Intersect<TupleOpenProps<A>, TupleOpenProps<B>>,
 > = $MergeTuplePropsToSerializable<V, O, A, B>;
 
 type IntersectTupleValues<
@@ -96,7 +98,7 @@ type IntersectTupleValues<
   O2 extends boolean,
   P1 extends Type,
   P2 extends Type,
-  R extends any[] = []
+  R extends unknown[] = [],
 > = V1 extends [infer H1, ...infer T1]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H1 extends Type

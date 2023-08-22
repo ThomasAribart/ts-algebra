@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- INSTANCIATION ---
 
@@ -13,7 +13,7 @@ requiredNeverKey;
 const requiredMissingKeyClosed: A.Equals<M.Object<{}, "b">, M.Never> = 1;
 requiredMissingKeyClosed;
 
-const requiredNeverKeyOpen: A.Equals<M.Object<{}, "b", M.Never>, M.Never> = 1;
+const requiredNeverKeyOpen: A.Equals<M.Object<{}, "b">, M.Never> = 1;
 requiredNeverKeyOpen;
 
 // --- OPEN ---

@@ -1,47 +1,70 @@
-import { DoesExtend, DeepMergeUnsafe, Not, And } from "../utils";
+import type { And, DeepMergeUnsafe, DoesExtend, If, Not } from "~/utils";
 
-import { Any } from "./any";
-import { Never, NeverType } from "./never";
-import { Type } from "./type";
-import { Resolve, ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { Any } from "./any";
+import type { Never, NeverType } from "./never";
+import type { Resolve, ResolveOptions } from "./resolve";
+import type { Type } from "./type";
+import type { Deserialized, IsSerialized } from "./utils";
 
+/**
+ * Type id of the `Object` meta-type
+ */
 export type ObjectTypeId = "object";
 
-// Prefixed with _ to not confuse with native TS Object
+/**
+ * Defines an `Object` meta-type
+ * @param VALUES Record<string, MetaType>
+ * @param REQUIRED string
+ * @param OPEN_PROPS MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
 export type _Object<
-  V extends Record<string, Type> = {},
-  R extends string = never,
-  P extends Type = Never,
-  I extends boolean = false,
-  D extends unknown = never
-> = _$Object<V, R, P, I, D>;
+  // ☝️ Prefixed with _ to not confuse with native TS Object
+  VALUES extends Record<string, Type> = {},
+  REQUIRED extends string = never,
+  OPEN_PROPS extends Type = Never,
+  IS_SERIALIZED extends boolean = false,
+  DESERIALIZED = never,
+> = _$Object<VALUES, REQUIRED, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
 
+/**
+ * Defines an `Object` meta-type (without type constraints)
+ * @param VALUES Record<string, MetaType>
+ * @param REQUIRED string
+ * @param OPEN_PROPS MetaType
+ * @param IS_SERIALIZED Boolean
+ * @param DESERIALIZED Type
+ */
 export type _$Object<
-  V = {},
-  R = never,
-  P = Never,
-  I = false,
-  D = never
+  // ☝️ Prefixed with _ to not confuse with native TS Object
+  VALUES = {},
+  REQUIRED = never,
+  OPEN_PROPS = Never,
+  IS_SERIALIZED = false,
+  DESERIALIZED = never,
 > = DoesExtend<
   true,
   {
-    [key in Extract<R, string>]: key extends keyof V
-      ? DoesExtend<V[key], NeverType>
-      : DoesExtend<P, NeverType>;
-  }[Extract<R, string>]
+    [KEY in Extract<REQUIRED, string>]: KEY extends keyof VALUES
+      ? DoesExtend<VALUES[KEY], NeverType>
+      : DoesExtend<OPEN_PROPS, NeverType>;
+  }[Extract<REQUIRED, string>]
 > extends true
   ? Never
   : {
       type: ObjectTypeId;
-      values: V;
-      required: R;
-      isOpen: Not<DoesExtend<P, NeverType>>;
-      openProps: P;
-      isSerialized: I;
-      deserialized: D;
+      values: VALUES;
+      required: REQUIRED;
+      isOpen: Not<DoesExtend<OPEN_PROPS, NeverType>>;
+      openProps: OPEN_PROPS;
+      isSerialized: IS_SERIALIZED;
+      deserialized: DESERIALIZED;
     };
 
+/**
+ * Any `Object` meta-type
+ */
 export type ObjectType = {
   type: ObjectTypeId;
   values: Record<string, Type>;
@@ -52,50 +75,62 @@ export type ObjectType = {
   deserialized: unknown;
 };
 
-export type ObjectValues<O extends ObjectType> = O["values"];
+export type ObjectValues<META_OBJECT extends ObjectType> =
+  META_OBJECT["values"];
 
 export type ObjectValue<
-  O extends ObjectType,
-  K extends string
-> = K extends keyof ObjectValues<O>
-  ? ObjectValues<O>[K]
-  : IsObjectOpen<O> extends true
-  ? ObjectOpenProps<O>
+  META_OBJECT extends ObjectType,
+  KEY extends string,
+> = KEY extends keyof ObjectValues<META_OBJECT>
+  ? ObjectValues<META_OBJECT>[KEY]
+  : IsObjectOpen<META_OBJECT> extends true
+  ? ObjectOpenProps<META_OBJECT>
   : Never;
 
-export type ObjectRequiredKeys<O extends ObjectType> = O["required"];
+export type ObjectRequiredKeys<META_OBJECT extends ObjectType> =
+  META_OBJECT["required"];
 
-export type IsObjectOpen<O extends ObjectType> = O["isOpen"];
+export type IsObjectOpen<META_OBJECT extends ObjectType> =
+  META_OBJECT["isOpen"];
 
-export type ObjectOpenProps<O extends ObjectType> = O["openProps"];
+export type ObjectOpenProps<META_OBJECT extends ObjectType> =
+  META_OBJECT["openProps"];
 
-type IsObjectEmpty<O extends ObjectType> = DoesExtend<
-  Extract<keyof ObjectValues<O>, keyof ObjectValues<O>>,
+type IsObjectEmpty<META_OBJECT extends ObjectType> = DoesExtend<
+  Extract<keyof ObjectValues<META_OBJECT>, keyof ObjectValues<META_OBJECT>>,
   never
 >;
 
-export type ResolveObject<O extends ObjectType, P extends ResolveOptions> = And<
-  P["deserialize"],
-  IsSerialized<O>
-> extends true
-  ? Deserialized<O>
-  : DeepMergeUnsafe<
-      IsObjectOpen<O> extends true
-        ? IsObjectEmpty<O> extends true
-          ? { [key: string]: Resolve<ObjectOpenProps<O>, P> }
-          : { [key: string]: Resolve<Any, P> }
-        : {},
-      DeepMergeUnsafe<
-        {
-          [key in Exclude<
-            keyof ObjectValues<O>,
-            ObjectRequiredKeys<O>
-          >]?: Resolve<ObjectValues<O>[key], P>;
-        },
-        {
-          [key in ObjectRequiredKeys<O>]: key extends keyof ObjectValues<O>
-            ? Resolve<ObjectValues<O>[key], P>
-            : Resolve<Any, P>;
-        }
-      >
-    >;
+/**
+ * Resolves an `Object` meta-type to its encapsulated type
+ * @param META_OBJECT ObjectType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
+export type ResolveObject<
+  META_OBJECT extends ObjectType,
+  OPTIONS extends ResolveOptions,
+> = If<
+  And<OPTIONS["deserialize"], IsSerialized<META_OBJECT>>,
+  Deserialized<META_OBJECT>,
+  DeepMergeUnsafe<
+    IsObjectOpen<META_OBJECT> extends true
+      ? IsObjectEmpty<META_OBJECT> extends true
+        ? { [KEY: string]: Resolve<ObjectOpenProps<META_OBJECT>, OPTIONS> }
+        : { [KEY: string]: Resolve<Any, OPTIONS> }
+      : {},
+    DeepMergeUnsafe<
+      {
+        [KEY in Exclude<
+          keyof ObjectValues<META_OBJECT>,
+          ObjectRequiredKeys<META_OBJECT>
+        >]?: Resolve<ObjectValues<META_OBJECT>[KEY], OPTIONS>;
+      },
+      {
+        [KEY in ObjectRequiredKeys<META_OBJECT>]: KEY extends keyof ObjectValues<META_OBJECT>
+          ? Resolve<ObjectValues<META_OBJECT>[KEY], OPTIONS>
+          : Resolve<Any, OPTIONS>;
+      }
+    >
+  >
+>;

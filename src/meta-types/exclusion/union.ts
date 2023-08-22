@@ -1,10 +1,9 @@
-import { If, IsNever, UnionLast } from "../../utils";
+import type { If, IsNever, UnionLast } from "~/utils";
 
-import { Type } from "..";
-import { $Union, UnionType, UnionValues } from "../union";
-import { $Intersect } from "../intersection";
-
-import { _$Exclude } from "./index";
+import type { Type } from "..";
+import type { $Intersect } from "../intersection";
+import type { $Union, UnionType, UnionValues } from "../union";
+import type { _$Exclude } from "./index";
 
 export type DistributeUnion<A extends UnionType, B> = $Union<
   RecurseOnUnionValues<UnionValues<A>, B>

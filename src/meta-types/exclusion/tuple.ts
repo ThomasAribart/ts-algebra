@@ -1,36 +1,36 @@
-import { And, DoesExtend, Not, If, Tail } from "../../utils";
+/* eslint-disable max-lines */
+import type { And, DoesExtend, If, Not, Tail } from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType, ConstValue } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayValues, ArrayType } from "../array";
-import {
-  Tuple,
+import type { AnyType } from "../any";
+import type { ArrayType, ArrayValues } from "../array";
+import type { Const, ConstType, ConstValue } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type {
   $Tuple,
+  IsTupleOpen,
+  Tuple,
+  TupleOpenProps,
   TupleType,
   TupleValues,
-  IsTupleOpen,
-  TupleOpenProps,
 } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-import { Deserialized, IsSerialized } from "../utils";
-
-import { _Exclude } from "./index";
-import { ExcludeEnum } from "./enum";
-import { ExcludeUnion } from "./union";
-import {
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { Deserialized, IsSerialized } from "../utils";
+import type { ExcludeEnum } from "./enum";
+import type { _Exclude } from "./index";
+import type { ExcludeUnion } from "./union";
+import type {
   CrossValue,
   CrossValueType,
-  OriginValue,
+  ExclusionResult,
+  IsOmittable,
   IsOutsideOfOriginScope,
   IsOutsideOfSubstractedScope,
+  OriginValue,
   Propagate,
-  IsOmittable,
-  ExclusionResult,
 } from "./utils";
 
 export type ExcludeFromTuple<A extends TupleType, B> = B extends Type
@@ -73,7 +73,7 @@ type ExcludeTuples<
   >,
   N extends CrossValueType[] = NonNeverItems<C>,
   P = _Exclude<TupleOpenProps<A>, TupleOpenProps<B>>,
-  I = Not<DoesExtend<P, NeverType>>
+  I = Not<DoesExtend<P, NeverType>>,
 > = DoesTupleSizesMatch<A, B, C> extends true
   ? {
       moreThanTwo: A;
@@ -94,7 +94,7 @@ type CrossTupleValues<
   O2 extends boolean,
   P1 extends Type,
   P2 extends Type,
-  C extends CrossValueType[] = []
+  C extends CrossValueType[] = [],
 > = V1 extends [infer H1, ...infer T1]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H1 extends Type
@@ -144,7 +144,7 @@ type CrossTupleValues<
 
 // UTILS
 
-type GetTupleLength<T extends any[], R extends any[] = Tail<T>> = If<
+type GetTupleLength<T extends unknown[], R extends unknown[] = Tail<T>> = If<
   DoesExtend<T, []>,
   "none",
   If<DoesExtend<R, []>, "onlyOne", "moreThanTwo">
@@ -155,14 +155,14 @@ type GetTupleLength<T extends any[], R extends any[] = Tail<T>> = If<
 type DoesTupleSizesMatch<
   S extends TupleType,
   E extends TupleType,
-  C extends CrossValueType[]
+  C extends CrossValueType[],
 > = And<IsTupleOpen<S>, Not<IsTupleOpen<E>>> extends true
   ? false
   : And<IsSubstractedSmallEnough<C>, IsSubstractedBigEnough<C>>;
 
 type IsSubstractedSmallEnough<C extends CrossValueType[]> = C extends [
   infer H,
-  ...infer T
+  ...infer T,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -176,7 +176,7 @@ type IsSubstractedSmallEnough<C extends CrossValueType[]> = C extends [
 
 type IsSubstractedBigEnough<C extends CrossValueType[]> = C extends [
   infer H,
-  ...infer T
+  ...infer T,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -192,7 +192,7 @@ type IsSubstractedBigEnough<C extends CrossValueType[]> = C extends [
 
 type NonNeverItems<
   C extends CrossValueType[],
-  R extends CrossValueType[] = []
+  R extends CrossValueType[] = [],
 > = C extends [infer H, ...infer T]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -206,7 +206,7 @@ type NonNeverItems<
 
 type PropagateExclusion<
   C extends CrossValueType[],
-  R extends any[] = []
+  R extends unknown[] = [],
 > = C extends [infer H, ...infer T]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -221,7 +221,7 @@ type PropagateExclusion<
 type OmitOmittableItems<
   S extends TupleType,
   C extends CrossValueType[],
-  I extends CrossValueType[] = OmittableItems<C>
+  I extends CrossValueType[] = OmittableItems<C>,
 > = {
   moreThanTwo: S;
   onlyOne: $Tuple<
@@ -235,7 +235,7 @@ type OmitOmittableItems<
 
 type OmittableItems<
   C extends CrossValueType[],
-  R extends CrossValueType[] = []
+  R extends CrossValueType[] = [],
 > = C extends [infer H, ...infer T]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -249,7 +249,7 @@ type OmittableItems<
 
 type RequiredTupleValues<
   C extends CrossValueType[],
-  R extends Type[] = []
+  R extends Type[] = [],
 > = C extends [infer H, ...infer T]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends CrossValueType
@@ -266,17 +266,17 @@ type RequiredTupleValues<
 type ExcludeConst<
   A extends TupleType,
   B extends ConstType,
-  V = ConstValue<B>
-> = V extends any[]
+  V = ConstValue<B>,
+> = V extends unknown[]
   ? _Exclude<
       A,
       $Tuple<ExtractConstValues<V>, Never, IsSerialized<B>, Deserialized<B>>
     >
   : A;
 
-type ExtractConstValues<V extends any[], R extends any[] = []> = V extends [
-  infer H,
-  ...infer T
-]
+type ExtractConstValues<
+  V extends unknown[],
+  R extends unknown[] = [],
+> = V extends [infer H, ...infer T]
   ? ExtractConstValues<T, [...R, Const<H>]>
   : R;

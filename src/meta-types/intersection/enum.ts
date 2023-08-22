@@ -1,23 +1,22 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType } from "../const";
-import { Enum, EnumType, EnumValues } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { SerializableType, Type } from "../type";
-
-import { $Intersect } from "./index";
-import { IntersectConstToEnum } from "./const";
-import { DistributeIntersection } from "./union";
-import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { Const, ConstType } from "../const";
+import type { Enum, EnumType, EnumValues } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { SerializableType, Type } from "../type";
+import type { UnionType } from "../union";
+import type { IntersectConstToEnum } from "./const";
+import type { $Intersect } from "./index";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeEnumValuesToSerializable<
   V,
   A extends EnumType,
-  B extends SerializableType
+  B extends SerializableType,
 > = Enum<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectEnum<A extends EnumType, B> = B extends Type
@@ -44,7 +43,7 @@ export type IntersectEnum<A extends EnumType, B> = B extends Type
 
 type FilterUnintersecting<
   A extends EnumType,
-  B extends SerializableType
+  B extends SerializableType,
 > = MergeEnumValuesToSerializable<RecurseOnEnumValues<EnumValues<A>, B>, A, B>;
 
 type RecurseOnEnumValues<V, B> = V extends infer T
@@ -55,20 +54,20 @@ type RecurseOnEnumValues<V, B> = V extends infer T
 
 export type IntersectEnumToPrimitive<
   A extends EnumType,
-  B extends PrimitiveType
+  B extends PrimitiveType,
 > = FilterUnintersecting<A, B>;
 
 export type IntersectEnumToArray<
   A extends EnumType,
-  B extends ArrayType
+  B extends ArrayType,
 > = FilterUnintersecting<A, B>;
 
 export type IntersectEnumToTuple<
   A extends EnumType,
-  B extends TupleType
+  B extends TupleType,
 > = FilterUnintersecting<A, B>;
 
 export type IntersectEnumToObject<
   A extends EnumType,
-  B extends ObjectType
+  B extends ObjectType,
 > = FilterUnintersecting<A, B>;
