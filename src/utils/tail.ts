@@ -1,5 +1,10 @@
-export type Tail<L extends unknown[]> = L extends readonly []
-  ? L
-  : L extends readonly [unknown?, ...infer T]
-  ? T
-  : L;
+/**
+ * Omit the first element of an array
+ * @param ARRAY Array
+ * @returns Array
+ */
+export type Tail<ARRAY extends unknown[]> = ARRAY extends readonly []
+  ? ARRAY
+  : ARRAY extends readonly [unknown?, ...infer TAIL]
+  ? TAIL
+  : ARRAY;

@@ -12,7 +12,7 @@ import type { $Tuple, Tuple, TupleType } from "./tuple";
 import type { Type } from "./type";
 import type { $Union, Union, UnionType } from "./union";
 
-export {
+export type {
   // --- META-TYPES ---
   Never,
   Any,

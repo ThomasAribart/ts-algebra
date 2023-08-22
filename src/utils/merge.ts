@@ -7,27 +7,27 @@ import type { IsArray, IsObject } from "./extends";
  * - Concat `A` and `B` if both are arrays
  *
  * `DeepMergeUnsafe` preserves non-required properties, but can return `never` if TS infers that `A & B = never` (which can happen if some properties are incompatible)
- * @param A Type
- * @param B Type
+ * @param TYPE_A Type
+ * @param TYPE_B Type
  * @returns Type
  */
-export type DeepMergeUnsafe<A, B> = IsObject<A> extends true
-  ? IsObject<B> extends true
+export type DeepMergeUnsafe<TYPE_A, TYPE_B> = IsObject<TYPE_A> extends true
+  ? IsObject<TYPE_B> extends true
     ? {
-        [K in keyof (A & B)]: K extends keyof B
-          ? K extends keyof A
-            ? DeepMergeUnsafe<A[K], B[K]>
-            : B[K]
-          : K extends keyof A
-          ? A[K]
+        [KEY in keyof (TYPE_A & TYPE_B)]: KEY extends keyof TYPE_B
+          ? KEY extends keyof TYPE_A
+            ? DeepMergeUnsafe<TYPE_A[KEY], TYPE_B[KEY]>
+            : TYPE_B[KEY]
+          : KEY extends keyof TYPE_A
+          ? TYPE_A[KEY]
           : never;
       }
-    : B
-  : IsArray<A> extends true
-  ? IsArray<B> extends true
-    ? B extends unknown[]
+    : TYPE_B
+  : IsArray<TYPE_A> extends true
+  ? IsArray<TYPE_B> extends true
+    ? TYPE_B extends unknown[]
       ? // 🔧 TOIMPROVE: Not cast here
-        [...(A extends unknown[] ? A : never), B]
+        [...(TYPE_A extends unknown[] ? TYPE_A : never), TYPE_B]
       : never
-    : B
-  : B;
+    : TYPE_B
+  : TYPE_B;
