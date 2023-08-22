@@ -1,10 +1,9 @@
-import { Prettify, And } from "../utils";
-
-import { Any } from "./any";
-import { NeverType } from "./never";
-import { Type } from "./type";
-import { Resolve, ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { And, Prettify } from "../utils";
+import type { Any } from "./any";
+import type { NeverType } from "./never";
+import type { Resolve, ResolveOptions } from "./resolve";
+import type { Type } from "./type";
+import type { Deserialized, IsSerialized } from "./utils";
 
 export type ArrayTypeId = "array";
 
@@ -12,7 +11,7 @@ export type ArrayTypeId = "array";
 export type _Array<
   V extends Type = Any,
   I extends boolean = false,
-  D extends unknown = never
+  D = never,
 > = _$Array<V, I, D>;
 
 export type _$Array<V = Any, I = false, D = never> = {

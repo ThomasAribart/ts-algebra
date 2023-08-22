@@ -1,10 +1,9 @@
-import { DoesExtend, DeepMergeUnsafe, Not, And } from "../utils";
-
-import { Any } from "./any";
-import { Never, NeverType } from "./never";
-import { Type } from "./type";
-import { Resolve, ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { And, DeepMergeUnsafe, DoesExtend, Not } from "../utils";
+import type { Any } from "./any";
+import type { Never, NeverType } from "./never";
+import type { Resolve, ResolveOptions } from "./resolve";
+import type { Type } from "./type";
+import type { Deserialized, IsSerialized } from "./utils";
 
 export type ObjectTypeId = "object";
 
@@ -14,7 +13,7 @@ export type _Object<
   R extends string = never,
   P extends Type = Never,
   I extends boolean = false,
-  D extends unknown = never
+  D = never,
 > = _$Object<V, R, P, I, D>;
 
 export type _$Object<
@@ -22,7 +21,7 @@ export type _$Object<
   R = never,
   P = Never,
   I = false,
-  D = never
+  D = never,
 > = DoesExtend<
   true,
   {
@@ -56,7 +55,7 @@ export type ObjectValues<O extends ObjectType> = O["values"];
 
 export type ObjectValue<
   O extends ObjectType,
-  K extends string
+  K extends string,
 > = K extends keyof ObjectValues<O>
   ? ObjectValues<O>[K]
   : IsObjectOpen<O> extends true

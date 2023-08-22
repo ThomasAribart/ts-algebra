@@ -1,15 +1,14 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { $Union, UnionType, UnionValues } from "../union";
-import { Type } from "../type";
-
-import { $Intersect } from "./index";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { $Union, UnionType, UnionValues } from "../union";
+import type { $Intersect } from "./index";
 
 export type IntersectUnion<A extends UnionType, B> = B extends Type
   ? B extends NeverType

@@ -1,4 +1,4 @@
-import { UnionLast } from "./unionLast";
+import type { UnionLast } from "./unionLast";
 
 /**
  * Remove an item out of a union

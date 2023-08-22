@@ -1,33 +1,32 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import {
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type {
   _$Object,
+  ObjectOpenProps,
+  ObjectRequiredKeys,
   ObjectType,
   ObjectValue,
   ObjectValues,
-  ObjectRequiredKeys,
-  ObjectOpenProps,
 } from "../object";
-import { UnionType } from "../union";
-import { Type, SerializableType } from "../type";
-
-import { Intersect, $Intersect } from "./index";
-import { IntersectConstToObject } from "./const";
-import { IntersectEnumToObject } from "./enum";
-import { DistributeIntersection } from "./union";
-import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { SerializableType, Type } from "../type";
+import type { UnionType } from "../union";
+import type { IntersectConstToObject } from "./const";
+import type { IntersectEnumToObject } from "./enum";
+import type { $Intersect, Intersect } from "./index";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeObjectPropsToSerializable<
   V extends Record<string, Type>,
   R extends string,
   P extends Type,
   A extends ObjectType,
-  B extends SerializableType
+  B extends SerializableType,
 > = $MergeObjectPropsToSerializable<V, R, P, A, B>;
 
 type $MergeObjectPropsToSerializable<
@@ -35,7 +34,7 @@ type $MergeObjectPropsToSerializable<
   R,
   P,
   A extends ObjectType,
-  B extends SerializableType
+  B extends SerializableType,
 > = _$Object<V, R, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
 
 export type IntersectObject<A extends ObjectType, B> = B extends Type
@@ -69,8 +68,8 @@ export type IntersectObject<A extends ObjectType, B> = B extends Type
 type IntersectObjects<
   A extends ObjectType,
   B extends ObjectType,
-  V extends Record<string, any> = IntersectObjectsValues<A, B>,
-  O = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>
+  V extends Record<string, unknown> = IntersectObjectsValues<A, B>,
+  O = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>,
 > = $MergeObjectPropsToSerializable<
   {
     [key in keyof V]: V[key];

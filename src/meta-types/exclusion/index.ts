@@ -1,22 +1,21 @@
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-
-import { ExcludeFromAny } from "./any";
-import { ExcludeFromConst } from "./const";
-import { ExcludeFromEnum } from "./enum";
-import { ExcludeFromPrimitive } from "./primitive";
-import { ExcludeFromArray } from "./array";
-import { ExcludeFromTuple } from "./tuple";
-import { ExcludeFromObject } from "./object";
-import { DistributeUnion } from "./union";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { ExcludeFromAny } from "./any";
+import type { ExcludeFromArray } from "./array";
+import type { ExcludeFromConst } from "./const";
+import type { ExcludeFromEnum } from "./enum";
+import type { ExcludeFromObject } from "./object";
+import type { ExcludeFromPrimitive } from "./primitive";
+import type { ExcludeFromTuple } from "./tuple";
+import type { DistributeUnion } from "./union";
 
 // Prefixed with _ to not confuse with native TS Exclude
 export type _Exclude<A extends Type, B extends Type> = _$Exclude<A, B>;

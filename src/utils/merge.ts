@@ -1,4 +1,4 @@
-import { IsObject, IsArray } from "./extends";
+import type { IsArray, IsObject } from "./extends";
 
 /**
  * Recursively merge two types `A` and `B`:
@@ -7,10 +7,9 @@ import { IsObject, IsArray } from "./extends";
  * - Concat `A` and `B` if both are arrays
  *
  * `DeepMergeUnsafe` preserves non-required properties, but can return `never` if TS infers that `A & B = never` (which can happen if some properties are incompatible)
- *
  * @param A Type
  * @param B Type
- * @return Type
+ * @returns Type
  */
 export type DeepMergeUnsafe<A, B> = IsObject<A> extends true
   ? IsObject<B> extends true

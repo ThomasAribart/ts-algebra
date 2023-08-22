@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- INSTANCIATION ---
 
@@ -14,7 +14,7 @@ test2;
 
 // --- ANY ---
 
-const test1: A.Equals<M.Resolve<M.Array<M.Any>>, unknown[]> = 1;
+const test1: A.Equals<M.Resolve<M.Array>, unknown[]> = 1;
 test1;
 
 // --- CONST ---

@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- NEVER ---
 

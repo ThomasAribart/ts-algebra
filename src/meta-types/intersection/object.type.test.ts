@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- NEVER ---
 
@@ -103,7 +103,7 @@ nonIntersectingConst2;
 
 const objectToSerializedConst: A.Equals<
   M.Intersect<
-    M.Object<{ date: M.Primitive<string> }, "date", M.Never>,
+    M.Object<{ date: M.Primitive<string> }, "date">,
     M.Const<{ date: "2022-01-01" }, true, { date: Date }>
   >,
   M.Const<{ date: "2022-01-01" }, true, { date: Date }>
@@ -171,7 +171,7 @@ nonIntersectingEnum2;
 
 const objectToSerializedEnum: A.Equals<
   M.Intersect<
-    M.Object<{ date: M.Primitive<string> }, "date", M.Never>,
+    M.Object<{ date: M.Primitive<string> }, "date">,
     M.Enum<
       { date: "2022-01-01" } | { date: "2023-01-01" },
       true,

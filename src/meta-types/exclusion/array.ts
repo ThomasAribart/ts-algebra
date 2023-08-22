@@ -1,18 +1,22 @@
-import { And, DoesExtend } from "../../utils";
+import type { And, DoesExtend } from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { _Array, ArrayType, ArrayValues } from "../array";
-import { TupleValues, TupleType, IsTupleOpen, TupleOpenProps } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { Type } from "../type";
-
-import { _Exclude } from "./index";
-import { ExcludeUnion } from "./union";
+import type { AnyType } from "../any";
+import type { _Array, ArrayType, ArrayValues } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type {
+  IsTupleOpen,
+  TupleOpenProps,
+  TupleType,
+  TupleValues,
+} from "../tuple";
+import type { Type } from "../type";
+import type { UnionType } from "../union";
+import type { _Exclude } from "./index";
+import type { ExcludeUnion } from "./union";
 
 export type ExcludeFromArray<A extends ArrayType, B> = B extends Type
   ? B extends NeverType

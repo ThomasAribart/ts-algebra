@@ -1,4 +1,4 @@
-import { SerializableType } from "./type";
+import type { SerializableType } from "./type";
 
 export type IsSerialized<T extends SerializableType> = T["isSerialized"];
 

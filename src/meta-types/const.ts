@@ -1,8 +1,7 @@
-import { If, And, IsNever } from "../utils";
-
-import { Never } from "./never";
-import { ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { And, If, IsNever } from "../utils";
+import type { Never } from "./never";
+import type { ResolveOptions } from "./resolve";
+import type { Deserialized, IsSerialized } from "./utils";
 
 export type ConstTypeId = "const";
 
@@ -19,7 +18,7 @@ export type Const<V, I extends boolean = false, D = never> = If<
 
 export type ConstType = {
   type: ConstTypeId;
-  value: any;
+  value: unknown;
   isSerialized: boolean;
   deserialized: unknown;
 };

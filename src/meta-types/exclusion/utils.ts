@@ -1,9 +1,8 @@
-import { And, Not } from "../../utils";
+import type { And, Not } from "~/utils";
 
-import { NeverType } from "../never";
-import { Type } from "../type";
-
-import { _$Exclude } from "./index";
+import type { NeverType } from "../never";
+import type { Type } from "../type";
+import type { _$Exclude } from "./index";
 
 export type CrossValue<
   V1 extends Type,
@@ -11,7 +10,7 @@ export type CrossValue<
   R1 extends boolean,
   V2 extends Type,
   P2 extends boolean,
-  R2 extends boolean
+  R2 extends boolean,
 > = {
   originValue: V1;
   isPossibleInOrigin: P1;
@@ -27,6 +26,7 @@ export type CrossValueType = {
   isRequiredInOrigin: boolean;
   isPossibleInSubstracted: boolean;
   isRequiredInSubstracted: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   exclusionResult: any;
 };
 

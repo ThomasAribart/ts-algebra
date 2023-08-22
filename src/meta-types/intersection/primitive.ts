@@ -1,24 +1,23 @@
-import { If, And, DoesExtend } from "../../utils";
+import type { And, DoesExtend, If } from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { ConstType } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveValue, PrimitiveType, Primitive } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType } from "../object";
-import { UnionType } from "../union";
-import { SerializableType, Type } from "../type";
-
-import { IntersectConstToPrimitive } from "./const";
-import { IntersectEnumToPrimitive } from "./enum";
-import { DistributeIntersection } from "./union";
-import { IntersectDeserialized, IntersectIsSerialized } from "./utils";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { ConstType } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectType } from "../object";
+import type { Primitive, PrimitiveType, PrimitiveValue } from "../primitive";
+import type { TupleType } from "../tuple";
+import type { SerializableType, Type } from "../type";
+import type { UnionType } from "../union";
+import type { IntersectConstToPrimitive } from "./const";
+import type { IntersectEnumToPrimitive } from "./enum";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergePrimitiveToSerializable<
   A extends PrimitiveType,
-  B extends SerializableType
+  B extends SerializableType,
 > = Primitive<
   PrimitiveValue<A>,
   IntersectIsSerialized<A, B>,

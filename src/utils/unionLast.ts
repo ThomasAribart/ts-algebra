@@ -1,4 +1,4 @@
-import { IntersectUnion } from "./intersectUnion";
+import type { IntersectUnion } from "./intersectUnion";
 
 /**
  * Get the last item within an Union

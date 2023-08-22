@@ -1,24 +1,23 @@
-import { IsObject } from "../../utils";
+import type { IsObject } from "~/utils";
 
-import { Never, NeverType } from "../never";
-import { AnyType } from "../any";
-import { Const, ConstType, ConstValue } from "../const";
-import { EnumType } from "../enum";
-import { PrimitiveType } from "../primitive";
-import { ArrayType } from "../array";
-import { TupleType } from "../tuple";
-import { ObjectType, ObjectRequiredKeys, ObjectValue } from "../object";
-import { UnionType } from "../union";
-import { SerializableType, Type } from "../type";
-import { Resolve } from "../resolve";
-
-import { Intersect } from "./index";
-import { DistributeIntersection } from "./union";
-import { IntersectIsSerialized, IntersectDeserialized } from "./utils";
+import type { AnyType } from "../any";
+import type { ArrayType } from "../array";
+import type { Const, ConstType, ConstValue } from "../const";
+import type { EnumType } from "../enum";
+import type { Never, NeverType } from "../never";
+import type { ObjectRequiredKeys, ObjectType, ObjectValue } from "../object";
+import type { PrimitiveType } from "../primitive";
+import type { Resolve } from "../resolve";
+import type { TupleType } from "../tuple";
+import type { SerializableType, Type } from "../type";
+import type { UnionType } from "../union";
+import type { Intersect } from "./index";
+import type { DistributeIntersection } from "./union";
+import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeConstToSerializable<
   A extends ConstType,
-  B extends SerializableType
+  B extends SerializableType,
 > = Const<
   ConstValue<A>,
   IntersectIsSerialized<A, B>,
@@ -49,34 +48,34 @@ export type IntersectConst<A extends ConstType, B> = B extends Type
 
 type CheckExtendsResolved<
   A extends ConstType,
-  B extends SerializableType
+  B extends SerializableType,
 > = ConstValue<A> extends Resolve<B, { deserialize: false }>
   ? MergeConstToSerializable<A, B>
   : Never;
 
 export type IntersectConstToEnum<
   A extends ConstType,
-  B extends EnumType
+  B extends EnumType,
 > = CheckExtendsResolved<A, B>;
 
 export type IntersectConstToPrimitive<
   A extends ConstType,
-  B extends PrimitiveType
+  B extends PrimitiveType,
 > = CheckExtendsResolved<A, B>;
 
 export type IntersectConstToArray<
   A extends ConstType,
-  B extends ArrayType
+  B extends ArrayType,
 > = CheckExtendsResolved<A, B>;
 
 export type IntersectConstToTuple<
   A extends ConstType,
-  B extends TupleType
+  B extends TupleType,
 > = CheckExtendsResolved<A, B>;
 
 export type IntersectConstToObject<
   A extends ConstType,
-  B extends ObjectType
+  B extends ObjectType,
 > = IsObject<ConstValue<A>> extends false
   ? Never
   : IntersectObjectConstToObject<A, B>;
@@ -84,7 +83,7 @@ export type IntersectConstToObject<
 type IntersectObjectConstToObject<
   A extends ConstType,
   B extends ObjectType,
-  V = IntersectConstValuesToObjectValues<ConstValue<A>, B>
+  V = IntersectConstValuesToObjectValues<ConstValue<A>, B>,
 > = NeverKeys<V> extends never ? MergeConstToSerializable<A, B> : Never;
 
 type IntersectConstValuesToObjectValues<V, B extends ObjectType> = {

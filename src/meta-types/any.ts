@@ -1,11 +1,10 @@
-import { And } from "../utils";
-
-import { ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { And } from "../utils";
+import type { ResolveOptions } from "./resolve";
+import type { Deserialized, IsSerialized } from "./utils";
 
 export type AnyTypeId = "any";
 
-export type Any<I extends boolean = false, D extends unknown = never> = {
+export type Any<I extends boolean = false, D = never> = {
   type: AnyTypeId;
   isSerialized: I;
   deserialized: D;

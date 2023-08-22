@@ -1,13 +1,13 @@
-import { AnyType, ResolveAny } from "./any";
-import { NeverType, ResolveNever } from "./never";
-import { ConstType, ResolveConst } from "./const";
-import { EnumType, ResolveEnum } from "./enum";
-import { PrimitiveType, ResolvePrimitive } from "./primitive";
-import { ArrayType, ResolveArray } from "./array";
-import { TupleType, ResolveTuple } from "./tuple";
-import { ObjectType, ResolveObject } from "./object";
-import { UnionType, ResolveUnion } from "./union";
-import { Type } from "./type";
+import type { AnyType, ResolveAny } from "./any";
+import type { ArrayType, ResolveArray } from "./array";
+import type { ConstType, ResolveConst } from "./const";
+import type { EnumType, ResolveEnum } from "./enum";
+import type { NeverType, ResolveNever } from "./never";
+import type { ObjectType, ResolveObject } from "./object";
+import type { PrimitiveType, ResolvePrimitive } from "./primitive";
+import type { ResolveTuple, TupleType } from "./tuple";
+import type { Type } from "./type";
+import type { ResolveUnion, UnionType } from "./union";
 
 export type ResolveOptions = {
   deserialize: boolean;
@@ -19,12 +19,12 @@ export type ResolveDefaultOptions = {
 
 export type Resolve<
   T extends Type,
-  O extends ResolveOptions = ResolveDefaultOptions
+  O extends ResolveOptions = ResolveDefaultOptions,
 > = $Resolve<T, O>;
 
 export type $Resolve<
   T,
-  O extends ResolveOptions = ResolveDefaultOptions
+  O extends ResolveOptions = ResolveDefaultOptions,
 > = T extends AnyType
   ? ResolveAny<T, O>
   : T extends NeverType

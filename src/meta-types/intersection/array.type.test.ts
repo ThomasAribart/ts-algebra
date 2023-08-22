@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- NEVER ---
 
@@ -55,13 +55,13 @@ test1b;
 
 // --- ENUM ---
 
-let intersectingEnum1: A.Equals<
+const intersectingEnum1: A.Equals<
   M.Intersect<M.Array<M.Primitive<string>>, M.Enum<["foo"] | ["bar"] | 42>>,
   M.Enum<["foo"] | ["bar"]>
 > = 1;
 intersectingEnum1;
 
-let intersectingEnum2: A.Equals<
+const intersectingEnum2: A.Equals<
   M.Intersect<M.Array<M.Primitive<number>>, M.Enum<["bar", "baz"] | [42]>>,
   M.Enum<[42]>
 > = 1;
@@ -159,7 +159,7 @@ const tupleBecomeClose: A.Equals<
     M.Array<M.Primitive<string>>,
     M.Tuple<[M.Primitive<string>], M.Primitive<number>>
   >,
-  M.Tuple<[M.Primitive<string>], M.Never>
+  M.Tuple<[M.Primitive<string>]>
 > = 1;
 tupleBecomeClose;
 

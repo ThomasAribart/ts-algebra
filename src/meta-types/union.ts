@@ -1,8 +1,7 @@
-import { If, IsNever, DoesExtend } from "../utils";
-
-import { Never, NeverType } from "./never";
-import { $Resolve, ResolveOptions } from "./resolve";
-import { Type } from "./type";
+import type { DoesExtend, If, IsNever } from "../utils";
+import type { Never, NeverType } from "./never";
+import type { $Resolve, ResolveOptions } from "./resolve";
+import type { Type } from "./type";
 
 export type UnionTypeId = "union";
 
@@ -26,10 +25,10 @@ export type UnionValues<U extends UnionType> = U["values"];
 
 export type ResolveUnion<
   U extends UnionType,
-  O extends ResolveOptions
+  O extends ResolveOptions,
 > = RecurseOnUnion<UnionValues<U>, O>;
 
 type RecurseOnUnion<
   V extends Type,
-  O extends ResolveOptions
+  O extends ResolveOptions,
 > = V extends infer T ? $Resolve<T, O> : never;

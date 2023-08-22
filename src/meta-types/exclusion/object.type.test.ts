@@ -1,6 +1,6 @@
-import { A } from "ts-toolbelt";
+import type { A } from "ts-toolbelt";
 
-import { M } from "index";
+import type { M } from "~/index";
 
 // --- NEVER ---
 
@@ -329,7 +329,7 @@ bothOpenKeyAdded;
 const propagatedSerialization: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never, true, { a: string }>,
-    M.Object<{ a: M.Const<"B"> }, "a", M.Never>
+    M.Object<{ a: M.Const<"B"> }, "a">
   >,
   M.Object<{ a: M.Enum<"A"> }, "a", M.Never, true, { a: string }>
 > = 1;
@@ -352,10 +352,10 @@ omittableKeySerialization;
 
 const substractedSerializationIsNotUsed: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never>,
+    M.Object<{ a: M.Enum<"A" | "B"> }, "a">,
     M.Object<{ a: M.Const<"B"> }, "a", M.Never, true, { a: string }>
   >,
-  M.Object<{ a: M.Enum<"A"> }, "a", M.Never>
+  M.Object<{ a: M.Enum<"A"> }, "a">
 > = 1;
 substractedSerializationIsNotUsed;
 
@@ -417,7 +417,7 @@ const nonExcludingExclusion: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B" | "C"> }, "a">,
     M.Exclude<
-      M.Object<{ a: M.Enum<"A" | "B" | "C"> }, never>,
+      M.Object<{ a: M.Enum<"A" | "B" | "C"> }>,
       M.Object<{ a: M.Primitive<string> }, "a">
     >
   >,

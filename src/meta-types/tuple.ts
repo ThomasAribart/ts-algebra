@@ -1,9 +1,8 @@
-import { DoesExtend, Not, And } from "../utils";
-
-import { Never, NeverType } from "./never";
-import { Type } from "./type";
-import { Resolve, ResolveOptions } from "./resolve";
-import { Deserialized, IsSerialized } from "./utils";
+import type { And, DoesExtend, Not } from "../utils";
+import type { Never, NeverType } from "./never";
+import type { Resolve, ResolveOptions } from "./resolve";
+import type { Type } from "./type";
+import type { Deserialized, IsSerialized } from "./utils";
 
 export type TupleTypeId = "tuple";
 
@@ -11,14 +10,14 @@ export type Tuple<
   V extends Type[],
   P extends Type = Never,
   I extends boolean = false,
-  D extends unknown = never
+  D = never,
 > = $Tuple<V, P, I, D>;
 
 export type $Tuple<
   V,
   P = Never,
   I = false,
-  D = never
+  D = never,
 > = IsAnyValueNever<V> extends true
   ? Never
   : {
@@ -63,7 +62,7 @@ export type ResolveTuple<T extends TupleType, O extends ResolveOptions> = And<
 type RecurseOnTuple<
   V extends Type[],
   O extends ResolveOptions,
-  R extends any[] = []
+  R extends unknown[] = [],
 > = V extends [infer H, ...infer T]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     H extends Type
