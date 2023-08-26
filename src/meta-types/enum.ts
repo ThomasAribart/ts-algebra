@@ -40,6 +40,11 @@ export type EnumType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the values of an `Enum` meta-type
+ * @param META_ENUM EnumType
+ * @returns Type
+ */
 export type EnumValues<META_ENUM extends EnumType> = META_ENUM["values"];
 
 /**

@@ -47,13 +47,18 @@ export type $Tuple<
       deserialized: DESERIALIZED;
     };
 
-type IsAnyValueNever<VALUES> = VALUES extends [
-  infer VALUES_HEAD,
-  ...infer VALUES_TAIL,
+/**
+ * Return `true` if tuple of meta-types contains the `Never` meta-type
+ * @param TUPLE MetaType[]
+ * @returns Boolean
+ */
+type IsAnyValueNever<TUPLE> = TUPLE extends [
+  infer TUPLE_HEAD,
+  ...infer TUPLE_TAIL,
 ]
-  ? VALUES_HEAD extends NeverType
+  ? TUPLE_HEAD extends NeverType
     ? true
-    : IsAnyValueNever<VALUES_TAIL>
+    : IsAnyValueNever<TUPLE_TAIL>
   : false;
 
 /**
@@ -68,10 +73,25 @@ export type TupleType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the meta-types of a `Tuple` meta-type values
+ * @param META_TUPLE TupleType
+ * @returns MetaType[]
+ */
 export type TupleValues<META_TUPLE extends TupleType> = META_TUPLE["values"];
 
+/**
+ * Return `true` if the provided `Tuple` meta-type allows additional items, `false` otherwise
+ * @param META_TUPLE TupleType
+ * @returns Boolean
+ */
 export type IsTupleOpen<META_TUPLE extends TupleType> = META_TUPLE["isOpen"];
 
+/**
+ * Return a `Tuple` meta-type additional items meta-type
+ * @param META_TUPLE TupleType
+ * @returns MetaType
+ */
 export type TupleOpenProps<META_TUPLE extends TupleType> =
   META_TUPLE["openProps"];
 
@@ -97,6 +117,12 @@ export type ResolveTuple<
   >
 >;
 
+/**
+ * Recursively resolves the items of a `Tuple` meta-type to their encapsulated types
+ * @param VALUES MetaType[]
+ * @param OPTIONS ResolveOptions
+ * @returns Type[]
+ */
 type RecurseOnTuple<
   VALUES extends Type[],
   OPTIONS extends ResolveOptions,

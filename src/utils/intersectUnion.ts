@@ -4,7 +4,7 @@
  * @returns Type
  */
 export declare type IntersectUnion<UNION> = (
-  UNION extends unknown ? (k: UNION) => void : never
-) extends (k: infer INTERSECTION) => void
+  UNION extends unknown ? (arg: UNION) => void : never
+) extends (arg: infer INTERSECTION) => void
   ? INTERSECTION
   : never;

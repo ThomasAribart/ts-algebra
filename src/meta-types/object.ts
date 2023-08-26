@@ -1,4 +1,11 @@
-import type { And, DeepMergeUnsafe, DoesExtend, If, Not } from "~/utils";
+import type {
+  And,
+  DeepMergeUnsafe,
+  DoesExtend,
+  If,
+  IsNever,
+  Not,
+} from "~/utils";
 
 import type { Any } from "./any";
 import type { Never, NeverType } from "./never";
@@ -75,9 +82,20 @@ export type ObjectType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the meta-types of an `Object` meta-type values
+ * @param META_OBJECT ObjectType
+ * @returns Record<string, MetaType>
+ */
 export type ObjectValues<META_OBJECT extends ObjectType> =
   META_OBJECT["values"];
 
+/**
+ * Return the value of an `Object` meta-type at a provided key (possibly `Never`)
+ * @param META_OBJECT ObjectType
+ * @param KEY String
+ * @returns MetaType
+ */
 export type ObjectValue<
   META_OBJECT extends ObjectType,
   KEY extends string,
@@ -87,18 +105,37 @@ export type ObjectValue<
   ? ObjectOpenProps<META_OBJECT>
   : Never;
 
+/**
+ * Return the required keys of an `Object` meta-type
+ * @param META_OBJECT ObjectType
+ * @returns String
+ */
 export type ObjectRequiredKeys<META_OBJECT extends ObjectType> =
   META_OBJECT["required"];
 
+/**
+ * Return `true` if the provided `Object` meta-type allows additional properties, `false` otherwise
+ * @param META_OBJECT ObjectType
+ * @returns Boolean
+ */
 export type IsObjectOpen<META_OBJECT extends ObjectType> =
   META_OBJECT["isOpen"];
 
+/**
+ * Return an `Object` meta-type additional properties meta-type
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 export type ObjectOpenProps<META_OBJECT extends ObjectType> =
   META_OBJECT["openProps"];
 
-type IsObjectEmpty<META_OBJECT extends ObjectType> = DoesExtend<
-  Extract<keyof ObjectValues<META_OBJECT>, keyof ObjectValues<META_OBJECT>>,
-  never
+/**
+ * Return `true` if object meta-type values are empty
+ * @param META_OBJECT ObjectType
+ * @returns Boolean
+ */
+type IsObjectEmpty<META_OBJECT extends ObjectType> = IsNever<
+  keyof ObjectValues<META_OBJECT>
 >;
 
 /**
@@ -114,11 +151,15 @@ export type ResolveObject<
   And<OPTIONS["deserialize"], IsSerialized<META_OBJECT>>,
   Deserialized<META_OBJECT>,
   DeepMergeUnsafe<
-    IsObjectOpen<META_OBJECT> extends true
-      ? IsObjectEmpty<META_OBJECT> extends true
-        ? { [KEY: string]: Resolve<ObjectOpenProps<META_OBJECT>, OPTIONS> }
-        : { [KEY: string]: Resolve<Any, OPTIONS> }
-      : {},
+    If<
+      IsObjectOpen<META_OBJECT>,
+      If<
+        IsObjectEmpty<META_OBJECT>,
+        { [KEY: string]: Resolve<ObjectOpenProps<META_OBJECT>, OPTIONS> },
+        { [KEY: string]: Resolve<Any, OPTIONS> }
+      >,
+      {}
+    >,
     DeepMergeUnsafe<
       {
         [KEY in Exclude<
