@@ -8,6 +8,9 @@ import type { PrimitiveType } from "./primitive";
 import type { TupleType } from "./tuple";
 import type { UnionType } from "./union";
 
+/**
+ * Any meta-type
+ */
 export type Type =
   | NeverType
   | AnyType
@@ -19,8 +22,11 @@ export type Type =
   | ObjectType
   | UnionType;
 
-export type SerializableType = Type extends infer U
-  ? U extends { isSerialized: boolean; deserialized: unknown }
-    ? U
+/**
+ * Any serializable meta-type
+ */
+export type SerializableType = Type extends infer META_TYPE
+  ? META_TYPE extends { isSerialized: boolean; deserialized: unknown }
+    ? META_TYPE
     : never
   : never;

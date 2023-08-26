@@ -36,7 +36,12 @@ export type UnionType = {
   values: Type;
 };
 
-export type UnionValues<U extends UnionType> = U["values"];
+/**
+ * Return the meta-types of a `Union` meta-type values
+ * @param META_UNION UnionType
+ * @returns MetaType[]
+ */
+export type UnionValues<META_UNION extends UnionType> = META_UNION["values"];
 
 /**
  * Resolves a `Union` meta-type to its encapsulated type
@@ -49,7 +54,13 @@ export type ResolveUnion<
   OPTIONS extends ResolveOptions,
 > = RecurseOnUnion<UnionValues<META_UNION>, OPTIONS>;
 
+/**
+ * Recursively resolves the elements of a `Union` meta-type to their encapsulated types
+ * @param VALUES MetaType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
 type RecurseOnUnion<
   VALUES extends Type,
   OPTIONS extends ResolveOptions,
-> = VALUES extends infer T ? $Resolve<T, OPTIONS> : never;
+> = VALUES extends infer META_TYPE ? $Resolve<META_TYPE, OPTIONS> : never;

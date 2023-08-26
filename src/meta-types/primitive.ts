@@ -49,6 +49,11 @@ export type PrimitiveType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the value of a `Primitive` meta-type
+ * @param META_PRIMITIVE PrimitiveType
+ * @returns Null | Boolean | Number | String
+ */
 export type PrimitiveValue<META_PRIMITIVE extends PrimitiveType> =
   META_PRIMITIVE["value"];
 

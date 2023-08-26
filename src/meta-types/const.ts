@@ -40,6 +40,11 @@ export type ConstType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the value of a `Const` meta-type
+ * @param META_CONST ConstType
+ * @returns Type
+ */
 export type ConstValue<META_CONST extends ConstType> = META_CONST["value"];
 
 /**

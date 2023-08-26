@@ -9,38 +9,56 @@ import type { ResolveTuple, TupleType } from "./tuple";
 import type { Type } from "./type";
 import type { ResolveUnion, UnionType } from "./union";
 
+/**
+ * Meta-type resolution options type constraint
+ */
 export type ResolveOptions = {
   deserialize: boolean;
 };
 
+/**
+ * Meta-type default resolution options
+ */
 export type ResolveDefaultOptions = {
   deserialize: true;
 };
 
+/**
+ * Resolves any meta-type to its encapsulated type
+ * @param META_TYPE MetaType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
 export type Resolve<
-  T extends Type,
-  O extends ResolveOptions = ResolveDefaultOptions,
-> = $Resolve<T, O>;
+  META_TYPE extends Type,
+  OPTIONS extends ResolveOptions = ResolveDefaultOptions,
+> = $Resolve<META_TYPE, OPTIONS>;
 
+/**
+ * Resolves any meta-type to its encapsulated type (without type constraints)
+ * @param META_TYPE MetaType
+ * @param OPTIONS ResolveOptions
+ * @returns Type
+ */
 export type $Resolve<
-  T,
-  O extends ResolveOptions = ResolveDefaultOptions,
-> = T extends AnyType
-  ? ResolveAny<T, O>
-  : T extends NeverType
+  META_TYPE,
+  OPTIONS extends ResolveOptions = ResolveDefaultOptions,
+> = META_TYPE extends AnyType
+  ? ResolveAny<META_TYPE, OPTIONS>
+  : META_TYPE extends NeverType
   ? ResolveNever
-  : T extends ConstType
-  ? ResolveConst<T, O>
-  : T extends EnumType
-  ? ResolveEnum<T, O>
-  : T extends PrimitiveType
-  ? ResolvePrimitive<T, O>
-  : T extends ArrayType
-  ? ResolveArray<T, O>
-  : T extends TupleType
-  ? ResolveTuple<T, O>
-  : T extends ObjectType
-  ? ResolveObject<T, O>
-  : T extends UnionType
-  ? ResolveUnion<T, O>
+  : META_TYPE extends ConstType
+  ? ResolveConst<META_TYPE, OPTIONS>
+  : META_TYPE extends EnumType
+  ? ResolveEnum<META_TYPE, OPTIONS>
+  : META_TYPE extends PrimitiveType
+  ? ResolvePrimitive<META_TYPE, OPTIONS>
+  : META_TYPE extends ArrayType
+  ? ResolveArray<META_TYPE, OPTIONS>
+  : META_TYPE extends TupleType
+  ? ResolveTuple<META_TYPE, OPTIONS>
+  : META_TYPE extends ObjectType
+  ? ResolveObject<META_TYPE, OPTIONS>
+  : META_TYPE extends UnionType
+  ? ResolveUnion<META_TYPE, OPTIONS>
   : never;

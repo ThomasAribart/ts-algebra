@@ -52,6 +52,11 @@ export type ArrayType = {
   deserialized: unknown;
 };
 
+/**
+ * Return the meta-type of an `Array` meta-type values
+ * @param META_ARRAY ArrayType
+ * @returns MetaType
+ */
 export type ArrayValues<META_ARRAY extends ArrayType> = META_ARRAY["values"];
 
 /**
