@@ -1,4 +1,4 @@
-import type { IsObject } from "~/utils";
+import type { If, IsNever, IsObject } from "~/utils";
 
 import type { AnyType } from "../any";
 import type { ArrayType } from "../array";
@@ -20,55 +20,66 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
-export type ExcludeFromConst<A extends ConstType, B> = B extends Type
-  ? B extends NeverType
-    ? A
-    : B extends AnyType
+export type ExcludeFromConst<
+  META_CONST extends ConstType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_CONST
+    : META_TYPE extends AnyType
     ? Never
-    : B extends ConstType
-    ? CheckNotExtendsResolved<A, B>
-    : B extends EnumType
-    ? CheckNotExtendsResolved<A, B>
-    : B extends PrimitiveType
-    ? CheckNotExtendsResolved<A, B>
-    : B extends ArrayType
-    ? CheckNotExtendsResolved<A, B>
-    : B extends TupleType
-    ? CheckNotExtendsResolved<A, B>
-    : B extends ObjectType
-    ? ExcludeObject<A, B>
-    : B extends UnionType
-    ? ExcludeUnion<A, B>
+    : META_TYPE extends ConstType
+    ? CheckNotExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends EnumType
+    ? CheckNotExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends PrimitiveType
+    ? CheckNotExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends ArrayType
+    ? CheckNotExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends TupleType
+    ? CheckNotExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends ObjectType
+    ? ExcludeObject<META_CONST, META_TYPE>
+    : META_TYPE extends UnionType
+    ? ExcludeUnion<META_CONST, META_TYPE>
     : Never
   : Never;
 
 type CheckNotExtendsResolved<
-  A extends ConstType,
-  B extends Type,
-> = ConstValue<A> extends Resolve<B, { deserialize: false }> ? Never : A;
+  META_CONST extends ConstType,
+  META_TYPE extends Type,
+> = ConstValue<META_CONST> extends Resolve<META_TYPE, { deserialize: false }>
+  ? Never
+  : META_CONST;
 
-type ExcludeObject<A extends ConstType, B extends ObjectType> = IsObject<
-  ConstValue<A>
-> extends true
-  ? ObjectRequiredKeys<B> extends keyof ConstValue<A>
-    ? ExcludeObjectFromConst<A, B>
-    : A
-  : A;
+type ExcludeObject<
+  META_CONST extends ConstType,
+  META_OBJECT extends ObjectType,
+> = If<
+  IsObject<ConstValue<META_CONST>>,
+  ObjectRequiredKeys<META_OBJECT> extends keyof ConstValue<META_CONST>
+    ? ExcludeObjectFromConst<META_CONST, META_OBJECT>
+    : META_CONST,
+  META_CONST
+>;
 
 type ExcludeObjectFromConst<
-  A extends ConstType,
-  B extends ObjectType,
-  X = ExcludeConstValues<ConstValue<A>, B>,
-> = NonNeverKeys<X> extends never ? Never : A;
+  META_CONST extends ConstType,
+  META_OBJECT extends ObjectType,
+  EXCLUDED_CONST_VALUES = ExcludeConstValues<
+    ConstValue<META_CONST>,
+    META_OBJECT
+  >,
+> = If<IsNever<RepresentableKeys<EXCLUDED_CONST_VALUES>>, Never, META_CONST>;
 
-type NonNeverKeys<O> = {
-  [key in keyof O]: O[key] extends Never ? never : key;
-}[keyof O];
+type RepresentableKeys<VALUES> = {
+  [KEY in keyof VALUES]: VALUES[KEY] extends Never ? never : KEY;
+}[keyof VALUES];
 
-type ExcludeConstValues<V, B extends ObjectType> = {
-  [key in keyof V]: key extends keyof ObjectValues<B>
-    ? _Exclude<Const<V[key]>, ObjectValues<B>[key]>
-    : IsObjectOpen<B> extends true
-    ? _Exclude<Const<V[key]>, ObjectOpenProps<B>>
-    : Const<V[key]>;
+type ExcludeConstValues<VALUE, META_OBJECT extends ObjectType> = {
+  [KEY in keyof VALUE]: KEY extends keyof ObjectValues<META_OBJECT>
+    ? _Exclude<Const<VALUE[KEY]>, ObjectValues<META_OBJECT>[KEY]>
+    : IsObjectOpen<META_OBJECT> extends true
+    ? _Exclude<Const<VALUE[KEY]>, ObjectOpenProps<META_OBJECT>>
+    : Const<VALUE[KEY]>;
 };

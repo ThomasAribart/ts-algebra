@@ -17,24 +17,27 @@ import type { IntersectPrimitive } from "./primitive";
 import type { IntersectTuple } from "./tuple";
 import type { IntersectUnion } from "./union";
 
-export type Intersect<A extends Type, B extends Type> = $Intersect<A, B>;
+export type Intersect<
+  META_TYPE_A extends Type,
+  META_TYPE_B extends Type,
+> = $Intersect<META_TYPE_A, META_TYPE_B>;
 
-export type $Intersect<A, B> = A extends NeverType
-  ? A
-  : A extends AnyType
-  ? IntersectAny<A, B>
-  : A extends ConstType
-  ? IntersectConst<A, B>
-  : A extends EnumType
-  ? IntersectEnum<A, B>
-  : A extends PrimitiveType
-  ? IntersectPrimitive<A, B>
-  : A extends ArrayType
-  ? IntersectArray<A, B>
-  : A extends TupleType
-  ? IntersectTuple<A, B>
-  : A extends ObjectType
-  ? IntersectObject<A, B>
-  : A extends UnionType
-  ? IntersectUnion<A, B>
+export type $Intersect<META_TYPE_A, META_TYPE_B> = META_TYPE_A extends NeverType
+  ? META_TYPE_A
+  : META_TYPE_A extends AnyType
+  ? IntersectAny<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ConstType
+  ? IntersectConst<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends EnumType
+  ? IntersectEnum<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends PrimitiveType
+  ? IntersectPrimitive<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ArrayType
+  ? IntersectArray<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends TupleType
+  ? IntersectTuple<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ObjectType
+  ? IntersectObject<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends UnionType
+  ? IntersectUnion<META_TYPE_A, META_TYPE_B>
   : Never;

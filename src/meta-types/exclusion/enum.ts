@@ -13,45 +13,55 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
-export type ExcludeFromEnum<A extends EnumType, B> = B extends Type
-  ? B extends NeverType
-    ? A
-    : B extends AnyType
+export type ExcludeFromEnum<
+  META_ENUM extends EnumType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_ENUM
+    : META_TYPE extends AnyType
     ? Never
-    : B extends ConstType
-    ? FilterSubstracted<A, B>
-    : B extends EnumType
-    ? FilterSubstracted<A, B>
-    : B extends PrimitiveType
-    ? FilterSubstracted<A, B>
-    : B extends ArrayType
-    ? FilterSubstracted<A, B>
-    : B extends TupleType
-    ? FilterSubstracted<A, B>
-    : B extends ObjectType
-    ? FilterSubstracted<A, B>
-    : B extends UnionType
-    ? ExcludeUnion<A, B>
+    : META_TYPE extends ConstType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends EnumType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends PrimitiveType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends ArrayType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends TupleType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends ObjectType
+    ? FilterExcluded<META_ENUM, META_TYPE>
+    : META_TYPE extends UnionType
+    ? ExcludeUnion<META_ENUM, META_TYPE>
     : Never
   : Never;
 
-type FilterSubstracted<A extends EnumType, B extends Type> = Enum<
-  RecurseOnEnumValues<EnumValues<A>, B>
+type FilterExcluded<META_ENUM extends EnumType, META_TYPE extends Type> = Enum<
+  RecurseOnEnumValues<EnumValues<META_ENUM>, META_TYPE>
 >;
 
-type RecurseOnEnumValues<V, B extends Type> = V extends infer EnumValue
-  ? _Exclude<Const<EnumValue>, B> extends NeverType
+type RecurseOnEnumValues<
+  ENUM_VALUES,
+  META_TYPE extends Type,
+> = ENUM_VALUES extends infer ENUM_VALUE
+  ? _Exclude<Const<ENUM_VALUE>, META_TYPE> extends NeverType
     ? never
-    : EnumValue
+    : ENUM_VALUE
   : never;
 
 export type ExcludeEnum<
-  A extends Type,
-  B extends EnumType,
-  V = EnumValues<B>,
-> = ExcludeEnumValue<A, UnionLast<V>, V>;
+  META_TYPE extends Type,
+  ENUM_TYPE extends EnumType,
+  ENUM_VALUES = EnumValues<ENUM_TYPE>,
+> = ExcludeEnumValue<META_TYPE, UnionLast<ENUM_VALUES>, ENUM_VALUES>;
 
-type ExcludeEnumValue<A extends Type, L, V> = $Intersect<
-  _Exclude<A, Const<L>>,
-  _Exclude<A, Enum<Exclude<V, L>>>
+type ExcludeEnumValue<
+  META_TYPE extends Type,
+  LAST_ENUM_VALUE,
+  ENUM_VALUES,
+> = $Intersect<
+  _Exclude<META_TYPE, Const<LAST_ENUM_VALUE>>,
+  _Exclude<META_TYPE, Enum<Exclude<ENUM_VALUES, LAST_ENUM_VALUE>>>
 >;

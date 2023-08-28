@@ -238,34 +238,34 @@ const bothClosedTooManyOmittableKeys: A.Equals<
 > = 1;
 bothClosedTooManyOmittableKeys;
 
-// Closed origin open substracted
-const closedOriginOpenSubstracted1: A.Equals<
+// Closed source open excluded
+const closedSourceOpenExcluded1: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a">,
     M.Object<{}, never, M.Const<"B">>
   >,
   M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a">
 > = 1;
-closedOriginOpenSubstracted1;
+closedSourceOpenExcluded1;
 
-const closedOriginOpenSubstracted2: A.Equals<
+const closedSourceOpenExcluded2: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a">,
     M.Object<{}, never, M.Const<"C">>
   >,
   M.Object<{ a: M.Const<"A"> }, "a">
 > = 1;
-closedOriginOpenSubstracted2;
+closedSourceOpenExcluded2;
 
-// Open origin closed substracted
-const openOriginClosedSubstracted: A.Equals<
+// Open source closed excluded
+const openSourceClosedExcluded: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
     M.Object<{ a: M.Const<"A"> }, "a">
   >,
   M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
-openOriginClosedSubstracted;
+openSourceClosedExcluded;
 
 // Both open
 const bothOpenMatch1: A.Equals<
@@ -350,14 +350,14 @@ const omittableKeySerialization: A.Equals<
 > = 1;
 omittableKeySerialization;
 
-const substractedSerializationIsNotUsed: A.Equals<
+const excludedSerializationIsNotUsed: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B"> }, "a">,
     M.Object<{ a: M.Const<"B"> }, "a", M.Never, true, { a: string }>
   >,
   M.Object<{ a: M.Enum<"A"> }, "a">
 > = 1;
-substractedSerializationIsNotUsed;
+excludedSerializationIsNotUsed;
 
 // --- UNION ---
 

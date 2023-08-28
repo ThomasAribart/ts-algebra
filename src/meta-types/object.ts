@@ -21,7 +21,7 @@ export type ObjectTypeId = "object";
 /**
  * Defines an `Object` meta-type
  * @param VALUES Record<string, MetaType>
- * @param REQUIRED string
+ * @param REQUIRED_KEYS string
  * @param OPEN_PROPS MetaType
  * @param IS_SERIALIZED Boolean
  * @param DESERIALIZED Type
@@ -29,16 +29,16 @@ export type ObjectTypeId = "object";
 export type _Object<
   // ☝️ Prefixed with _ to not confuse with native TS Object
   VALUES extends Record<string, Type> = {},
-  REQUIRED extends string = never,
+  REQUIRED_KEYS extends string = never,
   OPEN_PROPS extends Type = Never,
   IS_SERIALIZED extends boolean = false,
   DESERIALIZED = never,
-> = _$Object<VALUES, REQUIRED, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
+> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
 
 /**
  * Defines an `Object` meta-type (without type constraints)
  * @param VALUES Record<string, MetaType>
- * @param REQUIRED string
+ * @param REQUIRED_KEYS string
  * @param OPEN_PROPS MetaType
  * @param IS_SERIALIZED Boolean
  * @param DESERIALIZED Type
@@ -46,23 +46,23 @@ export type _Object<
 export type _$Object<
   // ☝️ Prefixed with _ to not confuse with native TS Object
   VALUES = {},
-  REQUIRED = never,
+  REQUIRED_KEYS = never,
   OPEN_PROPS = Never,
   IS_SERIALIZED = false,
   DESERIALIZED = never,
 > = DoesExtend<
   true,
   {
-    [KEY in Extract<REQUIRED, string>]: KEY extends keyof VALUES
+    [KEY in Extract<REQUIRED_KEYS, string>]: KEY extends keyof VALUES
       ? DoesExtend<VALUES[KEY], NeverType>
       : DoesExtend<OPEN_PROPS, NeverType>;
-  }[Extract<REQUIRED, string>]
+  }[Extract<REQUIRED_KEYS, string>]
 > extends true
   ? Never
   : {
       type: ObjectTypeId;
       values: VALUES;
-      required: REQUIRED;
+      required: REQUIRED_KEYS;
       isOpen: Not<DoesExtend<OPEN_PROPS, NeverType>>;
       openProps: OPEN_PROPS;
       isSerialized: IS_SERIALIZED;

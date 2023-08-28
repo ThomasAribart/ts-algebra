@@ -22,30 +22,45 @@ import type { MergeTuplePropsToSerializable } from "./tuple";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type IntersectAny<A extends AnyType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? Any<IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>
-    : B extends ConstType
-    ? MergeConstToSerializable<B, A>
-    : B extends EnumType
-    ? MergeEnumValuesToSerializable<EnumValues<B>, B, A>
-    : B extends PrimitiveType
-    ? MergePrimitiveToSerializable<B, A>
-    : B extends ArrayType
-    ? MergeArrayValuesToSerializable<ArrayValues<B>, B, A>
-    : B extends TupleType
-    ? MergeTuplePropsToSerializable<TupleValues<B>, TupleOpenProps<B>, B, A>
-    : B extends ObjectType
-    ? MergeObjectPropsToSerializable<
-        ObjectValues<B>,
-        ObjectRequiredKeys<B>,
-        ObjectOpenProps<B>,
-        B,
-        A
+export type IntersectAny<
+  META_ANY extends AnyType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? Any<
+        IntersectIsSerialized<META_ANY, META_TYPE>,
+        IntersectDeserialized<META_ANY, META_TYPE>
       >
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+    : META_TYPE extends ConstType
+    ? MergeConstToSerializable<META_TYPE, META_ANY>
+    : META_TYPE extends EnumType
+    ? MergeEnumValuesToSerializable<EnumValues<META_TYPE>, META_TYPE, META_ANY>
+    : META_TYPE extends PrimitiveType
+    ? MergePrimitiveToSerializable<META_TYPE, META_ANY>
+    : META_TYPE extends ArrayType
+    ? MergeArrayValuesToSerializable<
+        ArrayValues<META_TYPE>,
+        META_TYPE,
+        META_ANY
+      >
+    : META_TYPE extends TupleType
+    ? MergeTuplePropsToSerializable<
+        TupleValues<META_TYPE>,
+        TupleOpenProps<META_TYPE>,
+        META_TYPE,
+        META_ANY
+      >
+    : META_TYPE extends ObjectType
+    ? MergeObjectPropsToSerializable<
+        ObjectValues<META_TYPE>,
+        ObjectRequiredKeys<META_TYPE>,
+        ObjectOpenProps<META_TYPE>,
+        META_TYPE,
+        META_ANY
+      >
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_ANY>
     : Never
   : Never;

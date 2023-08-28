@@ -16,44 +16,55 @@ import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeArrayValuesToSerializable<
-  V extends Type,
-  A extends ArrayType,
-  B extends SerializableType,
-> = $MergeArrayValuesToSerializable<V, A, B>;
+  VALUES extends Type,
+  META_ARRAY extends ArrayType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = $MergeArrayValuesToSerializable<VALUES, META_ARRAY, SERIALIZABLE_META_TYPE>;
 
 type $MergeArrayValuesToSerializable<
-  V,
-  A extends ArrayType,
-  B extends SerializableType,
-> = _$Array<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
+  VALUES,
+  META_ARRAY extends ArrayType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = _$Array<
+  VALUES,
+  IntersectIsSerialized<META_ARRAY, SERIALIZABLE_META_TYPE>,
+  IntersectDeserialized<META_ARRAY, SERIALIZABLE_META_TYPE>
+>;
 
-export type IntersectArray<A extends ArrayType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? MergeArrayValuesToSerializable<ArrayValues<A>, A, B>
-    : B extends ConstType
-    ? IntersectConstToArray<B, A>
-    : B extends EnumType
-    ? IntersectEnumToArray<B, A>
-    : B extends PrimitiveType
+export type IntersectArray<
+  META_ARRAY extends ArrayType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? MergeArrayValuesToSerializable<
+        ArrayValues<META_ARRAY>,
+        META_ARRAY,
+        META_TYPE
+      >
+    : META_TYPE extends ConstType
+    ? IntersectConstToArray<META_TYPE, META_ARRAY>
+    : META_TYPE extends EnumType
+    ? IntersectEnumToArray<META_TYPE, META_ARRAY>
+    : META_TYPE extends PrimitiveType
     ? Never
-    : B extends ArrayType
-    ? IntersectArrays<A, B>
-    : B extends TupleType
-    ? IntersectTupleToArray<B, A>
-    : B extends ObjectType
+    : META_TYPE extends ArrayType
+    ? IntersectArrays<META_ARRAY, META_TYPE>
+    : META_TYPE extends TupleType
+    ? IntersectTupleToArray<META_TYPE, META_ARRAY>
+    : META_TYPE extends ObjectType
     ? Never
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_ARRAY>
     : Never
   : Never;
 
 type IntersectArrays<
-  A extends ArrayType,
-  B extends ArrayType,
+  META_ARRAY_A extends ArrayType,
+  META_ARRAY_B extends ArrayType,
 > = $MergeArrayValuesToSerializable<
-  Intersect<ArrayValues<A>, ArrayValues<B>>,
-  A,
-  B
+  Intersect<ArrayValues<META_ARRAY_A>, ArrayValues<META_ARRAY_B>>,
+  META_ARRAY_A,
+  META_ARRAY_B
 >;
