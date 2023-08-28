@@ -10,24 +10,27 @@ import type { Type } from "../type";
 import type { UnionType } from "../union";
 import type { ExcludeUnion } from "./union";
 
-export type ExcludeFromAny<A extends AnyType, B> = B extends Type
-  ? B extends NeverType
-    ? A
-    : B extends AnyType
+export type ExcludeFromAny<
+  META_ANY extends AnyType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_ANY
+    : META_TYPE extends AnyType
     ? Never
-    : B extends ConstType
-    ? A
-    : B extends EnumType
-    ? A
-    : B extends PrimitiveType
-    ? A
-    : B extends ArrayType
-    ? A
-    : B extends TupleType
-    ? A
-    : B extends ObjectType
-    ? A
-    : B extends UnionType
-    ? ExcludeUnion<A, B>
+    : META_TYPE extends ConstType
+    ? META_ANY
+    : META_TYPE extends EnumType
+    ? META_ANY
+    : META_TYPE extends PrimitiveType
+    ? META_ANY
+    : META_TYPE extends ArrayType
+    ? META_ANY
+    : META_TYPE extends TupleType
+    ? META_ANY
+    : META_TYPE extends ObjectType
+    ? META_ANY
+    : META_TYPE extends UnionType
+    ? ExcludeUnion<META_ANY, META_TYPE>
     : Never
   : Never;

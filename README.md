@@ -460,8 +460,8 @@ Takes two meta-types as arguments, and returns their exclusion as a meta-type.
 
 **Arguments:**
 
-- <code>OriginMetaType <i>(meta-type)</i></code>
-- <code>SubstractedMetaType <i>(meta-type)</i></code>
+- <code>SourceMetaType <i>(meta-type)</i></code>
+- <code>ExcludedMetaType <i>(meta-type)</i></code>
 
 <!-- prettier-ignore -->
 ```typescript
@@ -591,7 +591,7 @@ type Excluded = M.Exclude<
 // >
 ```
 
-Exluding a union returns the intersection of the exclusions of all elements, applied separately:
+Excluding a union returns the intersection of the exclusions of all elements, applied separately:
 
 <!-- prettier-ignore -->
 ```typescript
@@ -660,8 +660,8 @@ type Resolved = M.Resolve<
 
 In representable [exclusions](#exclude):
 
-- If the origin meta-type is not serialized, the resulting exclusion is not serialized.
-- If the origin meta-type is serialized, the resulting exclusion inherits of its deserialization properties.
+- If the source meta-type is not serialized, the resulting exclusion is not serialized.
+- If the source meta-type is serialized, the resulting exclusion inherits of its deserialization properties.
 
 ## 🚧 Type constraints
 

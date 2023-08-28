@@ -212,23 +212,23 @@ objectsNeverIntersect;
 
 // --- UNION ---
 
-const numberIsSubstracted1: A.Equals<
+const numberIsExcluded1: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
     M.Union<M.Array<M.Primitive<string>> | M.Array<M.Primitive<number>>>
   >,
   M.Union<M.Array<M.Primitive<string>> | M.Array<M.Never>>
 > = 1;
-numberIsSubstracted1;
+numberIsExcluded1;
 
-const numberIsSubstracted2: A.Equals<
+const numberIsExcluded2: A.Equals<
   M.Intersect<
     M.Array<M.Primitive<string>>,
     M.Union<M.Const<["foo"]> | M.Array<M.Primitive<number>>>
   >,
   M.Union<M.Const<["foo"]> | M.Array<M.Never>>
 > = 1;
-numberIsSubstracted2;
+numberIsExcluded2;
 
 const tupleIsKept: A.Equals<
   M.Intersect<

@@ -18,33 +18,42 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
-export type ExcludeFromArray<A extends ArrayType, B> = B extends Type
-  ? B extends NeverType
-    ? A
-    : B extends AnyType
+export type ExcludeFromArray<
+  META_ARRAY extends ArrayType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_ARRAY
+    : META_TYPE extends AnyType
     ? Never
-    : B extends ConstType
-    ? A
-    : B extends EnumType
-    ? A
-    : B extends PrimitiveType
-    ? A
-    : B extends ArrayType
-    ? ExcludeArrays<A, B>
-    : B extends TupleType
-    ? And<DoesExtend<TupleValues<B>, []>, IsTupleOpen<B>> extends true
-      ? ExcludeArrays<A, _Array<TupleOpenProps<B>>>
-      : A
-    : B extends ObjectType
-    ? A
-    : B extends UnionType
-    ? ExcludeUnion<A, B>
+    : META_TYPE extends ConstType
+    ? META_ARRAY
+    : META_TYPE extends EnumType
+    ? META_ARRAY
+    : META_TYPE extends PrimitiveType
+    ? META_ARRAY
+    : META_TYPE extends ArrayType
+    ? ExcludeArrays<META_ARRAY, META_TYPE>
+    : META_TYPE extends TupleType
+    ? And<
+        DoesExtend<TupleValues<META_TYPE>, []>,
+        IsTupleOpen<META_TYPE>
+      > extends true
+      ? ExcludeArrays<META_ARRAY, _Array<TupleOpenProps<META_TYPE>>>
+      : META_ARRAY
+    : META_TYPE extends ObjectType
+    ? META_ARRAY
+    : META_TYPE extends UnionType
+    ? ExcludeUnion<META_ARRAY, META_TYPE>
     : Never
   : Never;
 
-type ExcludeArrays<A extends ArrayType, B extends ArrayType> = _Exclude<
-  ArrayValues<A>,
-  ArrayValues<B>
+type ExcludeArrays<
+  META_ARRAY_A extends ArrayType,
+  META_ARRAY_B extends ArrayType,
+> = _Exclude<
+  ArrayValues<META_ARRAY_A>,
+  ArrayValues<META_ARRAY_B>
 > extends NeverType
   ? NeverType
-  : A;
+  : META_ARRAY_A;

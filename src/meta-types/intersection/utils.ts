@@ -1,20 +1,29 @@
-import type { Or } from "~/utils";
+import type { If, Or } from "~/utils";
 
 import type { SerializableType } from "../type";
 import type { Deserialized, IsSerialized } from "../utils";
 
 export type IntersectIsSerialized<
-  A extends SerializableType,
-  B extends SerializableType,
-> = Or<IsSerialized<A>, IsSerialized<B>>;
+  SERIALIZABLE_META_TYPE_A extends SerializableType,
+  SERIALIZABLE_META_TYPE_B extends SerializableType,
+> = Or<
+  IsSerialized<SERIALIZABLE_META_TYPE_A>,
+  IsSerialized<SERIALIZABLE_META_TYPE_B>
+>;
 
 export type IntersectDeserialized<
-  A extends SerializableType,
-  B extends SerializableType,
-> = IsSerialized<A> extends true
-  ? IsSerialized<B> extends true
-    ? Deserialized<A> & Deserialized<B>
-    : Deserialized<A>
-  : IsSerialized<B> extends true
-  ? Deserialized<B>
-  : never;
+  SERIALIZABLE_META_TYPE_A extends SerializableType,
+  SERIALIZABLE_META_TYPE_B extends SerializableType,
+> = If<
+  IsSerialized<SERIALIZABLE_META_TYPE_A>,
+  If<
+    IsSerialized<SERIALIZABLE_META_TYPE_B>,
+    Deserialized<SERIALIZABLE_META_TYPE_A> &
+      Deserialized<SERIALIZABLE_META_TYPE_B>,
+    Deserialized<SERIALIZABLE_META_TYPE_A>
+  >,
+  If<
+    IsSerialized<SERIALIZABLE_META_TYPE_B>,
+    Deserialized<SERIALIZABLE_META_TYPE_B>
+  >
+>;

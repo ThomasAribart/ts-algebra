@@ -14,60 +14,72 @@ import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeEnumValuesToSerializable<
-  V,
-  A extends EnumType,
-  B extends SerializableType,
-> = Enum<V, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
+  ENUM_VALUES,
+  META_ENUM extends EnumType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = Enum<
+  ENUM_VALUES,
+  IntersectIsSerialized<META_ENUM, SERIALIZABLE_META_TYPE>,
+  IntersectDeserialized<META_ENUM, SERIALIZABLE_META_TYPE>
+>;
 
-export type IntersectEnum<A extends EnumType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? MergeEnumValuesToSerializable<EnumValues<A>, A, B>
-    : B extends ConstType
-    ? IntersectConstToEnum<B, A>
-    : B extends EnumType
-    ? FilterUnintersecting<A, B>
-    : B extends PrimitiveType
-    ? IntersectEnumToPrimitive<A, B>
-    : B extends ArrayType
-    ? FilterUnintersecting<A, B>
-    : B extends TupleType
-    ? FilterUnintersecting<A, B>
-    : B extends ObjectType
-    ? FilterUnintersecting<A, B>
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+export type IntersectEnum<
+  META_ENUM extends EnumType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? MergeEnumValuesToSerializable<EnumValues<META_ENUM>, META_ENUM, META_TYPE>
+    : META_TYPE extends ConstType
+    ? IntersectConstToEnum<META_TYPE, META_ENUM>
+    : META_TYPE extends EnumType
+    ? FilterUnintersecting<META_ENUM, META_TYPE>
+    : META_TYPE extends PrimitiveType
+    ? IntersectEnumToPrimitive<META_ENUM, META_TYPE>
+    : META_TYPE extends ArrayType
+    ? FilterUnintersecting<META_ENUM, META_TYPE>
+    : META_TYPE extends TupleType
+    ? FilterUnintersecting<META_ENUM, META_TYPE>
+    : META_TYPE extends ObjectType
+    ? FilterUnintersecting<META_ENUM, META_TYPE>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_ENUM>
     : Never
   : Never;
 
 type FilterUnintersecting<
-  A extends EnumType,
-  B extends SerializableType,
-> = MergeEnumValuesToSerializable<RecurseOnEnumValues<EnumValues<A>, B>, A, B>;
+  META_ENUM extends EnumType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = MergeEnumValuesToSerializable<
+  RecurseOnEnumValues<EnumValues<META_ENUM>, SERIALIZABLE_META_TYPE>,
+  META_ENUM,
+  SERIALIZABLE_META_TYPE
+>;
 
-type RecurseOnEnumValues<V, B> = V extends infer T
-  ? $Intersect<Const<T>, B> extends Never
-    ? never
-    : T
-  : never;
+type RecurseOnEnumValues<ENUM_VALUES, SERIALIZABLE_META_TYPE> =
+  ENUM_VALUES extends infer ENUM_VALUE
+    ? $Intersect<Const<ENUM_VALUE>, SERIALIZABLE_META_TYPE> extends Never
+      ? never
+      : ENUM_VALUE
+    : never;
 
 export type IntersectEnumToPrimitive<
-  A extends EnumType,
-  B extends PrimitiveType,
-> = FilterUnintersecting<A, B>;
+  META_ENUM extends EnumType,
+  META_PRIMITIVE extends PrimitiveType,
+> = FilterUnintersecting<META_ENUM, META_PRIMITIVE>;
 
 export type IntersectEnumToArray<
-  A extends EnumType,
-  B extends ArrayType,
-> = FilterUnintersecting<A, B>;
+  META_ENUM extends EnumType,
+  META_ARRAY extends ArrayType,
+> = FilterUnintersecting<META_ENUM, META_ARRAY>;
 
 export type IntersectEnumToTuple<
-  A extends EnumType,
-  B extends TupleType,
-> = FilterUnintersecting<A, B>;
+  META_ENUM extends EnumType,
+  META_TUPLE extends TupleType,
+> = FilterUnintersecting<META_ENUM, META_TUPLE>;
 
 export type IntersectEnumToObject<
-  A extends EnumType,
-  B extends ObjectType,
-> = FilterUnintersecting<A, B>;
+  META_ENUM extends EnumType,
+  META_OBJECT extends ObjectType,
+> = FilterUnintersecting<META_ENUM, META_OBJECT>;

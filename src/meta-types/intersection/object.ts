@@ -22,67 +22,94 @@ import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeObjectPropsToSerializable<
-  V extends Record<string, Type>,
-  R extends string,
-  P extends Type,
-  A extends ObjectType,
-  B extends SerializableType,
-> = $MergeObjectPropsToSerializable<V, R, P, A, B>;
+  VALUES extends Record<string, Type>,
+  REQUIRED_KEYS extends string,
+  OPEN_PROPS extends Type,
+  META_OBJECT extends ObjectType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = $MergeObjectPropsToSerializable<
+  VALUES,
+  REQUIRED_KEYS,
+  OPEN_PROPS,
+  META_OBJECT,
+  SERIALIZABLE_META_TYPE
+>;
 
 type $MergeObjectPropsToSerializable<
-  V,
-  R,
-  P,
-  A extends ObjectType,
-  B extends SerializableType,
-> = _$Object<V, R, P, IntersectIsSerialized<A, B>, IntersectDeserialized<A, B>>;
+  VALUES,
+  REQUIRED_KEYS,
+  OPEN_PROPS,
+  META_OBJECT extends ObjectType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = _$Object<
+  VALUES,
+  REQUIRED_KEYS,
+  OPEN_PROPS,
+  IntersectIsSerialized<META_OBJECT, SERIALIZABLE_META_TYPE>,
+  IntersectDeserialized<META_OBJECT, SERIALIZABLE_META_TYPE>
+>;
 
-export type IntersectObject<A extends ObjectType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
+export type IntersectObject<
+  META_OBJECT extends ObjectType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
     ? MergeObjectPropsToSerializable<
-        ObjectValues<A>,
-        ObjectRequiredKeys<A>,
-        ObjectOpenProps<A>,
-        A,
-        B
+        ObjectValues<META_OBJECT>,
+        ObjectRequiredKeys<META_OBJECT>,
+        ObjectOpenProps<META_OBJECT>,
+        META_OBJECT,
+        META_TYPE
       >
-    : B extends ConstType
-    ? IntersectConstToObject<B, A>
-    : B extends EnumType
-    ? IntersectEnumToObject<B, A>
-    : B extends PrimitiveType
+    : META_TYPE extends ConstType
+    ? IntersectConstToObject<META_TYPE, META_OBJECT>
+    : META_TYPE extends EnumType
+    ? IntersectEnumToObject<META_TYPE, META_OBJECT>
+    : META_TYPE extends PrimitiveType
     ? Never
-    : B extends ArrayType
+    : META_TYPE extends ArrayType
     ? Never
-    : B extends TupleType
+    : META_TYPE extends TupleType
     ? Never
-    : B extends ObjectType
-    ? IntersectObjects<A, B>
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+    : META_TYPE extends ObjectType
+    ? IntersectObjects<META_OBJECT, META_TYPE>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_OBJECT>
     : Never
   : Never;
 
 type IntersectObjects<
-  A extends ObjectType,
-  B extends ObjectType,
-  V extends Record<string, unknown> = IntersectObjectsValues<A, B>,
-  O = Intersect<ObjectOpenProps<A>, ObjectOpenProps<B>>,
+  META_OBJECT_A extends ObjectType,
+  META_OBJECT_B extends ObjectType,
+  INTERSECTED_VALUES extends Record<string, unknown> = IntersectObjectsValues<
+    META_OBJECT_A,
+    META_OBJECT_B
+  >,
+  INTERSECTED_OPEN_PROPS = Intersect<
+    ObjectOpenProps<META_OBJECT_A>,
+    ObjectOpenProps<META_OBJECT_B>
+  >,
 > = $MergeObjectPropsToSerializable<
   {
-    [key in keyof V]: V[key];
+    [KEY in keyof INTERSECTED_VALUES]: INTERSECTED_VALUES[KEY];
   },
-  ObjectRequiredKeys<A> | ObjectRequiredKeys<B>,
-  O,
-  A,
-  B
+  ObjectRequiredKeys<META_OBJECT_A> | ObjectRequiredKeys<META_OBJECT_B>,
+  INTERSECTED_OPEN_PROPS,
+  META_OBJECT_A,
+  META_OBJECT_B
 >;
 
-type IntersectObjectsValues<A extends ObjectType, B extends ObjectType> = {
-  [key in Extract<
-    keyof ObjectValues<A> | keyof ObjectValues<B>,
+type IntersectObjectsValues<
+  META_OBJECT_A extends ObjectType,
+  META_OBJECT_B extends ObjectType,
+> = {
+  [KEY in Extract<
+    keyof ObjectValues<META_OBJECT_A> | keyof ObjectValues<META_OBJECT_B>,
     string
-  >]: $Intersect<ObjectValue<A, key>, ObjectValue<B, key>>;
+  >]: $Intersect<
+    ObjectValue<META_OBJECT_A, KEY>,
+    ObjectValue<META_OBJECT_B, KEY>
+  >;
 };

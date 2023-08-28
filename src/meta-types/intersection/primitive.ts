@@ -16,39 +16,42 @@ import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergePrimitiveToSerializable<
-  A extends PrimitiveType,
-  B extends SerializableType,
+  META_PRIMITIVE extends PrimitiveType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
 > = Primitive<
-  PrimitiveValue<A>,
-  IntersectIsSerialized<A, B>,
-  IntersectDeserialized<A, B>
+  PrimitiveValue<META_PRIMITIVE>,
+  IntersectIsSerialized<META_PRIMITIVE, SERIALIZABLE_META_TYPE>,
+  IntersectDeserialized<META_PRIMITIVE, SERIALIZABLE_META_TYPE>
 >;
 
-export type IntersectPrimitive<A extends PrimitiveType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? MergePrimitiveToSerializable<A, B>
-    : B extends ConstType
-    ? IntersectConstToPrimitive<B, A>
-    : B extends EnumType
-    ? IntersectEnumToPrimitive<B, A>
-    : B extends PrimitiveType
+export type IntersectPrimitive<
+  META_PRIMITIVE extends PrimitiveType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? MergePrimitiveToSerializable<META_PRIMITIVE, META_TYPE>
+    : META_TYPE extends ConstType
+    ? IntersectConstToPrimitive<META_TYPE, META_PRIMITIVE>
+    : META_TYPE extends EnumType
+    ? IntersectEnumToPrimitive<META_TYPE, META_PRIMITIVE>
+    : META_TYPE extends PrimitiveType
     ? If<
         And<
-          DoesExtend<PrimitiveValue<A>, PrimitiveValue<B>>,
-          DoesExtend<PrimitiveValue<B>, PrimitiveValue<A>>
+          DoesExtend<PrimitiveValue<META_PRIMITIVE>, PrimitiveValue<META_TYPE>>,
+          DoesExtend<PrimitiveValue<META_TYPE>, PrimitiveValue<META_PRIMITIVE>>
         >,
-        MergePrimitiveToSerializable<A, B>,
+        MergePrimitiveToSerializable<META_PRIMITIVE, META_TYPE>,
         Never
       >
-    : B extends ArrayType
+    : META_TYPE extends ArrayType
     ? Never
-    : B extends TupleType
+    : META_TYPE extends TupleType
     ? Never
-    : B extends ObjectType
+    : META_TYPE extends ObjectType
     ? Never
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_PRIMITIVE>
     : Never
   : Never;

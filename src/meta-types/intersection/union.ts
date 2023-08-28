@@ -10,32 +10,37 @@ import type { Type } from "../type";
 import type { $Union, UnionType, UnionValues } from "../union";
 import type { $Intersect } from "./index";
 
-export type IntersectUnion<A extends UnionType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? A
-    : B extends ConstType
-    ? DistributeIntersection<A, B>
-    : B extends EnumType
-    ? DistributeIntersection<A, B>
-    : B extends PrimitiveType
-    ? DistributeIntersection<A, B>
-    : B extends ArrayType
-    ? DistributeIntersection<A, B>
-    : B extends TupleType
-    ? DistributeIntersection<A, B>
-    : B extends ObjectType
-    ? DistributeIntersection<A, B>
-    : B extends UnionType
-    ? DistributeIntersection<A, B>
+export type IntersectUnion<
+  META_UNION extends UnionType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? META_UNION
+    : META_TYPE extends ConstType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends EnumType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends PrimitiveType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends ArrayType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends TupleType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends ObjectType
+    ? DistributeIntersection<META_UNION, META_TYPE>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_UNION, META_TYPE>
     : Never
   : Never;
 
-export type DistributeIntersection<A extends UnionType, B> = $Union<
-  RecurseOnUnionValues<UnionValues<A>, B>
->;
+export type DistributeIntersection<
+  META_UNION extends UnionType,
+  META_TYPE,
+> = $Union<RecurseOnUnionValues<UnionValues<META_UNION>, META_TYPE>>;
 
-type RecurseOnUnionValues<V extends Type, B> = V extends infer T
-  ? $Intersect<T, B>
-  : never;
+type RecurseOnUnionValues<
+  VALUES extends Type,
+  META_TYPE,
+> = VALUES extends infer VALUE ? $Intersect<VALUE, META_TYPE> : never;

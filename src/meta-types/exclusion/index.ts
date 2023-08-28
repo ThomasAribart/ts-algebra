@@ -18,24 +18,27 @@ import type { ExcludeFromTuple } from "./tuple";
 import type { DistributeUnion } from "./union";
 
 // Prefixed with _ to not confuse with native TS Exclude
-export type _Exclude<A extends Type, B extends Type> = _$Exclude<A, B>;
+export type _Exclude<
+  META_TYPE_A extends Type,
+  META_TYPE_B extends Type,
+> = _$Exclude<META_TYPE_A, META_TYPE_B>;
 
-export type _$Exclude<A, B> = A extends NeverType
-  ? A
-  : A extends AnyType
-  ? ExcludeFromAny<A, B>
-  : A extends ConstType
-  ? ExcludeFromConst<A, B>
-  : A extends EnumType
-  ? ExcludeFromEnum<A, B>
-  : A extends PrimitiveType
-  ? ExcludeFromPrimitive<A, B>
-  : A extends ArrayType
-  ? ExcludeFromArray<A, B>
-  : A extends TupleType
-  ? ExcludeFromTuple<A, B>
-  : A extends ObjectType
-  ? ExcludeFromObject<A, B>
-  : A extends UnionType
-  ? DistributeUnion<A, B>
+export type _$Exclude<META_TYPE_A, META_TYPE_B> = META_TYPE_A extends NeverType
+  ? META_TYPE_A
+  : META_TYPE_A extends AnyType
+  ? ExcludeFromAny<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ConstType
+  ? ExcludeFromConst<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends EnumType
+  ? ExcludeFromEnum<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends PrimitiveType
+  ? ExcludeFromPrimitive<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ArrayType
+  ? ExcludeFromArray<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends TupleType
+  ? ExcludeFromTuple<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends ObjectType
+  ? ExcludeFromObject<META_TYPE_A, META_TYPE_B>
+  : META_TYPE_A extends UnionType
+  ? DistributeUnion<META_TYPE_A, META_TYPE_B>
   : Never;

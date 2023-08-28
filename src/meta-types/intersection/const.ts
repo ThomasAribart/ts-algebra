@@ -1,4 +1,4 @@
-import type { IsObject } from "~/utils";
+import type { If, IsNever, IsObject } from "~/utils";
 
 import type { AnyType } from "../any";
 import type { ArrayType } from "../array";
@@ -16,82 +16,103 @@ import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
 export type MergeConstToSerializable<
-  A extends ConstType,
-  B extends SerializableType,
+  META_CONST extends ConstType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
 > = Const<
-  ConstValue<A>,
-  IntersectIsSerialized<A, B>,
-  IntersectDeserialized<A, B>
+  ConstValue<META_CONST>,
+  IntersectIsSerialized<META_CONST, SERIALIZABLE_META_TYPE>,
+  IntersectDeserialized<META_CONST, SERIALIZABLE_META_TYPE>
 >;
 
-export type IntersectConst<A extends ConstType, B> = B extends Type
-  ? B extends NeverType
-    ? B
-    : B extends AnyType
-    ? MergeConstToSerializable<A, B>
-    : B extends ConstType
-    ? CheckExtendsResolved<A, B>
-    : B extends EnumType
-    ? IntersectConstToEnum<A, B>
-    : B extends PrimitiveType
-    ? IntersectConstToPrimitive<A, B>
-    : B extends ArrayType
-    ? IntersectConstToArray<A, B>
-    : B extends TupleType
-    ? IntersectConstToTuple<A, B>
-    : B extends ObjectType
-    ? IntersectConstToObject<A, B>
-    : B extends UnionType
-    ? DistributeIntersection<B, A>
+export type IntersectConst<
+  META_CONST extends ConstType,
+  META_TYPE,
+> = META_TYPE extends Type
+  ? META_TYPE extends NeverType
+    ? META_TYPE
+    : META_TYPE extends AnyType
+    ? MergeConstToSerializable<META_CONST, META_TYPE>
+    : META_TYPE extends ConstType
+    ? CheckExtendsResolved<META_CONST, META_TYPE>
+    : META_TYPE extends EnumType
+    ? IntersectConstToEnum<META_CONST, META_TYPE>
+    : META_TYPE extends PrimitiveType
+    ? IntersectConstToPrimitive<META_CONST, META_TYPE>
+    : META_TYPE extends ArrayType
+    ? IntersectConstToArray<META_CONST, META_TYPE>
+    : META_TYPE extends TupleType
+    ? IntersectConstToTuple<META_CONST, META_TYPE>
+    : META_TYPE extends ObjectType
+    ? IntersectConstToObject<META_CONST, META_TYPE>
+    : META_TYPE extends UnionType
+    ? DistributeIntersection<META_TYPE, META_CONST>
     : Never
   : Never;
 
 type CheckExtendsResolved<
-  A extends ConstType,
-  B extends SerializableType,
-> = ConstValue<A> extends Resolve<B, { deserialize: false }>
-  ? MergeConstToSerializable<A, B>
+  META_CONST extends ConstType,
+  SERIALIZABLE_META_TYPE extends SerializableType,
+> = ConstValue<META_CONST> extends Resolve<
+  SERIALIZABLE_META_TYPE,
+  { deserialize: false }
+>
+  ? MergeConstToSerializable<META_CONST, SERIALIZABLE_META_TYPE>
   : Never;
 
 export type IntersectConstToEnum<
-  A extends ConstType,
-  B extends EnumType,
-> = CheckExtendsResolved<A, B>;
+  META_CONST extends ConstType,
+  META_ENUM extends EnumType,
+> = CheckExtendsResolved<META_CONST, META_ENUM>;
 
 export type IntersectConstToPrimitive<
-  A extends ConstType,
-  B extends PrimitiveType,
-> = CheckExtendsResolved<A, B>;
+  META_CONST extends ConstType,
+  META_ENUM extends PrimitiveType,
+> = CheckExtendsResolved<META_CONST, META_ENUM>;
 
 export type IntersectConstToArray<
-  A extends ConstType,
-  B extends ArrayType,
-> = CheckExtendsResolved<A, B>;
+  META_CONST extends ConstType,
+  META_ARRAY extends ArrayType,
+> = CheckExtendsResolved<META_CONST, META_ARRAY>;
 
 export type IntersectConstToTuple<
-  A extends ConstType,
-  B extends TupleType,
-> = CheckExtendsResolved<A, B>;
+  META_CONST extends ConstType,
+  META_TUPLE extends TupleType,
+> = CheckExtendsResolved<META_CONST, META_TUPLE>;
 
 export type IntersectConstToObject<
-  A extends ConstType,
-  B extends ObjectType,
-> = IsObject<ConstValue<A>> extends false
-  ? Never
-  : IntersectObjectConstToObject<A, B>;
+  META_CONST extends ConstType,
+  META_OBJECT extends ObjectType,
+> = If<
+  IsObject<ConstValue<META_CONST>>,
+  IntersectObjectConstToObject<META_CONST, META_OBJECT>,
+  Never
+>;
 
 type IntersectObjectConstToObject<
-  A extends ConstType,
-  B extends ObjectType,
-  V = IntersectConstValuesToObjectValues<ConstValue<A>, B>,
-> = NeverKeys<V> extends never ? MergeConstToSerializable<A, B> : Never;
+  META_CONST extends ConstType,
+  META_OBJECT extends ObjectType,
+  INTERSECTED_META_OBJECT = IntersectConstValuesToObjectValues<
+    ConstValue<META_CONST>,
+    META_OBJECT
+  >,
+> = If<
+  IsNever<NeverKeys<INTERSECTED_META_OBJECT>>,
+  MergeConstToSerializable<META_CONST, META_OBJECT>,
+  Never
+>;
 
-type IntersectConstValuesToObjectValues<V, B extends ObjectType> = {
-  [key in Extract<keyof V | ObjectRequiredKeys<B>, string>]: key extends keyof V
-    ? Intersect<Const<V[key]>, ObjectValue<B, key>>
+type IntersectConstValuesToObjectValues<
+  CONST_VALUE,
+  META_OBJECT extends ObjectType,
+> = {
+  [KEY in Extract<
+    keyof CONST_VALUE | ObjectRequiredKeys<META_OBJECT>,
+    string
+  >]: KEY extends keyof CONST_VALUE
+    ? Intersect<Const<CONST_VALUE[KEY]>, ObjectValue<META_OBJECT, KEY>>
     : Never;
 };
 
-type NeverKeys<O> = {
-  [key in keyof O]: O[key] extends Never ? key : never;
-}[keyof O];
+type NeverKeys<META_OBJECT> = {
+  [KEY in keyof META_OBJECT]: META_OBJECT[KEY] extends Never ? KEY : never;
+}[keyof META_OBJECT];
