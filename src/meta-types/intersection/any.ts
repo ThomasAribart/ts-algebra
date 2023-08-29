@@ -22,6 +22,12 @@ import type { MergeTuplePropsToSerializable } from "./tuple";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
+/**
+ * Intersects an `Array` meta-type to any other meta-type
+ * @param META_ANY AnyType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectAny<
   META_ANY extends AnyType,
   META_TYPE,

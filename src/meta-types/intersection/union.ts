@@ -10,6 +10,12 @@ import type { Type } from "../type";
 import type { $Union, UnionType, UnionValues } from "../union";
 import type { $Intersect } from "./index";
 
+/**
+ * Intersects a `Union` meta-type to any other meta-type
+ * @param META_UNION UnionType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectUnion<
   META_UNION extends UnionType,
   META_TYPE,
@@ -35,12 +41,19 @@ export type IntersectUnion<
     : Never
   : Never;
 
+/**
+ * Recursively intersects a `Union` meta-type values to any other meta-type
+ *
+ * To do so, we create a union of all value intersections: `(A | B) & C = (A & C) | (B & C)`
+ * @param META_UNION UnionType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type DistributeIntersection<
   META_UNION extends UnionType,
   META_TYPE,
-> = $Union<RecurseOnUnionValues<UnionValues<META_UNION>, META_TYPE>>;
-
-type RecurseOnUnionValues<
-  VALUES extends Type,
-  META_TYPE,
-> = VALUES extends infer VALUE ? $Intersect<VALUE, META_TYPE> : never;
+> = $Union<
+  UnionValues<META_UNION> extends infer UNION_VALUE
+    ? $Intersect<UNION_VALUE, META_TYPE>
+    : never
+>;

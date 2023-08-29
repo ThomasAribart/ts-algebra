@@ -20,6 +20,12 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
+/**
+ * Excludes from a `Const` meta-type any other meta-type
+ * @param META_CONST ConstType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromConst<
   META_CONST extends ConstType,
   META_TYPE,
@@ -52,6 +58,12 @@ type CheckNotExtendsResolved<
   ? Never
   : META_CONST;
 
+/**
+ * Excludes from a `Const` meta-type an `Object` meta-type
+ * @param META_CONST ConstType
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 type ExcludeObject<
   META_CONST extends ConstType,
   META_OBJECT extends ObjectType,

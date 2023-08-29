@@ -9,9 +9,9 @@ export type IsSerialized<SERIALIZABLE_META_TYPE extends SerializableType> =
   SERIALIZABLE_META_TYPE["isSerialized"];
 
 /**
- * Return the deserialized type of serializable meta-type
+ * Return the deserialized type of a serializable meta-type
  * @param SERIALIZABLE_META_TYPE SerializableType
- * @returns Boolean
+ * @returns Type
  */
 export type Deserialized<SERIALIZABLE_META_TYPE extends SerializableType> =
   SERIALIZABLE_META_TYPE["deserialized"];

@@ -24,6 +24,12 @@ export type MergePrimitiveToSerializable<
   IntersectDeserialized<META_PRIMITIVE, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects a `Primitive` meta-type to any other meta-type
+ * @param META_PRIMITIVE PrimitiveType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectPrimitive<
   META_PRIMITIVE extends PrimitiveType,
   META_TYPE,

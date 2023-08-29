@@ -10,6 +10,12 @@ import type { Type } from "../type";
 import type { UnionType } from "../union";
 import type { ExcludeUnion } from "./union";
 
+/**
+ * Excludes from a `Primitive` meta-type any other meta-type
+ * @param META_PRIMITIVE PrimitiveType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromPrimitive<
   META_PRIMITIVE extends PrimitiveType,
   META_TYPE,

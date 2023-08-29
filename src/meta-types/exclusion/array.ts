@@ -18,6 +18,12 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
+/**
+ * Excludes from an `Array` meta-type any other meta-type
+ * @param META_ARRAY ArrayType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromArray<
   META_ARRAY extends ArrayType,
   META_TYPE,
@@ -48,6 +54,12 @@ export type ExcludeFromArray<
     : Never
   : Never;
 
+/**
+ * Excludes from an `Array` meta-type another `Array` meta-type
+ * @param META_ARRAY_A ArrayType
+ * @param META_ARRAY_B ArrayType
+ * @returns MetaType
+ */
 type ExcludeArrays<
   META_ARRAY_A extends ArrayType,
   META_ARRAY_B extends ArrayType,

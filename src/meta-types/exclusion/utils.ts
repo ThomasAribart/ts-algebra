@@ -4,67 +4,142 @@ import type { NeverType } from "../never";
 import type { Type } from "../type";
 import type { _$Exclude } from "./index";
 
-export type CrossValue<
+/**
+ * For nested meta-types exclusions (`Tuple`, `Object`), temporary store the results of source & excluded meta-type value exclusions for analysis and propagation.
+ * @param VALUE_A MetaType
+ * @param IS_ALLOWED_IN_A Boolean
+ * @param IS_REQUIRED_IN_A Boolean
+ * @param VALUE_B MetaType
+ * @param IS_ALLOWED_IN_B Boolean
+ * @param IS_REQUIRED_IN_B Boolean
+ * @returns ValueExclusionResult
+ */
+export type ValueExclusionResult<
   VALUE_A extends Type,
-  IS_OPEN_A extends boolean,
-  IS_REQUIRED_A extends boolean,
+  IS_ALLOWED_IN_A extends boolean,
+  IS_REQUIRED_IN_A extends boolean,
   VALUE_B extends Type,
-  IS_OPEN_B extends boolean,
-  IS_REQUIRED_B extends boolean,
+  IS_ALLOWED_IN_B extends boolean,
+  IS_REQUIRED_IN_B extends boolean,
 > = {
   sourceValue: VALUE_A;
-  isPossibleInSource: IS_OPEN_A;
-  isRequiredInSource: IS_REQUIRED_A;
-  isPossibleInExcluded: IS_OPEN_B;
-  isRequiredInExcluded: IS_REQUIRED_B;
+  isAllowedInSource: IS_ALLOWED_IN_A;
+  isRequiredInSource: IS_REQUIRED_IN_A;
+  isAllowedInExcluded: IS_ALLOWED_IN_B;
+  isRequiredInExcluded: IS_REQUIRED_IN_B;
   exclusionResult: _$Exclude<VALUE_A, VALUE_B>;
 };
 
-export type CrossValueType = {
+/**
+ * Any `ValueExclusionResult`
+ */
+export type ValueExclusionResultType = {
   sourceValue: Type;
-  isPossibleInSource: boolean;
+  isAllowedInSource: boolean;
   isRequiredInSource: boolean;
-  isPossibleInExcluded: boolean;
+  isAllowedInExcluded: boolean;
   isRequiredInExcluded: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   exclusionResult: any;
 };
 
-export type SourceValue<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["sourceValue"];
+/**
+ * Source value of a `ValueExclusionResult`
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns MetaType
+ */
+export type SourceValue<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["sourceValue"];
 
-type IsPossibleInSource<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["isPossibleInSource"];
+/**
+ * Returns `true` if value is allowed in an exclusion source MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+type IsAllowedInSource<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["isAllowedInSource"];
 
-type IsRequiredInSource<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["isRequiredInSource"];
+/**
+ * Returns `true` if value is required in an exclusion source MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+type IsRequiredInSource<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["isRequiredInSource"];
 
-type IsPossibleInExcluded<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["isPossibleInExcluded"];
+/**
+ * Excluded value of a `ValueExclusionResult`
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns MetaType
+ */
+export type ExclusionResult<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["exclusionResult"];
 
-type IsRequiredInExcluded<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["isRequiredInExcluded"];
+/**
+ * Returns `true` if value is allowed in an exclusion excluded MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+type IsAllowedInExcluded<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["isAllowedInExcluded"];
 
-export type ExclusionResult<CROSSED_VALUE extends CrossValueType> =
-  CROSSED_VALUE["exclusionResult"];
+/**
+ * Returns `true` if value is required in an exclusion excluded MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+type IsRequiredInExcluded<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = VALUE_EXCLUSION_RESULT["isRequiredInExcluded"];
 
-export type IsOutsideOfSourceScope<CROSSED_VALUE extends CrossValueType> = And<
-  IsRequiredInExcluded<CROSSED_VALUE>,
-  Not<IsPossibleInSource<CROSSED_VALUE>>
+/**
+ * Returns `true` if value is not allowed in an exclusion source MetaType but required in its excluded MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+export type IsOutsideOfSourceScope<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = And<
+  Not<IsAllowedInSource<VALUE_EXCLUSION_RESULT>>,
+  IsRequiredInExcluded<VALUE_EXCLUSION_RESULT>
 >;
 
-export type IsOutsideOfExcludedScope<CROSSED_VALUE extends CrossValueType> =
-  And<
-    IsRequiredInSource<CROSSED_VALUE>,
-    Not<IsPossibleInExcluded<CROSSED_VALUE>>
-  >;
-
-export type Propagate<CROSSED_VALUE extends CrossValueType> =
-  ExclusionResult<CROSSED_VALUE> extends NeverType
-    ? SourceValue<CROSSED_VALUE>
-    : ExclusionResult<CROSSED_VALUE>;
-
-export type IsOmittable<CROSSED_VALUE extends CrossValueType> = And<
-  Not<IsRequiredInSource<CROSSED_VALUE>>,
-  IsRequiredInExcluded<CROSSED_VALUE>
+/**
+ * Returns `true` if value is required in an exclusion source MetaType but not allowed in its excluded MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+export type IsOutsideOfExcludedScope<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = And<
+  IsRequiredInSource<VALUE_EXCLUSION_RESULT>,
+  Not<IsAllowedInExcluded<VALUE_EXCLUSION_RESULT>>
 >;
+
+/**
+ * Returns `true` if value is not required in an exclusion source MetaType but required in its excluded MetaType, `false` otherwise
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns Boolean
+ */
+export type IsOmittable<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = And<
+  Not<IsRequiredInSource<VALUE_EXCLUSION_RESULT>>,
+  IsRequiredInExcluded<VALUE_EXCLUSION_RESULT>
+>;
+
+/**
+ * Returns the propagated exclusion of a value exclusion
+ * @param VALUE_EXCLUSION_RESULT ValueExclusionResult
+ * @returns MetaType
+ */
+export type PropagateExclusion<
+  VALUE_EXCLUSION_RESULT extends ValueExclusionResultType,
+> = ExclusionResult<VALUE_EXCLUSION_RESULT> extends NeverType
+  ? SourceValue<VALUE_EXCLUSION_RESULT>
+  : ExclusionResult<VALUE_EXCLUSION_RESULT>;
