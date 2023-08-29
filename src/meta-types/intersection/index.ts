@@ -17,11 +17,23 @@ import type { IntersectPrimitive } from "./primitive";
 import type { IntersectTuple } from "./tuple";
 import type { IntersectUnion } from "./union";
 
+/**
+ * Intersects two meta-types
+ * @param META_TYPE_A MetaType
+ * @param META_TYPE_B MetaType
+ * @returns MetaType
+ */
 export type Intersect<
   META_TYPE_A extends Type,
   META_TYPE_B extends Type,
 > = $Intersect<META_TYPE_A, META_TYPE_B>;
 
+/**
+ * Intersects two meta-types (without type constraints)
+ * @param META_TYPE_A MetaType
+ * @param META_TYPE_B MetaType
+ * @returns MetaType
+ */
 export type $Intersect<META_TYPE_A, META_TYPE_B> = META_TYPE_A extends NeverType
   ? META_TYPE_A
   : META_TYPE_A extends AnyType

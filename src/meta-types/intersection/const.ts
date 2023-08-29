@@ -24,6 +24,12 @@ export type MergeConstToSerializable<
   IntersectDeserialized<META_CONST, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects a `Const` meta-type to any other meta-type
+ * @param META_CONST ConstType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectConst<
   META_CONST extends ConstType,
   META_TYPE,
@@ -59,26 +65,56 @@ type CheckExtendsResolved<
   ? MergeConstToSerializable<META_CONST, SERIALIZABLE_META_TYPE>
   : Never;
 
+/**
+ * Intersects a `Const` meta-type to an `Enum` meta-type
+ * @param META_CONST ConstType
+ * @param META_ENUM EnumType
+ * @returns MetaType
+ */
 export type IntersectConstToEnum<
   META_CONST extends ConstType,
   META_ENUM extends EnumType,
 > = CheckExtendsResolved<META_CONST, META_ENUM>;
 
+/**
+ * Intersects a `Const` meta-type to a `Primitive` meta-type
+ * @param META_CONST ConstType
+ * @param META_PRIMITIVE PrimitiveType
+ * @returns MetaType
+ */
 export type IntersectConstToPrimitive<
   META_CONST extends ConstType,
-  META_ENUM extends PrimitiveType,
-> = CheckExtendsResolved<META_CONST, META_ENUM>;
+  META_PRIMITIVE extends PrimitiveType,
+> = CheckExtendsResolved<META_CONST, META_PRIMITIVE>;
 
+/**
+ * Intersects a `Const` meta-type to an `Array` meta-type
+ * @param META_CONST ConstType
+ * @param META_ARRAY ArrayType
+ * @returns MetaType
+ */
 export type IntersectConstToArray<
   META_CONST extends ConstType,
   META_ARRAY extends ArrayType,
 > = CheckExtendsResolved<META_CONST, META_ARRAY>;
 
+/**
+ * Intersects a `Const` meta-type to a `Tuple` meta-type
+ * @param META_CONST ConstType
+ * @param META_TUPLE TupleType
+ * @returns MetaType
+ */
 export type IntersectConstToTuple<
   META_CONST extends ConstType,
   META_TUPLE extends TupleType,
 > = CheckExtendsResolved<META_CONST, META_TUPLE>;
 
+/**
+ * Intersects a `Const` meta-type to an `Object` meta-type
+ * @param META_CONST ConstType
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 export type IntersectConstToObject<
   META_CONST extends ConstType,
   META_OBJECT extends ObjectType,

@@ -33,16 +33,22 @@ import type { ExcludeEnum } from "./enum";
 import type { _$Exclude, _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 import type {
-  CrossValue,
-  CrossValueType,
   ExclusionResult,
   IsOmittable,
   IsOutsideOfExcludedScope,
   IsOutsideOfSourceScope,
-  Propagate,
+  PropagateExclusion,
   SourceValue,
+  ValueExclusionResult,
+  ValueExclusionResultType,
 } from "./utils";
 
+/**
+ * Excludes from an `Object` meta-type any other meta-type
+ * @param META_OBJECT ObjectType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromObject<
   META_OBJECT extends ObjectType,
   META_TYPE,
@@ -68,14 +74,20 @@ export type ExcludeFromObject<
     : Never
   : Never;
 
+/**
+ * Excludes from an `Object` meta-type another `Object` meta-type
+ * @param META_OBJECT_A ObjectType
+ * @param META_OBJECT_B ObjectType
+ * @returns MetaType
+ */
 type ExcludeObjects<
   META_OBJECT_A extends ObjectType,
   META_OBJECT_B extends ObjectType,
-  CROSSED_VALUES extends Record<string, CrossValueType> = ExcludeObjectValues<
-    META_OBJECT_A,
-    META_OBJECT_B
-  >,
-  REPRESENTABLE_KEYS extends string = RepresentableKeys<CROSSED_VALUES>,
+  VALUE_EXCLUSION_RESULTS extends Record<
+    string,
+    ValueExclusionResultType
+  > = ExcludeObjectValues<META_OBJECT_A, META_OBJECT_B>,
+  REPRESENTABLE_KEYS extends string = RepresentableKeys<VALUE_EXCLUSION_RESULTS>,
   OPEN_PROPS_EXCLUSION = _Exclude<
     ObjectOpenProps<META_OBJECT_A>,
     ObjectOpenProps<META_OBJECT_B>
@@ -83,12 +95,12 @@ type ExcludeObjects<
 > = DoesObjectSizesMatch<
   META_OBJECT_A,
   META_OBJECT_B,
-  CROSSED_VALUES
+  VALUE_EXCLUSION_RESULTS
 > extends true
   ? {
       moreThanTwo: META_OBJECT_A;
-      onlyOne: PropagateExclusion<META_OBJECT_A, CROSSED_VALUES>;
-      none: OmitOmittableKeys<META_OBJECT_A, CROSSED_VALUES>;
+      onlyOne: PropagateExclusions<META_OBJECT_A, VALUE_EXCLUSION_RESULTS>;
+      none: OmitOmittableKeys<META_OBJECT_A, VALUE_EXCLUSION_RESULTS>;
     }[And<
       IsObjectOpen<META_OBJECT_A>,
       Not<DoesExtend<OPEN_PROPS_EXCLUSION, NeverType>>
@@ -107,12 +119,12 @@ type ExcludeObjectValues<
     | ObjectRequiredKeys<META_OBJECT_A>
     | ObjectRequiredKeys<META_OBJECT_B>,
     string
-  >]: CrossValue<
+  >]: ValueExclusionResult<
     ObjectValue<META_OBJECT_A, KEY>,
-    IsPossibleIn<META_OBJECT_A, KEY>,
+    IsAllowedIn<META_OBJECT_A, KEY>,
     IsRequiredIn<META_OBJECT_A, KEY>,
     ObjectValue<META_OBJECT_B, KEY>,
-    IsPossibleIn<META_OBJECT_B, KEY>,
+    IsAllowedIn<META_OBJECT_B, KEY>,
     IsRequiredIn<META_OBJECT_B, KEY>
   >;
 };
@@ -125,7 +137,7 @@ type GetUnionLength<UNION> = If<
   If<IsNever<UnionPop<UNION>>, "onlyOne", "moreThanTwo">
 >;
 
-type IsPossibleIn<META_OBJECT extends ObjectType, KEY extends string> = Or<
+type IsAllowedIn<META_OBJECT extends ObjectType, KEY extends string> = Or<
   DoesExtend<KEY, keyof ObjectValues<META_OBJECT>>,
   IsObjectOpen<META_OBJECT>
 >;
@@ -140,59 +152,62 @@ type IsRequiredIn<
 type DoesObjectSizesMatch<
   META_OBJECT_A extends ObjectType,
   META_OBJECT_B extends ObjectType,
-  CROSSED_VALUES extends Record<string, CrossValueType>,
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
 > = If<
   And<IsObjectOpen<META_OBJECT_A>, Not<IsObjectOpen<META_OBJECT_B>>>,
   false,
   And<
-    IsExcludedSmallEnough<CROSSED_VALUES>,
-    IsExcludedBigEnough<CROSSED_VALUES>
+    IsExcludedSmallEnough<VALUE_EXCLUSION_RESULTS>,
+    IsExcludedBigEnough<VALUE_EXCLUSION_RESULTS>
   >
 >;
 
 type IsExcludedSmallEnough<
-  CROSSED_VALUES extends Record<string, CrossValueType>,
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
 > = Not<
   DoesExtend<
     true,
     {
-      [KEY in keyof CROSSED_VALUES]: IsOutsideOfSourceScope<
-        CROSSED_VALUES[KEY]
+      [KEY in keyof VALUE_EXCLUSION_RESULTS]: IsOutsideOfSourceScope<
+        VALUE_EXCLUSION_RESULTS[KEY]
       >;
-    }[keyof CROSSED_VALUES]
+    }[keyof VALUE_EXCLUSION_RESULTS]
   >
 >;
 
 type IsExcludedBigEnough<
-  CROSSED_VALUES extends Record<string, CrossValueType>,
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
 > = Not<
   DoesExtend<
     true,
     {
-      [KEY in keyof CROSSED_VALUES]: IsOutsideOfExcludedScope<
-        CROSSED_VALUES[KEY]
+      [KEY in keyof VALUE_EXCLUSION_RESULTS]: IsOutsideOfExcludedScope<
+        VALUE_EXCLUSION_RESULTS[KEY]
       >;
-    }[keyof CROSSED_VALUES]
+    }[keyof VALUE_EXCLUSION_RESULTS]
   >
 >;
 
 // PROPAGATION
 
-type RepresentableKeys<CROSSED_VALUES extends Record<string, CrossValueType>> =
-  {
-    [KEY in Extract<keyof CROSSED_VALUES, string>]: ExclusionResult<
-      CROSSED_VALUES[KEY]
-    > extends NeverType
-      ? never
-      : KEY;
-  }[Extract<keyof CROSSED_VALUES, string>];
+type RepresentableKeys<
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
+> = {
+  [KEY in Extract<keyof VALUE_EXCLUSION_RESULTS, string>]: ExclusionResult<
+    VALUE_EXCLUSION_RESULTS[KEY]
+  > extends NeverType
+    ? never
+    : KEY;
+}[Extract<keyof VALUE_EXCLUSION_RESULTS, string>];
 
-type PropagateExclusion<
+type PropagateExclusions<
   META_OBJECT extends ObjectType,
-  CROSSED_VALUES extends Record<string, CrossValueType>,
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
 > = _Object<
   {
-    [KEY in keyof CROSSED_VALUES]: Propagate<CROSSED_VALUES[KEY]>;
+    [KEY in keyof VALUE_EXCLUSION_RESULTS]: PropagateExclusion<
+      VALUE_EXCLUSION_RESULTS[KEY]
+    >;
   },
   ObjectRequiredKeys<META_OBJECT>,
   ObjectOpenProps<META_OBJECT>,
@@ -204,15 +219,15 @@ type PropagateExclusion<
 
 type OmitOmittableKeys<
   META_OBJECT extends ObjectType,
-  CROSSED_VALUES extends Record<string, CrossValueType>,
-  OMITTABLE_KEYS extends string = OmittableKeys<CROSSED_VALUES>,
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
+  OMITTABLE_KEYS extends string = OmittableKeys<VALUE_EXCLUSION_RESULTS>,
 > = {
   moreThanTwo: META_OBJECT;
   onlyOne: _Object<
     {
-      [KEY in keyof CROSSED_VALUES]: KEY extends OMITTABLE_KEYS
+      [KEY in keyof VALUE_EXCLUSION_RESULTS]: KEY extends OMITTABLE_KEYS
         ? Never
-        : SourceValue<CROSSED_VALUES[KEY]>;
+        : SourceValue<VALUE_EXCLUSION_RESULTS[KEY]>;
     },
     ObjectRequiredKeys<META_OBJECT>,
     ObjectOpenProps<META_OBJECT>,
@@ -222,16 +237,24 @@ type OmitOmittableKeys<
   none: Never;
 }[GetUnionLength<OMITTABLE_KEYS>];
 
-type OmittableKeys<CROSSED_VALUES extends Record<string, CrossValueType>> = {
-  [KEY in Extract<keyof CROSSED_VALUES, string>]: IsOmittable<
-    CROSSED_VALUES[KEY]
+type OmittableKeys<
+  VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>,
+> = {
+  [KEY in Extract<keyof VALUE_EXCLUSION_RESULTS, string>]: IsOmittable<
+    VALUE_EXCLUSION_RESULTS[KEY]
   > extends true
     ? KEY
     : never;
-}[Extract<keyof CROSSED_VALUES, string>];
+}[Extract<keyof VALUE_EXCLUSION_RESULTS, string>];
 
 // CONST
 
+/**
+ * Excludes from an `Object` meta-type a `Const` meta-type
+ * @param META_OBJECT ObjectType
+ * @param META_CONST ConstType
+ * @returns MetaType
+ */
 type ExcludeConstFromObject<
   META_OBJECT extends ObjectType,
   META_CONST extends ConstType,

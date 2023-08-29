@@ -45,6 +45,12 @@ type $MergeTuplePropsToSerializable<
   IntersectDeserialized<META_TUPLE, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects a `Tuple` meta-type to any other meta-type
+ * @param META_TUPLE TupleType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectTuple<
   META_TUPLE extends TupleType,
   META_TYPE,
@@ -73,6 +79,12 @@ export type IntersectTuple<
   ? DistributeIntersection<META_TYPE, META_TUPLE>
   : Never;
 
+/**
+ * Intersects a `Tuple` meta-type to an `Array` meta-type
+ * @param META_TUPLE TupleType
+ * @param META_ARRAY ArrayType
+ * @returns MetaType
+ */
 export type IntersectTupleToArray<
   META_TUPLE extends TupleType,
   META_ARRAY extends ArrayType,
@@ -108,6 +120,12 @@ type IntersectTupleToArrayValues<
     : never
   : RESULT;
 
+/**
+ * Intersects two `Tuple` meta-types
+ * @param META_TUPLE_A TupleType
+ * @param META_TUPLE_B TupleType
+ * @returns MetaType
+ */
 type IntersectTuples<
   META_TUPLE_A extends TupleType,
   META_TUPLE_B extends TupleType,

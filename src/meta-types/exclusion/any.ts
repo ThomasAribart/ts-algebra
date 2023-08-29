@@ -10,6 +10,12 @@ import type { Type } from "../type";
 import type { UnionType } from "../union";
 import type { ExcludeUnion } from "./union";
 
+/**
+ * Excludes from an `Any` meta-type any other meta-type
+ * @param META_ANY AnyType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromAny<
   META_ANY extends AnyType,
   META_TYPE,

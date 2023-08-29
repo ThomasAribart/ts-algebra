@@ -49,6 +49,12 @@ type $MergeObjectPropsToSerializable<
   IntersectDeserialized<META_OBJECT, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects an `Object` meta-type to any other meta-type
+ * @param META_OBJECT ObjectType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectObject<
   META_OBJECT extends ObjectType,
   META_TYPE,
@@ -80,6 +86,12 @@ export type IntersectObject<
     : Never
   : Never;
 
+/**
+ * Intersects two `Object` meta-types
+ * @param META_OBJECT ObjectType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 type IntersectObjects<
   META_OBJECT_A extends ObjectType,
   META_OBJECT_B extends ObjectType,

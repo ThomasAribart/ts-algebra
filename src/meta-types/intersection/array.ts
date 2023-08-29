@@ -31,6 +31,12 @@ type $MergeArrayValuesToSerializable<
   IntersectDeserialized<META_ARRAY, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects an `Array` meta-type to any other meta-type
+ * @param META_ARRAY ArrayType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectArray<
   META_ARRAY extends ArrayType,
   META_TYPE,
@@ -60,6 +66,12 @@ export type IntersectArray<
     : Never
   : Never;
 
+/**
+ * Intersects two `Array` meta-types
+ * @param META_ARRAY_A ArrayType
+ * @param META_ARRAY_B ArrayType
+ * @returns MetaType
+ */
 type IntersectArrays<
   META_ARRAY_A extends ArrayType,
   META_ARRAY_B extends ArrayType,

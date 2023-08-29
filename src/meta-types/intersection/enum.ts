@@ -23,6 +23,12 @@ export type MergeEnumValuesToSerializable<
   IntersectDeserialized<META_ENUM, SERIALIZABLE_META_TYPE>
 >;
 
+/**
+ * Intersects an `Enum` meta-type to any other meta-type
+ * @param META_ENUM EnumType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type IntersectEnum<
   META_ENUM extends EnumType,
   META_TYPE,
@@ -64,21 +70,45 @@ type RecurseOnEnumValues<ENUM_VALUES, SERIALIZABLE_META_TYPE> =
       : ENUM_VALUE
     : never;
 
+/**
+ * Intersects an `Enum` meta-type to a `Primitive` meta-type
+ * @param META_ENUM EnumType
+ * @param META_PRIMITIVE PrimitiveType
+ * @returns MetaType
+ */
 export type IntersectEnumToPrimitive<
   META_ENUM extends EnumType,
   META_PRIMITIVE extends PrimitiveType,
 > = FilterUnintersecting<META_ENUM, META_PRIMITIVE>;
 
+/**
+ * Intersects an `Enum` meta-type to an `Array` meta-type
+ * @param META_ENUM EnumType
+ * @param META_ARRAY ArrayType
+ * @returns MetaType
+ */
 export type IntersectEnumToArray<
   META_ENUM extends EnumType,
   META_ARRAY extends ArrayType,
 > = FilterUnintersecting<META_ENUM, META_ARRAY>;
 
+/**
+ * Intersects an `Enum` meta-type to a `Tuple` meta-type
+ * @param META_ENUM EnumType
+ * @param META_TUPLE TupleType
+ * @returns MetaType
+ */
 export type IntersectEnumToTuple<
   META_ENUM extends EnumType,
   META_TUPLE extends TupleType,
 > = FilterUnintersecting<META_ENUM, META_TUPLE>;
 
+/**
+ * Intersects an `Enum` meta-type to an `Object` meta-type
+ * @param META_ENUM EnumType
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 export type IntersectEnumToObject<
   META_ENUM extends EnumType,
   META_OBJECT extends ObjectType,

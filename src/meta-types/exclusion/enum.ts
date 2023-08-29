@@ -13,6 +13,12 @@ import type { UnionType } from "../union";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 
+/**
+ * Excludes from an `Enum` meta-type any other meta-type
+ * @param META_ENUM EnumType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromEnum<
   META_ENUM extends EnumType,
   META_TYPE,
@@ -51,6 +57,12 @@ type RecurseOnEnumValues<
     : ENUM_VALUE
   : never;
 
+/**
+ * Excludes from any meta-type an `Enum` meta-type
+ * @param META_TYPE MetaType
+ * @param META_ENUM EnumType
+ * @returns MetaType
+ */
 export type ExcludeEnum<
   META_TYPE extends Type,
   ENUM_TYPE extends EnumType,

@@ -23,16 +23,22 @@ import type { ExcludeEnum } from "./enum";
 import type { _Exclude } from "./index";
 import type { ExcludeUnion } from "./union";
 import type {
-  CrossValue,
-  CrossValueType,
   ExclusionResult,
   IsOmittable,
   IsOutsideOfExcludedScope,
   IsOutsideOfSourceScope,
-  Propagate,
+  PropagateExclusion,
   SourceValue,
+  ValueExclusionResult,
+  ValueExclusionResultType,
 } from "./utils";
 
+/**
+ * Excludes from a `Tuple` meta-type any other meta-type
+ * @param META_TUPLE TupleType
+ * @param META_TYPE MetaType
+ * @returns MetaType
+ */
 export type ExcludeFromTuple<
   META_TUPLE extends TupleType,
   META_TYPE,
@@ -58,6 +64,12 @@ export type ExcludeFromTuple<
     : Never
   : Never;
 
+/**
+ * Excludes from a `Tuple` meta-type an `Array` meta-type
+ * @param META_TUPLE TupleType
+ * @param META_ARRAY ArrayType
+ * @returns MetaType
+ */
 type ExcludeArray<
   META_TUPLE extends TupleType,
   META_ARRAY extends ArrayType,
@@ -71,10 +83,16 @@ type ExcludeArray<
   >
 >;
 
+/**
+ * Excludes from a `Tuple` meta-type another `Tuple` meta-type
+ * @param META_TUPLE_A TupleType
+ * @param META_TUPLE_B TupleType
+ * @returns MetaType
+ */
 type ExcludeTuples<
   META_TUPLE_A extends TupleType,
   META_TUPLE_B extends TupleType,
-  CROSSED_VALUES extends CrossValueType[] = CrossTupleValues<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = ExcludeTupleValues<
     TupleValues<META_TUPLE_A>,
     TupleValues<META_TUPLE_B>,
     IsTupleOpen<META_TUPLE_A>,
@@ -82,7 +100,7 @@ type ExcludeTuples<
     TupleOpenProps<META_TUPLE_A>,
     TupleOpenProps<META_TUPLE_B>
   >,
-  REPRESENTABLE_CROSSED_VALUES extends CrossValueType[] = RepresentableCrossedValues<CROSSED_VALUES>,
+  REPRESENTABLE_VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = RepresentableExcludedValues<VALUE_EXCLUSION_RESULTS>,
   EXCLUDED_OPEN_PROPS = _Exclude<
     TupleOpenProps<META_TUPLE_A>,
     TupleOpenProps<META_TUPLE_B>
@@ -91,33 +109,33 @@ type ExcludeTuples<
     DoesExtend<EXCLUDED_OPEN_PROPS, NeverType>
   >,
 > = If<
-  DoesTupleSizesMatch<META_TUPLE_A, META_TUPLE_B, CROSSED_VALUES>,
+  DoesTupleSizesMatch<META_TUPLE_A, META_TUPLE_B, VALUE_EXCLUSION_RESULTS>,
   {
     moreThanTwo: META_TUPLE_A;
     onlyOne: $Tuple<
-      PropagateExclusion<CROSSED_VALUES>,
+      PropagateExclusions<VALUE_EXCLUSION_RESULTS>,
       TupleOpenProps<META_TUPLE_A>,
       IsSerialized<META_TUPLE_A>,
       Deserialized<META_TUPLE_A>
     >;
-    none: OmitOmittableCrossedValues<META_TUPLE_A, CROSSED_VALUES>;
+    none: OmitOmittableExcludedValues<META_TUPLE_A, VALUE_EXCLUSION_RESULTS>;
   }[And<
     IsTupleOpen<META_TUPLE_A>,
     IS_OPEN_PROPS_EXCLUSION_REPRESENTABLE
   > extends true
     ? "moreThanTwo"
-    : GetTupleLength<REPRESENTABLE_CROSSED_VALUES>],
+    : GetTupleLength<REPRESENTABLE_VALUE_EXCLUSION_RESULTS>],
   META_TUPLE_A
 >;
 
-type CrossTupleValues<
+type ExcludeTupleValues<
   META_TUPLE_A_VALUES extends Type[],
   META_TUPLE_B_VALUES extends Type[],
   IS_META_TUPLE_A_OPEN extends boolean,
   IS_META_TUPLE_B_OPEN extends boolean,
   META_TUPLE_A_OPEN_PROPS extends Type,
   META_TUPLE_B_OPEN_PROPS extends Type,
-  CROSSED_VALUES extends CrossValueType[] = [],
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = [],
 > = META_TUPLE_A_VALUES extends [
   infer META_TUPLE_A_VALUES_HEAD,
   ...infer META_TUPLE_A_VALUES_TAIL,
@@ -132,7 +150,7 @@ type CrossTupleValues<
         ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
           META_TUPLE_B_VALUES_HEAD extends Type
           ? META_TUPLE_B_VALUES_TAIL extends Type[]
-            ? CrossTupleValues<
+            ? ExcludeTupleValues<
                 META_TUPLE_A_VALUES_TAIL,
                 META_TUPLE_B_VALUES_TAIL,
                 IS_META_TUPLE_A_OPEN,
@@ -140,8 +158,8 @@ type CrossTupleValues<
                 META_TUPLE_A_OPEN_PROPS,
                 META_TUPLE_B_OPEN_PROPS,
                 [
-                  ...CROSSED_VALUES,
-                  CrossValue<
+                  ...VALUE_EXCLUSION_RESULTS,
+                  ValueExclusionResult<
                     META_TUPLE_A_VALUES_HEAD,
                     true,
                     true,
@@ -153,7 +171,7 @@ type CrossTupleValues<
               >
             : never
           : never
-        : CrossTupleValues<
+        : ExcludeTupleValues<
             META_TUPLE_A_VALUES_TAIL,
             [],
             IS_META_TUPLE_A_OPEN,
@@ -161,8 +179,8 @@ type CrossTupleValues<
             META_TUPLE_A_OPEN_PROPS,
             META_TUPLE_B_OPEN_PROPS,
             [
-              ...CROSSED_VALUES,
-              CrossValue<
+              ...VALUE_EXCLUSION_RESULTS,
+              ValueExclusionResult<
                 META_TUPLE_A_VALUES_HEAD,
                 true,
                 true,
@@ -181,7 +199,7 @@ type CrossTupleValues<
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
     META_TUPLE_B_VALUES_HEAD extends Type
     ? META_TUPLE_B_VALUES_TAIL extends Type[]
-      ? CrossTupleValues<
+      ? ExcludeTupleValues<
           [],
           META_TUPLE_B_VALUES_TAIL,
           IS_META_TUPLE_A_OPEN,
@@ -189,8 +207,8 @@ type CrossTupleValues<
           META_TUPLE_A_OPEN_PROPS,
           META_TUPLE_B_OPEN_PROPS,
           [
-            ...CROSSED_VALUES,
-            CrossValue<
+            ...VALUE_EXCLUSION_RESULTS,
+            ValueExclusionResult<
               META_TUPLE_A_OPEN_PROPS,
               IS_META_TUPLE_A_OPEN,
               false,
@@ -202,7 +220,7 @@ type CrossTupleValues<
         >
       : never
     : never
-  : CROSSED_VALUES;
+  : VALUE_EXCLUSION_RESULTS;
 
 // UTILS
 
@@ -220,88 +238,93 @@ type GetTupleLength<
 type DoesTupleSizesMatch<
   META_TUPLE_A extends TupleType,
   META_TUPLE_B extends TupleType,
-  CROSSED_VALUES extends CrossValueType[],
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
 > = If<
   And<IsTupleOpen<META_TUPLE_A>, Not<IsTupleOpen<META_TUPLE_B>>>,
   false,
   And<
-    IsExcludedSmallEnough<CROSSED_VALUES>,
-    IsExcludedBigEnough<CROSSED_VALUES>
+    IsExcludedSmallEnough<VALUE_EXCLUSION_RESULTS>,
+    IsExcludedBigEnough<VALUE_EXCLUSION_RESULTS>
   >
 >;
 
-type IsExcludedSmallEnough<CROSSED_VALUES extends CrossValueType[]> =
-  CROSSED_VALUES extends [
-    infer CROSSED_VALUES_HEAD,
-    ...infer CROSSED_VALUES_TAIL,
-  ]
-    ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-      CROSSED_VALUES_HEAD extends CrossValueType
-      ? CROSSED_VALUES_TAIL extends CrossValueType[]
-        ? If<
-            IsOutsideOfSourceScope<CROSSED_VALUES_HEAD>,
-            false,
-            IsExcludedSmallEnough<CROSSED_VALUES_TAIL>
-          >
-        : never
+type IsExcludedSmallEnough<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
+]
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
+      ? If<
+          IsOutsideOfSourceScope<VALUE_EXCLUSION_RESULTS_HEAD>,
+          false,
+          IsExcludedSmallEnough<VALUE_EXCLUSION_RESULTS_TAIL>
+        >
       : never
-    : true;
+    : never
+  : true;
 
-type IsExcludedBigEnough<CROSSED_VALUES extends CrossValueType[]> =
-  CROSSED_VALUES extends [
-    infer CROSSED_VALUES_HEAD,
-    ...infer CROSSED_VALUES_TAIL,
-  ]
-    ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-      CROSSED_VALUES_HEAD extends CrossValueType
-      ? CROSSED_VALUES_TAIL extends CrossValueType[]
-        ? If<
-            IsOutsideOfExcludedScope<CROSSED_VALUES_HEAD>,
-            false,
-            IsExcludedBigEnough<CROSSED_VALUES_TAIL>
-          >
-        : never
+type IsExcludedBigEnough<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
+]
+  ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
+      ? If<
+          IsOutsideOfExcludedScope<VALUE_EXCLUSION_RESULTS_HEAD>,
+          false,
+          IsExcludedBigEnough<VALUE_EXCLUSION_RESULTS_TAIL>
+        >
       : never
-    : true;
+    : never
+  : true;
 
 // PROPAGATION
 
-type RepresentableCrossedValues<
-  CROSSED_VALUES extends CrossValueType[],
-  REPRESENTABLE_CROSSED_VALUES extends CrossValueType[] = [],
-> = CROSSED_VALUES extends [
-  infer CROSSED_VALUES_HEAD,
-  ...infer CROSSED_VALUES_TAIL,
+type RepresentableExcludedValues<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+  REPRESENTABLE_VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = [],
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-    CROSSED_VALUES_HEAD extends CrossValueType
-    ? CROSSED_VALUES_TAIL extends CrossValueType[]
-      ? ExclusionResult<CROSSED_VALUES_HEAD> extends NeverType
-        ? RepresentableCrossedValues<
-            CROSSED_VALUES_TAIL,
-            REPRESENTABLE_CROSSED_VALUES
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
+      ? ExclusionResult<VALUE_EXCLUSION_RESULTS_HEAD> extends NeverType
+        ? RepresentableExcludedValues<
+            VALUE_EXCLUSION_RESULTS_TAIL,
+            REPRESENTABLE_VALUE_EXCLUSION_RESULTS
           >
-        : RepresentableCrossedValues<
-            CROSSED_VALUES_TAIL,
-            [...REPRESENTABLE_CROSSED_VALUES, CROSSED_VALUES_HEAD]
+        : RepresentableExcludedValues<
+            VALUE_EXCLUSION_RESULTS_TAIL,
+            [
+              ...REPRESENTABLE_VALUE_EXCLUSION_RESULTS,
+              VALUE_EXCLUSION_RESULTS_HEAD,
+            ]
           >
       : never
     : never
-  : REPRESENTABLE_CROSSED_VALUES;
+  : REPRESENTABLE_VALUE_EXCLUSION_RESULTS;
 
-type PropagateExclusion<
-  CROSSED_VALUES extends CrossValueType[],
+type PropagateExclusions<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   RESULT extends unknown[] = [],
-> = CROSSED_VALUES extends [
-  infer CROSSED_VALUES_HEAD,
-  ...infer CROSSED_VALUES_TAIL,
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-    CROSSED_VALUES_HEAD extends CrossValueType
-    ? CROSSED_VALUES_TAIL extends CrossValueType[]
-      ? PropagateExclusion<
-          CROSSED_VALUES_TAIL,
-          [...RESULT, Propagate<CROSSED_VALUES_HEAD>]
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
+      ? PropagateExclusions<
+          VALUE_EXCLUSION_RESULTS_TAIL,
+          [...RESULT, PropagateExclusion<VALUE_EXCLUSION_RESULTS_HEAD>]
         >
       : never
     : never
@@ -309,58 +332,58 @@ type PropagateExclusion<
 
 // OMITTABLE ITEMS
 
-type OmitOmittableCrossedValues<
+type OmitOmittableExcludedValues<
   META_TUPLE extends TupleType,
-  CROSSED_VALUES extends CrossValueType[],
-  OMITTABLE_CROSSED_VALUES extends CrossValueType[] = OmittableCrossedValues<CROSSED_VALUES>,
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+  OMITTABLE_VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = OmittableExcludedValues<VALUE_EXCLUSION_RESULTS>,
 > = {
   moreThanTwo: META_TUPLE;
   onlyOne: $Tuple<
-    RequiredCrossedValues<CROSSED_VALUES>,
+    RequiredExcludedValues<VALUE_EXCLUSION_RESULTS>,
     Never,
     IsSerialized<META_TUPLE>,
     Deserialized<META_TUPLE>
   >;
   none: Never;
-}[GetTupleLength<OMITTABLE_CROSSED_VALUES>];
+}[GetTupleLength<OMITTABLE_VALUE_EXCLUSION_RESULTS>];
 
-type OmittableCrossedValues<
-  CROSSED_VALUES extends CrossValueType[],
-  RESULT extends CrossValueType[] = [],
-> = CROSSED_VALUES extends [
-  infer CROSSED_VALUES_HEAD,
-  ...infer CROSSED_VALUES_TAIL,
+type OmittableExcludedValues<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+  RESULT extends ValueExclusionResultType[] = [],
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-    CROSSED_VALUES_HEAD extends CrossValueType
-    ? CROSSED_VALUES_TAIL extends CrossValueType[]
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
       ? If<
-          IsOmittable<CROSSED_VALUES_HEAD>,
-          OmittableCrossedValues<
-            CROSSED_VALUES_TAIL,
-            [...RESULT, CROSSED_VALUES_HEAD]
+          IsOmittable<VALUE_EXCLUSION_RESULTS_HEAD>,
+          OmittableExcludedValues<
+            VALUE_EXCLUSION_RESULTS_TAIL,
+            [...RESULT, VALUE_EXCLUSION_RESULTS_HEAD]
           >,
-          OmittableCrossedValues<CROSSED_VALUES_TAIL, RESULT>
+          OmittableExcludedValues<VALUE_EXCLUSION_RESULTS_TAIL, RESULT>
         >
       : never
     : never
   : RESULT;
 
-type RequiredCrossedValues<
-  CROSSED_VALUES extends CrossValueType[],
+type RequiredExcludedValues<
+  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   RESULT extends Type[] = [],
-> = CROSSED_VALUES extends [
-  infer CROSSED_VALUES_HEAD,
-  ...infer CROSSED_VALUES_TAIL,
+> = VALUE_EXCLUSION_RESULTS extends [
+  infer VALUE_EXCLUSION_RESULTS_HEAD,
+  ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
   ? // TODO increase TS version and use "extends" in Array https://devblogs.microsoft.com/typescript/announcing-typescript-4-8/#improved-inference-for-infer-types-in-template-string-types
-    CROSSED_VALUES_HEAD extends CrossValueType
-    ? CROSSED_VALUES_TAIL extends CrossValueType[]
-      ? IsOmittable<CROSSED_VALUES_HEAD> extends true
+    VALUE_EXCLUSION_RESULTS_HEAD extends ValueExclusionResultType
+    ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
+      ? IsOmittable<VALUE_EXCLUSION_RESULTS_HEAD> extends true
         ? RESULT
-        : RequiredCrossedValues<
-            CROSSED_VALUES_TAIL,
-            [...RESULT, SourceValue<CROSSED_VALUES_HEAD>]
+        : RequiredExcludedValues<
+            VALUE_EXCLUSION_RESULTS_TAIL,
+            [...RESULT, SourceValue<VALUE_EXCLUSION_RESULTS_HEAD>]
           >
       : never
     : never
@@ -368,6 +391,12 @@ type RequiredCrossedValues<
 
 // CONST
 
+/**
+ * Excludes from a `Tuple` meta-type a `Const` meta-type
+ * @param META_TUPLE TupleType
+ * @param META_CONST ConstType
+ * @returns MetaType
+ */
 type ExcludeConst<
   META_TUPLE extends TupleType,
   META_CONST extends ConstType,
