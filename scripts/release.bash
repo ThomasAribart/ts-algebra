@@ -25,7 +25,7 @@ while true; do
   [Yy]*)
     isOfficialRelease=true
 
-    branchName="master"
+    branchName="main"
 
     break
     ;;
