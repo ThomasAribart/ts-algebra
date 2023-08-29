@@ -7,6 +7,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "release": "bash scripts/release.bash",
+    "set-package-version": "ts-node scripts/setPackageVersion",
     "test": "yarn test-type && yarn test-format && yarn test-unused-exports && yarn test-lint",
     "test-type": "tsc --noEmit",
     "test-format": "yarn prettier . --check",
@@ -18,6 +19,7 @@
   "dependencies": {},
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.4.0",
+    "@types/node": "^20.5.7",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "@zerollup/ts-transform-paths": "^1.7.18",
@@ -33,6 +35,7 @@
     "rollup": "^2.67.3",
     "rollup-plugin-dts": "4.1.0",
     "rollup-plugin-import-map": "^2.2.2",
+    "ts-node": "^10.9.1",
     "ts-toolbelt": "^9.6.0",
     "ts-unused-exports": "^8.0.0",
     "ttypescript": "^1.5.13",
