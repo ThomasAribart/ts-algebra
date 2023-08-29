@@ -12,5 +12,8 @@
     "**/.git": true,
     "**/.DS_Store": true,
     "**/builds": true
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }
