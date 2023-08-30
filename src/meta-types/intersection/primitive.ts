@@ -15,7 +15,13 @@ import type { IntersectEnumToPrimitive } from "./enum";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type MergePrimitiveToSerializable<
+/**
+ * Intersects a `Primitive` meta-type deserialization parameters with those of another meta-type
+ * @param META_PRIMITIVE PrimitiveType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns PrimitiveType
+ */
+export type IntersectPrimitiveSerializationParams<
   META_PRIMITIVE extends PrimitiveType,
   SERIALIZABLE_META_TYPE extends SerializableType,
 > = Primitive<
@@ -25,7 +31,7 @@ export type MergePrimitiveToSerializable<
 >;
 
 /**
- * Intersects a `Primitive` meta-type to any other meta-type
+ * Intersects a `Primitive` meta-type with any other meta-type
  * @param META_PRIMITIVE PrimitiveType
  * @param META_TYPE MetaType
  * @returns MetaType
@@ -37,7 +43,7 @@ export type IntersectPrimitive<
   ? META_TYPE extends NeverType
     ? META_TYPE
     : META_TYPE extends AnyType
-    ? MergePrimitiveToSerializable<META_PRIMITIVE, META_TYPE>
+    ? IntersectPrimitiveSerializationParams<META_PRIMITIVE, META_TYPE>
     : META_TYPE extends ConstType
     ? IntersectConstToPrimitive<META_TYPE, META_PRIMITIVE>
     : META_TYPE extends EnumType
@@ -48,7 +54,7 @@ export type IntersectPrimitive<
           DoesExtend<PrimitiveValue<META_PRIMITIVE>, PrimitiveValue<META_TYPE>>,
           DoesExtend<PrimitiveValue<META_TYPE>, PrimitiveValue<META_PRIMITIVE>>
         >,
-        MergePrimitiveToSerializable<META_PRIMITIVE, META_TYPE>,
+        IntersectPrimitiveSerializationParams<META_PRIMITIVE, META_TYPE>,
         Never
       >
     : META_TYPE extends ArrayType

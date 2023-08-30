@@ -21,7 +21,16 @@ import type { $Intersect, Intersect } from "./index";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type MergeObjectPropsToSerializable<
+/**
+ * Intersects an `Object` meta-type deserialization parameters with those of another meta-type
+ * @param VALUES Record<string, MetaType>
+ * @param REQUIRED_KEYS String
+ * @param OPEN_PROPS MetaType
+ * @param META_OBJECT ObjectType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns ObjectType
+ */
+export type IntersectObjectSerializationParams<
   VALUES extends Record<string, Type>,
   REQUIRED_KEYS extends string,
   OPEN_PROPS extends Type,
@@ -35,6 +44,15 @@ export type MergeObjectPropsToSerializable<
   SERIALIZABLE_META_TYPE
 >;
 
+/**
+ * Intersects an `Object` meta-type deserialization parameters with those of another meta-type (without type constraints)
+ * @param VALUES Record<string, MetaType>
+ * @param REQUIRED_KEYS String
+ * @param OPEN_PROPS MetaType
+ * @param META_OBJECT ObjectType
+ * @param SERIALIZABLE_META_TYPE MetaType
+ * @returns ObjectType
+ */
 type $MergeObjectPropsToSerializable<
   VALUES,
   REQUIRED_KEYS,
@@ -50,7 +68,7 @@ type $MergeObjectPropsToSerializable<
 >;
 
 /**
- * Intersects an `Object` meta-type to any other meta-type
+ * Intersects an `Object` meta-type with any other meta-type
  * @param META_OBJECT ObjectType
  * @param META_TYPE MetaType
  * @returns MetaType
@@ -62,7 +80,7 @@ export type IntersectObject<
   ? META_TYPE extends NeverType
     ? META_TYPE
     : META_TYPE extends AnyType
-    ? MergeObjectPropsToSerializable<
+    ? IntersectObjectSerializationParams<
         ObjectValues<META_OBJECT>,
         ObjectRequiredKeys<META_OBJECT>,
         ObjectOpenProps<META_OBJECT>,
@@ -113,6 +131,12 @@ type IntersectObjects<
   META_OBJECT_B
 >;
 
+/**
+ * Intersects two `Object` meta-types values
+ * @param META_OBJECT_A ObjectType
+ * @param META_OBJECT_B ObjectType
+ * @returns Record<string, MetaType>
+ */
 type IntersectObjectsValues<
   META_OBJECT_A extends ObjectType,
   META_OBJECT_B extends ObjectType,

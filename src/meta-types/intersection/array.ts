@@ -15,12 +15,26 @@ import type { IntersectTupleToArray } from "./tuple";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type MergeArrayValuesToSerializable<
+/**
+ * Intersects an `Array` meta-type deserialization parameters with those of another meta-type
+ * @param META_ARRAY_VALUES MetaType
+ * @param META_ARRAY ArrayType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns ArrayType
+ */
+export type IntersectArraySerializationParams<
   VALUES extends Type,
   META_ARRAY extends ArrayType,
   SERIALIZABLE_META_TYPE extends SerializableType,
 > = $MergeArrayValuesToSerializable<VALUES, META_ARRAY, SERIALIZABLE_META_TYPE>;
 
+/**
+ * Intersects an `Array` meta-type deserialization parameters with those of another meta-type (without type constraints)
+ * @param META_ARRAY_VALUES MetaType
+ * @param META_ARRAY ArrayType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns ArrayType
+ */
 type $MergeArrayValuesToSerializable<
   VALUES,
   META_ARRAY extends ArrayType,
@@ -32,7 +46,7 @@ type $MergeArrayValuesToSerializable<
 >;
 
 /**
- * Intersects an `Array` meta-type to any other meta-type
+ * Intersects an `Array` meta-type with any other meta-type
  * @param META_ARRAY ArrayType
  * @param META_TYPE MetaType
  * @returns MetaType
@@ -44,7 +58,7 @@ export type IntersectArray<
   ? META_TYPE extends NeverType
     ? META_TYPE
     : META_TYPE extends AnyType
-    ? MergeArrayValuesToSerializable<
+    ? IntersectArraySerializationParams<
         ArrayValues<META_ARRAY>,
         META_ARRAY,
         META_TYPE
