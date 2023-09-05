@@ -118,7 +118,7 @@ type ExcludeTuples<
       IsSerialized<META_TUPLE_A>,
       Deserialized<META_TUPLE_A>
     >;
-    none: OmitOmittableExcludedValues<META_TUPLE_A, VALUE_EXCLUSION_RESULTS>;
+    none: OmitOmittableExcludedItems<META_TUPLE_A, VALUE_EXCLUSION_RESULTS>;
   }[And<
     IsTupleOpen<META_TUPLE_A>,
     IS_OPEN_PROPS_EXCLUSION_REPRESENTABLE
@@ -128,6 +128,16 @@ type ExcludeTuples<
   META_TUPLE_A
 >;
 
+/**
+ * Given two `Tuple` meta-types, provide a tuple of item-to-item exclusion results. Will extend to the largest tuple size and use additional items if needed.
+ * @param META_TUPLE_A_VALUES MetaType[]
+ * @param META_TUPLE_B_VALUES MetaType[]
+ * @param IS_META_TUPLE_A_OPEN Boolean
+ * @param IS_META_TUPLE_B_OPEN Boolean
+ * @param META_TUPLE_A_OPEN_PROPS MetaType
+ * @param META_TUPLE_B_OPEN_PROPS MetaType
+ * @returns ValueExclusionResult[]
+ */
 type ExcludeTupleValues<
   META_TUPLE_A_VALUES extends Type[],
   META_TUPLE_B_VALUES extends Type[],
@@ -224,6 +234,11 @@ type ExcludeTupleValues<
 
 // UTILS
 
+/**
+ * Returns `"none"` if tuple is empty, `"onlyOne"` if it contains one item, `"moreThanTwo"` otherwise
+ * @param ANY_TUPLE Type[]
+ * @returns `"none" | "onlyOne" | "moreThanTwo"`
+ */
 type GetTupleLength<
   ANY_TUPLE extends unknown[],
   TAIL extends unknown[] = Tail<ANY_TUPLE>,
@@ -235,6 +250,19 @@ type GetTupleLength<
 
 // SIZE CHECK
 
+/**
+ * Returns `true` if the excluded meta-tuple size matches the source meta-tuple enough to make the exclusion relevant (i.e. return something else that the source meta-tuple), `false` otherwise.
+ *
+ * To do this, we first check if source is open and excluded is closed. In this case, sizes don't match (excluded is too small).
+ *
+ * If not, either source and excluded are both open, either source is closed. In both case:
+ * - If an item is not allowed in source but required in excluded, sizes don't match (excluded is too large)
+ * - If an item is required in source but not allowed in excluded, sizes don't match (excluded is too small)
+ * @param META_TUPLE_A TupleType
+ * @param META_TUPLE_B TupleType
+ * @param VALUE_EXCLUSION_RESULTS ValueExclusionResult[]
+ * @returns Boolean
+ */
 type DoesTupleSizesMatch<
   META_TUPLE_A extends TupleType,
   META_TUPLE_B extends TupleType,
@@ -248,6 +276,11 @@ type DoesTupleSizesMatch<
   >
 >;
 
+/**
+ * Given a item-to-item exclusion results tuple, returns `false` if one item is not allowed in source but required in excluded, `true` otherwise.
+ * @param VALUE_EXCLUSION_RESULTS Record<string, ValueExclusionResult>
+ * @returns Boolean
+ */
 type IsExcludedSmallEnough<
   VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
 > = VALUE_EXCLUSION_RESULTS extends [
@@ -266,6 +299,11 @@ type IsExcludedSmallEnough<
     : never
   : true;
 
+/**
+ * Given a item-to-item exclusion results tuple, returns `false` if one item is required in source but not allowed in excluded, `true` otherwise.
+ * @param VALUE_EXCLUSION_RESULTS Record<string, ValueExclusionResult>
+ * @returns Boolean
+ */
 type IsExcludedBigEnough<
   VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
 > = VALUE_EXCLUSION_RESULTS extends [
@@ -286,6 +324,11 @@ type IsExcludedBigEnough<
 
 // PROPAGATION
 
+/**
+ * Given a item-to-item exclusion results tuple, filters the exclusion results that are representable (i.e. value exclusion is not the `Never` meta-type).
+ * @param VALUE_EXCLUSION_RESULTS ValueExclusionResult[]
+ * @returns ValueExclusionResult[]
+ */
 type RepresentableExcludedValues<
   VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   REPRESENTABLE_VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = [],
@@ -312,6 +355,11 @@ type RepresentableExcludedValues<
     : never
   : REPRESENTABLE_VALUE_EXCLUSION_RESULTS;
 
+/**
+ * Given a item-to-item exclusion results tuple, returns the values of the propagated exclusion.
+ * @param VALUE_EXCLUSION_RESULTS ValueExclusionResult[]
+ * @returns MetaType[]
+ */
 type PropagateExclusions<
   VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   RESULT extends unknown[] = [],
@@ -332,25 +380,42 @@ type PropagateExclusions<
 
 // OMITTABLE ITEMS
 
-type OmitOmittableExcludedValues<
+/**
+ * Excludes two `Tuple` meta-types by omitting certain items from the source meta-tuple
+ *
+ * The process is the following:
+ * - If two items or more are omittable, the source is returned untouched
+ * - If only one item is omittable, then it can only be the first additional item: Source is returned closed (no additional items)
+ * - If no item is omittable, the `Never` meta-type is returned
+ * @param META_TUPLE TupleType
+ * @param ITEM_EXCLUSION_RESULTS ValueExclusionResultType[]
+ * @returns MetaType
+ */
+type OmitOmittableExcludedItems<
   META_TUPLE extends TupleType,
-  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
-  OMITTABLE_VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[] = OmittableExcludedValues<VALUE_EXCLUSION_RESULTS>,
-> = {
-  moreThanTwo: META_TUPLE;
-  onlyOne: $Tuple<
-    RequiredExcludedValues<VALUE_EXCLUSION_RESULTS>,
-    Never,
-    IsSerialized<META_TUPLE>,
-    Deserialized<META_TUPLE>
-  >;
-  none: Never;
-}[GetTupleLength<OMITTABLE_VALUE_EXCLUSION_RESULTS>];
+  ITEM_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+  OMITTABLE_ITEM_EXCLUSION_RESULTS extends ValueExclusionResultType[] = OmittableExcludedItems<ITEM_EXCLUSION_RESULTS>,
+  OMITTABLE_ITEMS_COUNT extends string = GetTupleLength<OMITTABLE_ITEM_EXCLUSION_RESULTS>,
+> = OMITTABLE_ITEMS_COUNT extends "moreThanTwo"
+  ? META_TUPLE
+  : OMITTABLE_ITEMS_COUNT extends "onlyOne"
+  ? $Tuple<
+      RequiredExcludedItems<ITEM_EXCLUSION_RESULTS>,
+      Never,
+      IsSerialized<META_TUPLE>,
+      Deserialized<META_TUPLE>
+    >
+  : Never;
 
-type OmittableExcludedValues<
-  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+/**
+ * Filters the items of an item-to-item exclusion results tuple that can be omitted (i.e. not required in source but required in excluded)
+ * @param ITEM_EXCLUSION_RESULTS ValueExclusionResult[]
+ * @returns ValueExclusionResult[]
+ */
+type OmittableExcludedItems<
+  ITEM_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   RESULT extends ValueExclusionResultType[] = [],
-> = VALUE_EXCLUSION_RESULTS extends [
+> = ITEM_EXCLUSION_RESULTS extends [
   infer VALUE_EXCLUSION_RESULTS_HEAD,
   ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
@@ -359,20 +424,29 @@ type OmittableExcludedValues<
     ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
       ? If<
           IsOmittable<VALUE_EXCLUSION_RESULTS_HEAD>,
-          OmittableExcludedValues<
+          OmittableExcludedItems<
             VALUE_EXCLUSION_RESULTS_TAIL,
             [...RESULT, VALUE_EXCLUSION_RESULTS_HEAD]
           >,
-          OmittableExcludedValues<VALUE_EXCLUSION_RESULTS_TAIL, RESULT>
+          OmittableExcludedItems<VALUE_EXCLUSION_RESULTS_TAIL, RESULT>
         >
       : never
     : never
   : RESULT;
 
-type RequiredExcludedValues<
-  VALUE_EXCLUSION_RESULTS extends ValueExclusionResultType[],
+/**
+ * Filters the items of an item-to-item exclusion results tuple that are required (i.e. not omittable).
+ *
+ * Note that:
+ * - The recursion is stopped when one omittable item is found (no need to go further, check usage context)
+ * - The source values are returned
+ * @param ITEM_EXCLUSION_RESULTS ValueExclusionResult[]
+ * @returns MetaType[]
+ */
+type RequiredExcludedItems<
+  ITEM_EXCLUSION_RESULTS extends ValueExclusionResultType[],
   RESULT extends Type[] = [],
-> = VALUE_EXCLUSION_RESULTS extends [
+> = ITEM_EXCLUSION_RESULTS extends [
   infer VALUE_EXCLUSION_RESULTS_HEAD,
   ...infer VALUE_EXCLUSION_RESULTS_TAIL,
 ]
@@ -381,7 +455,7 @@ type RequiredExcludedValues<
     ? VALUE_EXCLUSION_RESULTS_TAIL extends ValueExclusionResultType[]
       ? IsOmittable<VALUE_EXCLUSION_RESULTS_HEAD> extends true
         ? RESULT
-        : RequiredExcludedValues<
+        : RequiredExcludedItems<
             VALUE_EXCLUSION_RESULTS_TAIL,
             [...RESULT, SourceValue<VALUE_EXCLUSION_RESULTS_HEAD>]
           >
@@ -413,6 +487,11 @@ type ExcludeConst<
     >
   : META_TUPLE;
 
+/**
+ * Transforms an array const to a meta-tuple of meta-consts
+ * @param CONST_VALUES Type[]
+ * @returns MetaTuple
+ */
 type ExtractConstValues<
   CONST_VALUES extends unknown[],
   RESULT extends unknown[] = [],

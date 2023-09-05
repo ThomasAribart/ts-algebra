@@ -15,7 +15,13 @@ import type { Intersect } from "./index";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type MergeConstToSerializable<
+/**
+ * Intersects a `Const` meta-type deserialization parameters with those of another meta-type
+ * @param META_CONST ConstType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns ConstType
+ */
+export type IntersectConstSerializationParams<
   META_CONST extends ConstType,
   SERIALIZABLE_META_TYPE extends SerializableType,
 > = Const<
@@ -25,7 +31,7 @@ export type MergeConstToSerializable<
 >;
 
 /**
- * Intersects a `Const` meta-type to any other meta-type
+ * Intersects a `Const` meta-type with any other meta-type
  * @param META_CONST ConstType
  * @param META_TYPE MetaType
  * @returns MetaType
@@ -37,7 +43,7 @@ export type IntersectConst<
   ? META_TYPE extends NeverType
     ? META_TYPE
     : META_TYPE extends AnyType
-    ? MergeConstToSerializable<META_CONST, META_TYPE>
+    ? IntersectConstSerializationParams<META_CONST, META_TYPE>
     : META_TYPE extends ConstType
     ? CheckExtendsResolved<META_CONST, META_TYPE>
     : META_TYPE extends EnumType
@@ -55,6 +61,12 @@ export type IntersectConst<
     : Never
   : Never;
 
+/**
+ * Returns the `Const` meta-type if it extends the resolved value of another meta-type (without deserialization), the `Never` meta-type otherwise
+ * @param META_CONST ConstType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns MetaType
+ */
 type CheckExtendsResolved<
   META_CONST extends ConstType,
   SERIALIZABLE_META_TYPE extends SerializableType,
@@ -62,11 +74,11 @@ type CheckExtendsResolved<
   SERIALIZABLE_META_TYPE,
   { deserialize: false }
 >
-  ? MergeConstToSerializable<META_CONST, SERIALIZABLE_META_TYPE>
+  ? IntersectConstSerializationParams<META_CONST, SERIALIZABLE_META_TYPE>
   : Never;
 
 /**
- * Intersects a `Const` meta-type to an `Enum` meta-type
+ * Intersects a `Const` meta-type with an `Enum` meta-type
  * @param META_CONST ConstType
  * @param META_ENUM EnumType
  * @returns MetaType
@@ -77,7 +89,7 @@ export type IntersectConstToEnum<
 > = CheckExtendsResolved<META_CONST, META_ENUM>;
 
 /**
- * Intersects a `Const` meta-type to a `Primitive` meta-type
+ * Intersects a `Const` meta-type with a `Primitive` meta-type
  * @param META_CONST ConstType
  * @param META_PRIMITIVE PrimitiveType
  * @returns MetaType
@@ -88,7 +100,7 @@ export type IntersectConstToPrimitive<
 > = CheckExtendsResolved<META_CONST, META_PRIMITIVE>;
 
 /**
- * Intersects a `Const` meta-type to an `Array` meta-type
+ * Intersects a `Const` meta-type with an `Array` meta-type
  * @param META_CONST ConstType
  * @param META_ARRAY ArrayType
  * @returns MetaType
@@ -99,7 +111,7 @@ export type IntersectConstToArray<
 > = CheckExtendsResolved<META_CONST, META_ARRAY>;
 
 /**
- * Intersects a `Const` meta-type to a `Tuple` meta-type
+ * Intersects a `Const` meta-type with a `Tuple` meta-type
  * @param META_CONST ConstType
  * @param META_TUPLE TupleType
  * @returns MetaType
@@ -110,7 +122,7 @@ export type IntersectConstToTuple<
 > = CheckExtendsResolved<META_CONST, META_TUPLE>;
 
 /**
- * Intersects a `Const` meta-type to an `Object` meta-type
+ * Intersects a `Const` meta-type with an `Object` meta-type
  * @param META_CONST ConstType
  * @param META_OBJECT ObjectType
  * @returns MetaType
@@ -124,6 +136,12 @@ export type IntersectConstToObject<
   Never
 >;
 
+/**
+ * Intersects a `Const` meta-type (whose value is an object) to an `Object` meta-type
+ * @param META_CONST ConstType
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 type IntersectObjectConstToObject<
   META_CONST extends ConstType,
   META_OBJECT extends ObjectType,
@@ -133,10 +151,16 @@ type IntersectObjectConstToObject<
   >,
 > = If<
   IsNever<NeverKeys<INTERSECTED_META_OBJECT>>,
-  MergeConstToSerializable<META_CONST, META_OBJECT>,
+  IntersectConstSerializationParams<META_CONST, META_OBJECT>,
   Never
 >;
 
+/**
+ * Intersects the value of a `Const` meta-type with an `Object` meta-type (including its required keys)
+ * @param CONST_VALUE Type
+ * @param META_OBJECT ObjectType
+ * @returns Record<string, MetaType>
+ */
 type IntersectConstValuesToObjectValues<
   CONST_VALUE,
   META_OBJECT extends ObjectType,
@@ -149,6 +173,11 @@ type IntersectConstValuesToObjectValues<
     : Never;
 };
 
+/**
+ * Given an `Object` meta-type, returns the keys of its values that extend the `Never` meta-type
+ * @param META_OBJECT ObjectType
+ * @returns string
+ */
 type NeverKeys<META_OBJECT> = {
   [KEY in keyof META_OBJECT]: META_OBJECT[KEY] extends Never ? KEY : never;
 }[keyof META_OBJECT];

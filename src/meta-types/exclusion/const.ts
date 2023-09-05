@@ -51,6 +51,12 @@ export type ExcludeFromConst<
     : Never
   : Never;
 
+/**
+ * Returns the `Never` meta-type if the `Const` meta-type extends the resolved value of another meta-type (without deserialization), the `Const` meta-type otherwise
+ * @param META_CONST ConstType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns MetaType
+ */
 type CheckNotExtendsResolved<
   META_CONST extends ConstType,
   META_TYPE extends Type,
@@ -75,6 +81,12 @@ type ExcludeObject<
   META_CONST
 >;
 
+/**
+ * Excludes from a `Const` meta-type (whose value is an object) an `Object` meta-type
+ * @param META_CONST ConstType
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 type ExcludeObjectFromConst<
   META_CONST extends ConstType,
   META_OBJECT extends ObjectType,
@@ -84,10 +96,12 @@ type ExcludeObjectFromConst<
   >,
 > = If<IsNever<RepresentableKeys<EXCLUDED_CONST_VALUES>>, Never, META_CONST>;
 
-type RepresentableKeys<VALUES> = {
-  [KEY in keyof VALUES]: VALUES[KEY] extends Never ? never : KEY;
-}[keyof VALUES];
-
+/**
+ * Excludes from a `Const` meta-type object value the values of an `Object` meta-type
+ * @param VALUE Object
+ * @param META_OBJECT ObjectType
+ * @returns MetaType
+ */
 type ExcludeConstValues<VALUE, META_OBJECT extends ObjectType> = {
   [KEY in keyof VALUE]: KEY extends keyof ObjectValues<META_OBJECT>
     ? _Exclude<Const<VALUE[KEY]>, ObjectValues<META_OBJECT>[KEY]>
@@ -95,3 +109,12 @@ type ExcludeConstValues<VALUE, META_OBJECT extends ObjectType> = {
     ? _Exclude<Const<VALUE[KEY]>, ObjectOpenProps<META_OBJECT>>
     : Const<VALUE[KEY]>;
 };
+
+/**
+ * Given an `Object` meta-type values, returns the keys of its values that are representable (i.e. don't extend the `Never` meta-type)
+ * @param VALUES Record<string, MetaType>
+ * @returns string
+ */
+type RepresentableKeys<VALUES> = {
+  [KEY in keyof VALUES]: VALUES[KEY] extends Never ? never : KEY;
+}[keyof VALUES];

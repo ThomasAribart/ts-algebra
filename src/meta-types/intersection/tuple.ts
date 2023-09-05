@@ -21,7 +21,15 @@ import type { $Intersect, Intersect } from "./index";
 import type { DistributeIntersection } from "./union";
 import type { IntersectDeserialized, IntersectIsSerialized } from "./utils";
 
-export type MergeTuplePropsToSerializable<
+/**
+ * Intersects a `Tuple` meta-type deserialization parameters with those of another meta-type
+ * @param VALUES MetaType[]
+ * @param OPEN_PROPS MetaType
+ * @param META_TUPLE TupleType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns TupleType
+ */
+export type IntersectTupleSerializationParams<
   VALUES extends Type[],
   OPEN_PROPS extends Type,
   META_TUPLE extends TupleType,
@@ -33,6 +41,14 @@ export type MergeTuplePropsToSerializable<
   SERIALIZABLE_META_TYPE
 >;
 
+/**
+ * Intersects a `Tuple` meta-type deserialization parameters with those of another meta-type (without type constraints)
+ * @param VALUES MetaType[]
+ * @param OPEN_PROPS MetaType
+ * @param META_TUPLE TupleType
+ * @param SERIALIZABLE_META_TYPE SerializableType
+ * @returns TupleType
+ */
 type $MergeTuplePropsToSerializable<
   VALUES,
   OPEN_PROPS,
@@ -46,7 +62,7 @@ type $MergeTuplePropsToSerializable<
 >;
 
 /**
- * Intersects a `Tuple` meta-type to any other meta-type
+ * Intersects a `Tuple` meta-type with any other meta-type
  * @param META_TUPLE TupleType
  * @param META_TYPE MetaType
  * @returns MetaType
@@ -57,7 +73,7 @@ export type IntersectTuple<
 > = META_TYPE extends NeverType
   ? META_TYPE
   : META_TYPE extends AnyType
-  ? MergeTuplePropsToSerializable<
+  ? IntersectTupleSerializationParams<
       TupleValues<META_TUPLE>,
       TupleOpenProps<META_TUPLE>,
       META_TUPLE,
@@ -80,7 +96,7 @@ export type IntersectTuple<
   : Never;
 
 /**
- * Intersects a `Tuple` meta-type to an `Array` meta-type
+ * Intersects a `Tuple` meta-type with an `Array` meta-type
  * @param META_TUPLE TupleType
  * @param META_ARRAY ArrayType
  * @returns MetaType
@@ -103,6 +119,12 @@ export type IntersectTupleToArray<
   META_ARRAY
 >;
 
+/**
+ * Recursively intersects a `Tuple` meta-type values to an `Array` meta-type values
+ * @param TUPLE_VALUES MetaType[]
+ * @param META_ARRAY ArrayType
+ * @returns MetaType[]
+ */
 type IntersectTupleToArrayValues<
   TUPLE_VALUES extends Type[],
   ARRAY_VALUES extends Type,
@@ -148,6 +170,16 @@ type IntersectTuples<
   META_TUPLE_B
 >;
 
+/**
+ * Recursively intersects two `Tuple` meta-type values
+ * @param TUPLE_A_VALUES MetaType[]
+ * @param TUPLE_B_VALUES MetaType[]
+ * @param TUPLE_A_IS_OPEN Boolean
+ * @param TUPLE_B_IS_OPEN Boolean
+ * @param TUPLE_A_OPEN_PROPS MetaType
+ * @param TUPLE_B_OPEN_PROPS MetaType
+ * @returns MetaType[]
+ */
 type IntersectTupleValues<
   TUPLE_A_VALUES extends Type[],
   TUPLE_B_VALUES extends Type[],

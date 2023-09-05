@@ -11,7 +11,7 @@ import type { $Union, UnionType, UnionValues } from "../union";
 import type { $Intersect } from "./index";
 
 /**
- * Intersects a `Union` meta-type to any other meta-type
+ * Intersects a `Union` meta-type with any other meta-type
  * @param META_UNION UnionType
  * @param META_TYPE MetaType
  * @returns MetaType

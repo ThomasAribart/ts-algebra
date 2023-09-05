@@ -36,8 +36,9 @@ export type ExcludeUnion<META_TYPE, META_UNION extends UnionType> = If<
  * Recursively excludes a `Union` meta-type values from any meta-type
  *
  * To do so, we pick a value, exclude it from the meta-type and intersect the result to the exclusion of the rest: `A \ (B | C) = (A \ B) & (A \ C)`
- * @param META_TUPLE TupleType
  * @param META_TYPE MetaType
+ * @param META_UNION_VALUE Type
+ * @param META_UNION UnionType
  * @returns MetaType
  */
 type RecurseOnUnionValues<
