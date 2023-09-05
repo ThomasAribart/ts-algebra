@@ -1,4 +1,5 @@
-import type { UnionLast } from "../../utils/unionLast";
+import type { UnionLast } from "~/utils/unionLast";
+
 import type { AnyType } from "../any";
 import type { ArrayType } from "../array";
 import type { Const, ConstType } from "../const";
@@ -28,27 +29,40 @@ export type ExcludeFromEnum<
     : META_TYPE extends AnyType
     ? Never
     : META_TYPE extends ConstType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends EnumType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends PrimitiveType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends ArrayType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends TupleType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends ObjectType
-    ? FilterExcluded<META_ENUM, META_TYPE>
+    ? FilterEnumExcluded<META_ENUM, META_TYPE>
     : META_TYPE extends UnionType
     ? ExcludeUnion<META_ENUM, META_TYPE>
     : Never
   : Never;
 
-type FilterExcluded<META_ENUM extends EnumType, META_TYPE extends Type> = Enum<
-  RecurseOnEnumValues<EnumValues<META_ENUM>, META_TYPE>
->;
+/**
+ * Build a new `Enum` meta-type with the values of the original `Enum` that are not excluded by a given meta-type (i.e. exclusion is representable)
+ * @param META_ENUM EnumType
+ * @param META_TYPE MetaType
+ * @returns EnumType
+ */
+type FilterEnumExcluded<
+  META_ENUM extends EnumType,
+  META_TYPE extends Type,
+> = Enum<FilterEnumExcludedValues<EnumValues<META_ENUM>, META_TYPE>>;
 
-type RecurseOnEnumValues<
+/**
+ * Filters the values of an `Enum` meta-type that are not excluded by a given meta-type (i.e. exclusion is representable)
+ * @param ENUM_VALUES Type
+ * @param META_TYPE MetaType
+ * @returns EnumType
+ */
+type FilterEnumExcludedValues<
   ENUM_VALUES,
   META_TYPE extends Type,
 > = ENUM_VALUES extends infer ENUM_VALUE
@@ -69,6 +83,15 @@ export type ExcludeEnum<
   ENUM_VALUES = EnumValues<ENUM_TYPE>,
 > = ExcludeEnumValue<META_TYPE, UnionLast<ENUM_VALUES>, ENUM_VALUES>;
 
+/**
+ * Recursively excludes an `Enum` meta-type values from any meta-type
+ *
+ * To do so, we pick a value, exclude it from the meta-type and intersect the result to the exclusion of the rest: `A \ (B | C) = (A \ B) & (A \ C)`
+ * @param META_TYPE MetaType
+ * @param LAST_ENUM_VALUE Type
+ * @param ENUM_VALUES Type
+ * @returns MetaType
+ */
 type ExcludeEnumValue<
   META_TYPE extends Type,
   LAST_ENUM_VALUE,
