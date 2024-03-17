@@ -289,6 +289,7 @@ const enumToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
@@ -321,6 +322,7 @@ const serializedEnumToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >

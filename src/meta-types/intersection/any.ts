@@ -4,6 +4,7 @@ import type { ConstType } from "../const";
 import type { EnumType, EnumValues } from "../enum";
 import type { Never, NeverType } from "../never";
 import type {
+  ObjectCloseOnResolve,
   ObjectOpenProps,
   ObjectRequiredKeys,
   ObjectType,
@@ -67,6 +68,7 @@ export type IntersectAny<
         ObjectValues<META_TYPE>,
         ObjectRequiredKeys<META_TYPE>,
         ObjectOpenProps<META_TYPE>,
+        ObjectCloseOnResolve<META_TYPE>,
         META_TYPE,
         META_ANY
       >
