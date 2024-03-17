@@ -36,21 +36,36 @@ const test2: A.Equals<
 > = 1;
 test2;
 
-// --- CLOSED ---
+// --- OPEN + closeOnResolve === true ---
 
 const test3: A.Equals<
   M.Resolve<
-    M.Object<{ str: M.Primitive<string>; num: M.Primitive<number> }, "str">
+    M.Object<
+      { str: M.Primitive<string>; num: M.Primitive<number> },
+      "str",
+      M.Primitive<string>,
+      true
+    >
   >,
   { str: string; num?: number | undefined }
 > = 1;
 test3;
 
+// --- CLOSED ---
+
 const test4: A.Equals<
+  M.Resolve<
+    M.Object<{ str: M.Primitive<string>; num: M.Primitive<number> }, "str">
+  >,
+  { str: string; num?: number | undefined }
+> = 1;
+test4;
+
+const test5: A.Equals<
   M.Resolve<M.Object<{ str: M.Primitive<string> }, "str" | "num">>,
   never
 > = 1;
-test4;
+test5;
 
 // --- SERIALIZED ---
 
@@ -60,6 +75,7 @@ const serialized: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
@@ -74,6 +90,7 @@ const serializedIgnored: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
