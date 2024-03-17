@@ -280,6 +280,7 @@ const constToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
@@ -304,6 +305,7 @@ const serializedConstToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >

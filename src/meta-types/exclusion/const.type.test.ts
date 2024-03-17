@@ -201,7 +201,7 @@ nonExcludingOpenObject;
 const serializedObject: A.Equals<
   M.Exclude<
     M.Const<{ a: "A" }>,
-    M.Object<{}, never, M.Const<"C">, true, { a: string }>
+    M.Object<{}, never, M.Const<"C">, false, true, { a: string }>
   >,
   M.Const<{ a: "A" }>
 > = 1;

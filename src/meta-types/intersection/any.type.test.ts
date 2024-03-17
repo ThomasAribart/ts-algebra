@@ -181,11 +181,19 @@ const anyToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 anyToSerializedObject;
 
@@ -194,7 +202,14 @@ const serializedAnyToObject: A.Equals<
     M.Any<true, { date: Date }>,
     M.Object<{ date: M.Primitive<string> }, "date">
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 serializedAnyToObject;
 
@@ -205,6 +220,7 @@ const serializedAnyToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
@@ -213,6 +229,7 @@ const serializedAnyToSerializedObject: A.Equals<
     { date: M.Primitive<string> },
     "date",
     M.Never,
+    false,
     true,
     { date: Date } & { date: Date }
   >

@@ -238,7 +238,7 @@ const bothClosedTooManyOmittableKeys: A.Equals<
 > = 1;
 bothClosedTooManyOmittableKeys;
 
-// Closed source open excluded
+// Source: closed - Excluded: open
 const closedSourceOpenExcluded1: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a">,
@@ -257,7 +257,17 @@ const closedSourceOpenExcluded2: A.Equals<
 > = 1;
 closedSourceOpenExcluded2;
 
-// Open source closed excluded
+// Source: closed - Excluded: open + close on resolve
+const closedSource_openExcludedCloseOnresolve: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Enum<"A" | "B">; b: M.Const<"B"> }, "a">,
+    M.Object<{}, never, M.Const<"B">, true>
+  >,
+  M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a">
+> = 1;
+closedSource_openExcludedCloseOnresolve;
+
+// Source: open - Excluded: closed
 const openSourceClosedExcluded: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Const<"A"> }, "a", M.Any>,
@@ -266,6 +276,16 @@ const openSourceClosedExcluded: A.Equals<
   M.Object<{ a: M.Const<"A"> }, "a", M.Any>
 > = 1;
 openSourceClosedExcluded;
+
+// Source: open + close on resolve - Excluded: closed
+const openSourceCloseOnResolve_closedExcluded: A.Equals<
+  M.Exclude<
+    M.Object<{ a: M.Const<"A"> }, "a", M.Any, true>,
+    M.Object<{ a: M.Const<"A"> }, "a">
+  >,
+  M.Object<{ a: M.Const<"A"> }, "a", M.Any, true>
+> = 1;
+openSourceCloseOnResolve_closedExcluded;
 
 // Both open
 const bothOpenMatch1: A.Equals<
@@ -326,12 +346,35 @@ const bothOpenKeyAdded: A.Equals<
 > = 1;
 bothOpenKeyAdded;
 
+// Both open + close on resolve
+const bothOpenCloseOnResolve: A.Equals<
+  M.Exclude<
+    M.Object<
+      { a: M.Enum<"A" | "B">; b: M.Const<"B"> },
+      "a",
+      M.Const<"B">,
+      true
+    >,
+    M.Object<{}, never, M.Const<"B">, true>
+  >,
+  M.Object<{ a: M.Enum<"A">; b: M.Const<"B"> }, "a", M.Const<"B">, true>
+> = 1;
+bothOpenCloseOnResolve;
+
+// Serialization
 const propagatedSerialization: A.Equals<
   M.Exclude<
-    M.Object<{ a: M.Enum<"A" | "B"> }, "a", M.Never, true, { a: string }>,
+    M.Object<
+      { a: M.Enum<"A" | "B"> },
+      "a",
+      M.Never,
+      false,
+      true,
+      { a: string }
+    >,
     M.Object<{ a: M.Const<"B"> }, "a">
   >,
-  M.Object<{ a: M.Enum<"A"> }, "a", M.Never, true, { a: string }>
+  M.Object<{ a: M.Enum<"A"> }, "a", M.Never, false, true, { a: string }>
 > = 1;
 propagatedSerialization;
 
@@ -341,19 +384,27 @@ const omittableKeySerialization: A.Equals<
       { a: M.Const<"A">; b: M.Const<"B"> },
       "a",
       M.Never,
+      false,
       true,
       { a: string }
     >,
     M.Object<{ a: M.Const<"A">; b: M.Const<"B"> }, "a" | "b">
   >,
-  M.Object<{ a: M.Const<"A">; b: M.Never }, "a", M.Never, true, { a: string }>
+  M.Object<
+    { a: M.Const<"A">; b: M.Never },
+    "a",
+    M.Never,
+    false,
+    true,
+    { a: string }
+  >
 > = 1;
 omittableKeySerialization;
 
 const excludedSerializationIsNotUsed: A.Equals<
   M.Exclude<
     M.Object<{ a: M.Enum<"A" | "B"> }, "a">,
-    M.Object<{ a: M.Const<"B"> }, "a", M.Never, true, { a: string }>
+    M.Object<{ a: M.Const<"B"> }, "a", M.Never, false, true, { a: string }>
   >,
   M.Object<{ a: M.Enum<"A"> }, "a">
 > = 1;
