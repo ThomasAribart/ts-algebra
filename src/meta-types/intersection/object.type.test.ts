@@ -23,7 +23,14 @@ const objectToSerializedAny: A.Equals<
     M.Object<{ date: M.Primitive<string> }, "date">,
     M.Any<true, { date: Date }>
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 objectToSerializedAny;
 
@@ -33,12 +40,20 @@ const serializedObjectToAny: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
     M.Any
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 serializedObjectToAny;
 
@@ -48,6 +63,7 @@ const serializedObjectToSerializedAny: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -57,6 +73,7 @@ const serializedObjectToSerializedAny: A.Equals<
     { date: M.Primitive<string> },
     "date",
     M.Never,
+    false,
     true,
     { date: Date } & { date: Date }
   >
@@ -116,6 +133,7 @@ const serializedObjectToConst: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -131,6 +149,7 @@ const serializedObjectToSerializedConst: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -188,6 +207,7 @@ const serializedObjectToEnum: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -203,6 +223,7 @@ const serializedObjectToSerializedEnum: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -295,6 +316,20 @@ const intersectingObject3: A.Equals<
 > = 1;
 intersectingObject3;
 
+const intersectingObject4: A.Equals<
+  M.Intersect<
+    M.Object<{ str: M.Primitive<string> }, "str", M.Any, true>,
+    M.Object<{ foo: M.Primitive<string> }, "foo", M.Any>
+  >,
+  M.Object<
+    { str: M.Primitive<string>; foo: M.Primitive<string> },
+    "str" | "foo",
+    M.Any,
+    true
+  >
+> = 1;
+intersectingObject4;
+
 // Rejects "str" property because B is closed
 const nonIntersectingObject1: A.Equals<
   M.Intersect<
@@ -352,11 +387,19 @@ const objectToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 objectToSerializedObject;
 
@@ -366,12 +409,20 @@ const serializedObjectToObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
     M.Object<{ date: M.Primitive<string> }, "date">
   >,
-  M.Object<{ date: M.Primitive<string> }, "date", M.Never, true, { date: Date }>
+  M.Object<
+    { date: M.Primitive<string> },
+    "date",
+    M.Never,
+    false,
+    true,
+    { date: Date }
+  >
 > = 1;
 serializedObjectToObject;
 
@@ -381,6 +432,7 @@ const serializedObjectToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,
@@ -388,6 +440,7 @@ const serializedObjectToSerializedObject: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: unknown }
     >
@@ -396,6 +449,7 @@ const serializedObjectToSerializedObject: A.Equals<
     { date: M.Primitive<string> },
     "date",
     M.Never,
+    false,
     true,
     { date: Date } & { date: unknown }
   >

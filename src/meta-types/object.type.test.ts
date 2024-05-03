@@ -18,7 +18,7 @@ requiredNeverKeyOpen;
 
 // --- OPEN ---
 
-const test1: A.Equals<
+const testOpenWithConflict: A.Equals<
   M.Resolve<
     M.Object<
       { str: M.Primitive<string>; num: M.Primitive<number> },
@@ -28,29 +28,42 @@ const test1: A.Equals<
   >,
   { str: string; num?: number | undefined; [k: string]: unknown }
 > = 1;
-test1;
+testOpenWithConflict;
 
-const test2: A.Equals<
+const testOpenWithoutConflict: A.Equals<
   M.Resolve<M.Object<{}, never, M.Primitive<string>>>,
   { [k: string]: string }
 > = 1;
-test2;
+testOpenWithoutConflict;
+
+const testClosedOnResolve: A.Equals<
+  M.Resolve<
+    M.Object<
+      { str: M.Primitive<string>; num: M.Primitive<number> },
+      "str",
+      M.Primitive<string>,
+      true
+    >
+  >,
+  { str: string; num?: number | undefined }
+> = 1;
+testClosedOnResolve;
 
 // --- CLOSED ---
 
-const test3: A.Equals<
+const testClosed: A.Equals<
   M.Resolve<
     M.Object<{ str: M.Primitive<string>; num: M.Primitive<number> }, "str">
   >,
   { str: string; num?: number | undefined }
 > = 1;
-test3;
+testClosed;
 
-const test4: A.Equals<
+const testClosedImpossible: A.Equals<
   M.Resolve<M.Object<{ str: M.Primitive<string> }, "str" | "num">>,
   never
 > = 1;
-test4;
+testClosedImpossible;
 
 // --- SERIALIZED ---
 
@@ -60,6 +73,7 @@ const serialized: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >
@@ -74,6 +88,7 @@ const serializedIgnored: A.Equals<
       { date: M.Primitive<string> },
       "date",
       M.Never,
+      false,
       true,
       { date: Date }
     >,

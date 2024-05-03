@@ -17,6 +17,7 @@ import type { EnumType } from "../enum";
 import type { Never, NeverType } from "../never";
 import type {
   _Object,
+  IsObjectClosedOnResolve,
   IsObjectOpen,
   ObjectOpenProps,
   ObjectRequiredKeys,
@@ -268,6 +269,7 @@ type PropagateExclusions<
   },
   ObjectRequiredKeys<META_OBJECT>,
   ObjectOpenProps<META_OBJECT>,
+  IsObjectClosedOnResolve<META_OBJECT>,
   IsSerialized<META_OBJECT>,
   Deserialized<META_OBJECT>
 >;
@@ -301,6 +303,7 @@ type OmitOmittableKeys<
       },
       ObjectRequiredKeys<META_OBJECT>,
       ObjectOpenProps<META_OBJECT>,
+      IsObjectClosedOnResolve<META_OBJECT>,
       IsSerialized<META_OBJECT>,
       Deserialized<META_OBJECT>
     >
@@ -343,6 +346,7 @@ type ExcludeConstFromObject<
       },
       Extract<keyof CONST_VALUE, string>,
       Never,
+      IsObjectClosedOnResolve<META_OBJECT>,
       IsSerialized<META_CONST>,
       Deserialized<META_CONST>
     >
