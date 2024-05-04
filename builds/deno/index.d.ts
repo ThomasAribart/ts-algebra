@@ -44,8 +44,8 @@ declare type EnumValues<META_ENUM extends EnumType> = META_ENUM["values"];
 declare type ResolveEnum<META_ENUM extends EnumType, OPTIONS extends ResolveOptions> = If$1<And<OPTIONS["deserialize"], IsSerialized<META_ENUM>>, Deserialized<META_ENUM>, EnumValues<META_ENUM>>;
 
 declare type ObjectTypeId = "object";
-declare type _Object<VALUES extends Record<string, Type> = {}, REQUIRED_KEYS extends string = never, OPEN_PROPS extends Type = Never, IS_SERIALIZED extends boolean = false, DESERIALIZED = never> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
-declare type _$Object<VALUES = {}, REQUIRED_KEYS = never, OPEN_PROPS = Never, IS_SERIALIZED = false, DESERIALIZED = never> = DoesExtend$1<true, {
+declare type _Object<VALUES extends Record<string, Type> = {}, REQUIRED_KEYS extends string = never, OPEN_PROPS extends Type = Never, CLOSE_ON_RESOLVE extends boolean = false, IS_SERIALIZED extends boolean = false, DESERIALIZED = never> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, CLOSE_ON_RESOLVE, IS_SERIALIZED, DESERIALIZED>;
+declare type _$Object<VALUES = {}, REQUIRED_KEYS = never, OPEN_PROPS = Never, CLOSE_ON_RESOLVE = false, IS_SERIALIZED = false, DESERIALIZED = never> = DoesExtend$1<true, {
     [KEY in Extract<REQUIRED_KEYS, string>]: KEY extends keyof VALUES ? DoesExtend$1<VALUES[KEY], NeverType> : DoesExtend$1<OPEN_PROPS, NeverType>;
 }[Extract<REQUIRED_KEYS, string>]> extends true ? Never : {
     type: ObjectTypeId;
@@ -53,6 +53,7 @@ declare type _$Object<VALUES = {}, REQUIRED_KEYS = never, OPEN_PROPS = Never, IS
     required: REQUIRED_KEYS;
     isOpen: Not<DoesExtend$1<OPEN_PROPS, NeverType>>;
     openProps: OPEN_PROPS;
+    closeOnResolve: CLOSE_ON_RESOLVE;
     isSerialized: IS_SERIALIZED;
     deserialized: DESERIALIZED;
 };
@@ -62,6 +63,7 @@ declare type ObjectType = {
     required: string;
     isOpen: boolean;
     openProps: Type;
+    closeOnResolve: boolean;
     isSerialized: boolean;
     deserialized: unknown;
 };
@@ -70,8 +72,9 @@ declare type ObjectValue<META_OBJECT extends ObjectType, KEY extends string> = K
 declare type ObjectRequiredKeys<META_OBJECT extends ObjectType> = META_OBJECT["required"];
 declare type IsObjectOpen<META_OBJECT extends ObjectType> = META_OBJECT["isOpen"];
 declare type ObjectOpenProps<META_OBJECT extends ObjectType> = META_OBJECT["openProps"];
+declare type IsObjectClosedOnResolve<META_OBJECT extends ObjectType> = META_OBJECT["closeOnResolve"];
 declare type IsObjectEmpty<META_OBJECT extends ObjectType> = IsNever$1<keyof ObjectValues<META_OBJECT>>;
-declare type ResolveObject<META_OBJECT extends ObjectType, OPTIONS extends ResolveOptions> = If$1<And<OPTIONS["deserialize"], IsSerialized<META_OBJECT>>, Deserialized<META_OBJECT>, DeepMergeUnsafe<If$1<IsObjectOpen<META_OBJECT>, If$1<IsObjectEmpty<META_OBJECT>, {
+declare type ResolveObject<META_OBJECT extends ObjectType, OPTIONS extends ResolveOptions> = If$1<And<OPTIONS["deserialize"], IsSerialized<META_OBJECT>>, Deserialized<META_OBJECT>, DeepMergeUnsafe<If$1<And<IsObjectOpen<META_OBJECT>, Not<IsObjectClosedOnResolve<META_OBJECT>>>, If$1<IsObjectEmpty<META_OBJECT>, {
     [KEY: string]: Resolve<ObjectOpenProps<META_OBJECT>, OPTIONS>;
 }, {
     [KEY: string]: Resolve<Any, OPTIONS>;
@@ -264,12 +267,12 @@ declare type $MergeArrayValuesToSerializable<VALUES, META_ARRAY extends ArrayTyp
 declare type IntersectArray<META_ARRAY extends ArrayType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? IntersectArraySerializationParams<ArrayValues<META_ARRAY>, META_ARRAY, META_TYPE> : META_TYPE extends ConstType ? IntersectConstToArray<META_TYPE, META_ARRAY> : META_TYPE extends EnumType ? IntersectEnumToArray<META_TYPE, META_ARRAY> : META_TYPE extends PrimitiveType ? Never : META_TYPE extends ArrayType ? IntersectArrays<META_ARRAY, META_TYPE> : META_TYPE extends TupleType ? IntersectTupleToArray<META_TYPE, META_ARRAY> : META_TYPE extends ObjectType ? Never : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_ARRAY> : Never : Never;
 declare type IntersectArrays<META_ARRAY_A extends ArrayType, META_ARRAY_B extends ArrayType> = $MergeArrayValuesToSerializable<Intersect<ArrayValues<META_ARRAY_A>, ArrayValues<META_ARRAY_B>>, META_ARRAY_A, META_ARRAY_B>;
 
-declare type IntersectObjectSerializationParams<VALUES extends Record<string, Type>, REQUIRED_KEYS extends string, OPEN_PROPS extends Type, META_OBJECT extends ObjectType, SERIALIZABLE_META_TYPE extends SerializableType> = $MergeObjectPropsToSerializable<VALUES, REQUIRED_KEYS, OPEN_PROPS, META_OBJECT, SERIALIZABLE_META_TYPE>;
-declare type $MergeObjectPropsToSerializable<VALUES, REQUIRED_KEYS, OPEN_PROPS, META_OBJECT extends ObjectType, SERIALIZABLE_META_TYPE extends SerializableType> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, IntersectIsSerialized<META_OBJECT, SERIALIZABLE_META_TYPE>, IntersectDeserialized<META_OBJECT, SERIALIZABLE_META_TYPE>>;
-declare type IntersectObject<META_OBJECT extends ObjectType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? IntersectObjectSerializationParams<ObjectValues<META_OBJECT>, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, META_OBJECT, META_TYPE> : META_TYPE extends ConstType ? IntersectConstToObject<META_TYPE, META_OBJECT> : META_TYPE extends EnumType ? IntersectEnumToObject<META_TYPE, META_OBJECT> : META_TYPE extends PrimitiveType ? Never : META_TYPE extends ArrayType ? Never : META_TYPE extends TupleType ? Never : META_TYPE extends ObjectType ? IntersectObjects<META_OBJECT, META_TYPE> : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_OBJECT> : Never : Never;
-declare type IntersectObjects<META_OBJECT_A extends ObjectType, META_OBJECT_B extends ObjectType, INTERSECTED_VALUES extends Record<string, unknown> = IntersectObjectsValues<META_OBJECT_A, META_OBJECT_B>, INTERSECTED_OPEN_PROPS = Intersect<ObjectOpenProps<META_OBJECT_A>, ObjectOpenProps<META_OBJECT_B>>> = $MergeObjectPropsToSerializable<{
+declare type IntersectObjectSerializationParams<VALUES extends Record<string, Type>, REQUIRED_KEYS extends string, OPEN_PROPS extends Type, CLOSE_ON_RESOLVE extends boolean, META_OBJECT extends ObjectType, SERIALIZABLE_META_TYPE extends SerializableType> = $MergeObjectPropsToSerializable<VALUES, REQUIRED_KEYS, OPEN_PROPS, CLOSE_ON_RESOLVE, META_OBJECT, SERIALIZABLE_META_TYPE>;
+declare type $MergeObjectPropsToSerializable<VALUES, REQUIRED_KEYS, OPEN_PROPS, CLOSE_ON_RESOLVE, META_OBJECT extends ObjectType, SERIALIZABLE_META_TYPE extends SerializableType> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, CLOSE_ON_RESOLVE, IntersectIsSerialized<META_OBJECT, SERIALIZABLE_META_TYPE>, IntersectDeserialized<META_OBJECT, SERIALIZABLE_META_TYPE>>;
+declare type IntersectObject<META_OBJECT extends ObjectType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? IntersectObjectSerializationParams<ObjectValues<META_OBJECT>, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, IsObjectClosedOnResolve<META_OBJECT>, META_OBJECT, META_TYPE> : META_TYPE extends ConstType ? IntersectConstToObject<META_TYPE, META_OBJECT> : META_TYPE extends EnumType ? IntersectEnumToObject<META_TYPE, META_OBJECT> : META_TYPE extends PrimitiveType ? Never : META_TYPE extends ArrayType ? Never : META_TYPE extends TupleType ? Never : META_TYPE extends ObjectType ? IntersectObjects<META_OBJECT, META_TYPE> : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_OBJECT> : Never : Never;
+declare type IntersectObjects<META_OBJECT_A extends ObjectType, META_OBJECT_B extends ObjectType, INTERSECTED_VALUES extends Record<string, unknown> = IntersectObjectsValues<META_OBJECT_A, META_OBJECT_B>, INTERSECTED_OPEN_PROPS = Intersect<ObjectOpenProps<META_OBJECT_A>, ObjectOpenProps<META_OBJECT_B>>, INTERSECTED_CLOSE_ON_RESOLVE = Or<IsObjectClosedOnResolve<META_OBJECT_A>, IsObjectClosedOnResolve<META_OBJECT_B>>> = $MergeObjectPropsToSerializable<{
     [KEY in keyof INTERSECTED_VALUES]: INTERSECTED_VALUES[KEY];
-}, ObjectRequiredKeys<META_OBJECT_A> | ObjectRequiredKeys<META_OBJECT_B>, INTERSECTED_OPEN_PROPS, META_OBJECT_A, META_OBJECT_B>;
+}, ObjectRequiredKeys<META_OBJECT_A> | ObjectRequiredKeys<META_OBJECT_B>, INTERSECTED_OPEN_PROPS, INTERSECTED_CLOSE_ON_RESOLVE, META_OBJECT_A, META_OBJECT_B>;
 declare type IntersectObjectsValues<META_OBJECT_A extends ObjectType, META_OBJECT_B extends ObjectType> = {
     [KEY in Extract<keyof ObjectValues<META_OBJECT_A> | keyof ObjectValues<META_OBJECT_B>, string>]: $Intersect<ObjectValue<META_OBJECT_A, KEY>, ObjectValue<META_OBJECT_B, KEY>>;
 };
@@ -277,7 +280,7 @@ declare type IntersectObjectsValues<META_OBJECT_A extends ObjectType, META_OBJEC
 declare type IntersectPrimitiveSerializationParams<META_PRIMITIVE extends PrimitiveType, SERIALIZABLE_META_TYPE extends SerializableType> = Primitive<PrimitiveValue<META_PRIMITIVE>, IntersectIsSerialized<META_PRIMITIVE, SERIALIZABLE_META_TYPE>, IntersectDeserialized<META_PRIMITIVE, SERIALIZABLE_META_TYPE>>;
 declare type IntersectPrimitive<META_PRIMITIVE extends PrimitiveType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? IntersectPrimitiveSerializationParams<META_PRIMITIVE, META_TYPE> : META_TYPE extends ConstType ? IntersectConstToPrimitive<META_TYPE, META_PRIMITIVE> : META_TYPE extends EnumType ? IntersectEnumToPrimitive<META_TYPE, META_PRIMITIVE> : META_TYPE extends PrimitiveType ? If$1<And<DoesExtend$1<PrimitiveValue<META_PRIMITIVE>, PrimitiveValue<META_TYPE>>, DoesExtend$1<PrimitiveValue<META_TYPE>, PrimitiveValue<META_PRIMITIVE>>>, IntersectPrimitiveSerializationParams<META_PRIMITIVE, META_TYPE>, Never> : META_TYPE extends ArrayType ? Never : META_TYPE extends TupleType ? Never : META_TYPE extends ObjectType ? Never : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_PRIMITIVE> : Never : Never;
 
-declare type IntersectAny<META_ANY extends AnyType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? Any<IntersectIsSerialized<META_ANY, META_TYPE>, IntersectDeserialized<META_ANY, META_TYPE>> : META_TYPE extends ConstType ? IntersectConstSerializationParams<META_TYPE, META_ANY> : META_TYPE extends EnumType ? IntersectEnumSerializationParams<EnumValues<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends PrimitiveType ? IntersectPrimitiveSerializationParams<META_TYPE, META_ANY> : META_TYPE extends ArrayType ? IntersectArraySerializationParams<ArrayValues<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends TupleType ? IntersectTupleSerializationParams<TupleValues<META_TYPE>, TupleOpenProps<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends ObjectType ? IntersectObjectSerializationParams<ObjectValues<META_TYPE>, ObjectRequiredKeys<META_TYPE>, ObjectOpenProps<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_ANY> : Never : Never;
+declare type IntersectAny<META_ANY extends AnyType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_TYPE : META_TYPE extends AnyType ? Any<IntersectIsSerialized<META_ANY, META_TYPE>, IntersectDeserialized<META_ANY, META_TYPE>> : META_TYPE extends ConstType ? IntersectConstSerializationParams<META_TYPE, META_ANY> : META_TYPE extends EnumType ? IntersectEnumSerializationParams<EnumValues<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends PrimitiveType ? IntersectPrimitiveSerializationParams<META_TYPE, META_ANY> : META_TYPE extends ArrayType ? IntersectArraySerializationParams<ArrayValues<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends TupleType ? IntersectTupleSerializationParams<TupleValues<META_TYPE>, TupleOpenProps<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends ObjectType ? IntersectObjectSerializationParams<ObjectValues<META_TYPE>, ObjectRequiredKeys<META_TYPE>, ObjectOpenProps<META_TYPE>, IsObjectClosedOnResolve<META_TYPE>, META_TYPE, META_ANY> : META_TYPE extends UnionType ? DistributeIntersection<META_TYPE, META_ANY> : Never : Never;
 
 declare type Intersect<META_TYPE_A extends Type, META_TYPE_B extends Type> = $Intersect<META_TYPE_A, META_TYPE_B>;
 declare type $Intersect<META_TYPE_A, META_TYPE_B> = META_TYPE_A extends NeverType ? META_TYPE_A : META_TYPE_A extends AnyType ? IntersectAny<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends ConstType ? IntersectConst<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends EnumType ? IntersectEnum<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends PrimitiveType ? IntersectPrimitive<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends ArrayType ? IntersectArray<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends TupleType ? IntersectTuple<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends ObjectType ? IntersectObject<META_TYPE_A, META_TYPE_B> : META_TYPE_A extends UnionType ? IntersectUnion<META_TYPE_A, META_TYPE_B> : Never;
@@ -361,16 +364,16 @@ declare type RepresentableKeys<VALUE_EXCLUSION_RESULTS extends Record<string, Va
 }[Extract<keyof VALUE_EXCLUSION_RESULTS, string>];
 declare type PropagateExclusions$1<META_OBJECT extends ObjectType, VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>> = _Object<{
     [KEY in keyof VALUE_EXCLUSION_RESULTS]: PropagateExclusion<VALUE_EXCLUSION_RESULTS[KEY]>;
-}, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, IsSerialized<META_OBJECT>, Deserialized<META_OBJECT>>;
+}, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, IsObjectClosedOnResolve<META_OBJECT>, IsSerialized<META_OBJECT>, Deserialized<META_OBJECT>>;
 declare type OmitOmittableKeys<META_OBJECT extends ObjectType, VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>, OMITTABLE_KEYS extends string = OmittableKeys<VALUE_EXCLUSION_RESULTS>, OMITTABLE_KEYS_COUNT extends string = GetUnionLength<OMITTABLE_KEYS>> = OMITTABLE_KEYS_COUNT extends "moreThanTwo" ? META_OBJECT : OMITTABLE_KEYS_COUNT extends "onlyOne" ? _Object<{
     [KEY in keyof VALUE_EXCLUSION_RESULTS]: KEY extends OMITTABLE_KEYS ? Never : SourceValue<VALUE_EXCLUSION_RESULTS[KEY]>;
-}, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, IsSerialized<META_OBJECT>, Deserialized<META_OBJECT>> : Never;
+}, ObjectRequiredKeys<META_OBJECT>, ObjectOpenProps<META_OBJECT>, IsObjectClosedOnResolve<META_OBJECT>, IsSerialized<META_OBJECT>, Deserialized<META_OBJECT>> : Never;
 declare type OmittableKeys<VALUE_EXCLUSION_RESULTS extends Record<string, ValueExclusionResultType>> = {
     [KEY in Extract<keyof VALUE_EXCLUSION_RESULTS, string>]: IsOmittable<VALUE_EXCLUSION_RESULTS[KEY]> extends true ? KEY : never;
 }[Extract<keyof VALUE_EXCLUSION_RESULTS, string>];
 declare type ExcludeConstFromObject<META_OBJECT extends ObjectType, META_CONST extends ConstType, CONST_VALUE = ConstValue<META_CONST>> = If$1<IsObject<CONST_VALUE>, _$Exclude<META_OBJECT, _Object<{
     [KEY in Extract<keyof CONST_VALUE, string>]: Const<CONST_VALUE[KEY]>;
-}, Extract<keyof CONST_VALUE, string>, Never, IsSerialized<META_CONST>, Deserialized<META_CONST>>>, META_OBJECT>;
+}, Extract<keyof CONST_VALUE, string>, Never, IsObjectClosedOnResolve<META_OBJECT>, IsSerialized<META_CONST>, Deserialized<META_CONST>>>, META_OBJECT>;
 
 declare type ExcludeFromPrimitive<META_PRIMITIVE extends PrimitiveType, META_TYPE> = META_TYPE extends Type ? META_TYPE extends NeverType ? META_PRIMITIVE : META_TYPE extends AnyType ? Never : META_TYPE extends ConstType ? META_PRIMITIVE : META_TYPE extends EnumType ? META_PRIMITIVE : META_TYPE extends PrimitiveType ? PrimitiveValue<META_PRIMITIVE> extends PrimitiveValue<META_TYPE> ? Never : META_PRIMITIVE : META_TYPE extends ArrayType ? META_PRIMITIVE : META_TYPE extends TupleType ? META_PRIMITIVE : META_TYPE extends ObjectType ? META_PRIMITIVE : META_TYPE extends UnionType ? ExcludeUnion<META_PRIMITIVE, META_TYPE> : Never : Never;
 
