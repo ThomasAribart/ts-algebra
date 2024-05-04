@@ -31,15 +31,24 @@ export type _Object<
   VALUES extends Record<string, Type> = {},
   REQUIRED_KEYS extends string = never,
   OPEN_PROPS extends Type = Never,
+  CLOSE_ON_RESOLVE extends boolean = false,
   IS_SERIALIZED extends boolean = false,
   DESERIALIZED = never,
-> = _$Object<VALUES, REQUIRED_KEYS, OPEN_PROPS, IS_SERIALIZED, DESERIALIZED>;
+> = _$Object<
+  VALUES,
+  REQUIRED_KEYS,
+  OPEN_PROPS,
+  CLOSE_ON_RESOLVE,
+  IS_SERIALIZED,
+  DESERIALIZED
+>;
 
 /**
  * Defines an `Object` meta-type (without type constraints)
  * @param VALUES Record<string, MetaType>
  * @param REQUIRED_KEYS string
  * @param OPEN_PROPS MetaType
+ * @param CLOSE_ON_RESOLVE Boolean
  * @param IS_SERIALIZED Boolean
  * @param DESERIALIZED Type
  */
@@ -48,6 +57,7 @@ export type _$Object<
   VALUES = {},
   REQUIRED_KEYS = never,
   OPEN_PROPS = Never,
+  CLOSE_ON_RESOLVE = false,
   IS_SERIALIZED = false,
   DESERIALIZED = never,
 > = DoesExtend<
@@ -65,6 +75,7 @@ export type _$Object<
       required: REQUIRED_KEYS;
       isOpen: Not<DoesExtend<OPEN_PROPS, NeverType>>;
       openProps: OPEN_PROPS;
+      closeOnResolve: CLOSE_ON_RESOLVE;
       isSerialized: IS_SERIALIZED;
       deserialized: DESERIALIZED;
     };
@@ -78,6 +89,7 @@ export type ObjectType = {
   required: string;
   isOpen: boolean;
   openProps: Type;
+  closeOnResolve: boolean;
   isSerialized: boolean;
   deserialized: unknown;
 };
@@ -130,6 +142,14 @@ export type ObjectOpenProps<META_OBJECT extends ObjectType> =
   META_OBJECT["openProps"];
 
 /**
+ * Return `true` if the provided `Object` meta-type is to be resolved as a closed object
+ * @param META_OBJECT ObjectType
+ * @returns Boolean
+ */
+export type IsObjectClosedOnResolve<META_OBJECT extends ObjectType> =
+  META_OBJECT["closeOnResolve"];
+
+/**
  * Return `true` if object meta-type values are empty
  * @param META_OBJECT ObjectType
  * @returns Boolean
@@ -152,7 +172,7 @@ export type ResolveObject<
   Deserialized<META_OBJECT>,
   DeepMergeUnsafe<
     If<
-      IsObjectOpen<META_OBJECT>,
+      And<IsObjectOpen<META_OBJECT>, Not<IsObjectClosedOnResolve<META_OBJECT>>>,
       If<
         IsObjectEmpty<META_OBJECT>,
         { [KEY: string]: Resolve<ObjectOpenProps<META_OBJECT>, OPTIONS> },

@@ -275,6 +275,7 @@ In presence of named properties, open meta-objects additional properties are res
 - <code>NamedProperties <i>(?{ [key:string]: meta-type } = {})</i></code>
 - <code>RequiredPropertiesKeys <i>(?string union = never)</i></code>
 - <code>AdditionalProperties <i>(?meta-type = M.Never)</i></code>: The type of additional properties
+- <code>CloseOnResolve <i>(?boolean = false)</i></code>: Ignore `AdditionalProperties` at resolution time
 - <code>IsSerialized <i>(?boolean = false)</i></code>: See [deserialization](#-deserialization)
 - <code>Deserialized <i>(?type = never)</i></code>: See [deserialization](#-deserialization)
 
@@ -295,6 +296,22 @@ type Resolved = M.Resolve<
 //  req: string,
 //  notRequired?: null,
 //  [key: string]: unknown
+// }
+
+type ClosedOnResolve = M.Resolve<
+  M.Object<
+    {
+      required: M.Primitive<string>;
+      notRequired: M.Primitive<null>;
+    },
+    "required",
+    M.Primitive<number>,
+    false
+  >
+>;
+// => {
+//  req: string,
+//  notRequired?: null,
 // }
 ```
 

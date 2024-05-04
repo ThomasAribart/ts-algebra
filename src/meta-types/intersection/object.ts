@@ -1,3 +1,5 @@
+import type { Or } from "~/utils";
+
 import type { AnyType } from "../any";
 import type { ArrayType } from "../array";
 import type { ConstType } from "../const";
@@ -5,6 +7,7 @@ import type { EnumType } from "../enum";
 import type { Never, NeverType } from "../never";
 import type {
   _$Object,
+  IsObjectClosedOnResolve,
   ObjectOpenProps,
   ObjectRequiredKeys,
   ObjectType,
@@ -34,12 +37,14 @@ export type IntersectObjectSerializationParams<
   VALUES extends Record<string, Type>,
   REQUIRED_KEYS extends string,
   OPEN_PROPS extends Type,
+  CLOSE_ON_RESOLVE extends boolean,
   META_OBJECT extends ObjectType,
   SERIALIZABLE_META_TYPE extends SerializableType,
 > = $MergeObjectPropsToSerializable<
   VALUES,
   REQUIRED_KEYS,
   OPEN_PROPS,
+  CLOSE_ON_RESOLVE,
   META_OBJECT,
   SERIALIZABLE_META_TYPE
 >;
@@ -57,12 +62,14 @@ type $MergeObjectPropsToSerializable<
   VALUES,
   REQUIRED_KEYS,
   OPEN_PROPS,
+  CLOSE_ON_RESOLVE,
   META_OBJECT extends ObjectType,
   SERIALIZABLE_META_TYPE extends SerializableType,
 > = _$Object<
   VALUES,
   REQUIRED_KEYS,
   OPEN_PROPS,
+  CLOSE_ON_RESOLVE,
   IntersectIsSerialized<META_OBJECT, SERIALIZABLE_META_TYPE>,
   IntersectDeserialized<META_OBJECT, SERIALIZABLE_META_TYPE>
 >;
@@ -84,6 +91,7 @@ export type IntersectObject<
         ObjectValues<META_OBJECT>,
         ObjectRequiredKeys<META_OBJECT>,
         ObjectOpenProps<META_OBJECT>,
+        IsObjectClosedOnResolve<META_OBJECT>,
         META_OBJECT,
         META_TYPE
       >
@@ -121,12 +129,17 @@ type IntersectObjects<
     ObjectOpenProps<META_OBJECT_A>,
     ObjectOpenProps<META_OBJECT_B>
   >,
+  INTERSECTED_CLOSE_ON_RESOLVE = Or<
+    IsObjectClosedOnResolve<META_OBJECT_A>,
+    IsObjectClosedOnResolve<META_OBJECT_B>
+  >,
 > = $MergeObjectPropsToSerializable<
   {
     [KEY in keyof INTERSECTED_VALUES]: INTERSECTED_VALUES[KEY];
   },
   ObjectRequiredKeys<META_OBJECT_A> | ObjectRequiredKeys<META_OBJECT_B>,
   INTERSECTED_OPEN_PROPS,
+  INTERSECTED_CLOSE_ON_RESOLVE,
   META_OBJECT_A,
   META_OBJECT_B
 >;

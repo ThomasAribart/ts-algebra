@@ -210,7 +210,7 @@ nonExcludingOpenObject;
 const serializedObject: A.Equals<
   M.Exclude<
     M.Enum<{ a: "A" } | { a: "B" }>,
-    M.Object<{}, never, M.Const<"C">, true, { a: "A" }>
+    M.Object<{}, never, M.Const<"C">, false, true, { a: "A" }>
   >,
   M.Enum<{ a: "A" } | { a: "B" }>
 > = 1;
