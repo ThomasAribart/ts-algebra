@@ -1,7 +1,11 @@
 <img src="assets/header-round-medium.png" width="100%" align="center" />
 
-<p align="right">
-  <i>If you use this repo, star it ✨</i>
+💖 _Huge thanks to the [sponsors](https://github.com/sponsors/ThomasAribart) who help me maintain this repo:_
+
+<p align="center">
+  <a href="https://www.theodo.fr/"><img src="https://github.com/theodo.png" width="50px" alt="Theodo" title="Theodo"/></a></td>&nbsp;&nbsp;
+  <!-- sponsors --><!-- sponsors -->
+  <a href="https://github.com/sponsors/ThomasAribart"><img src="assets/plus-sign.png" width="50px" alt="Plus sign" title="Your brand here!"/></a>
 </p>
 
 # Types on steroids 💊
